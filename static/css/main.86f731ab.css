@@ -1,0 +1,2 @@
+body{margin:0;padding:0;font-family:sans-serif}#app{position:absolute;display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;top:0;bottom:0;left:0;right:0}#control-panel{background:#eee;padding:15px;overflow:hidden}#function-plot{background:#00f;overflow:hidden;-ms-flex-positive:1;flex-grow:1}#function-plot>canvas{width:100%;height:100%}#function-input{overflow:hidden;width:90%}#help-button{position:absolute;top:13px;right:13px}
+/*# sourceMappingURL=main.86f731ab.css.map*/
