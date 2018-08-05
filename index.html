@@ -1,1 +1,736 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/><link rel="manifest" href="/complex-function-plotter/manifest.json"><link rel="shortcut icon" href="/complex-function-plotter/favicon.ico"><title>Complex Function Plotter</title><meta name="description" content="Interactive visualization tool for complex functions."/><meta name="keywords" content="webgl,complex,function,plot,visualization,interactive,conformal,domain coloring,wgxli"/><link href="/complex-function-plotter/static/css/main.51ea1b19.css" rel="stylesheet"></head><body><noscript>Complex Function Plotter — Unfortunately, this app cannot work with JavaScript disabled. Please enable JavaScript to use the plotter. :)</noscript><div id="root"></div><script type="text/javascript" src="/complex-function-plotter/static/js/main.9866e848.js"></script></body></html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><link rel="manifest" href="/complex-function-plotter/manifest.json"><link rel="shortcut icon" href="/complex-function-plotter/favicon.ico"><title>Complex Function Plotter</title><meta name="description" content="Interactive visualization tool for complex functions."><meta name="keywords" content="webgl,complex,function,plot,visualization,interactive,conformal,domain coloring,wgxli"><link href="/complex-function-plotter/static/css/main.b6dcbf6b.css" rel="stylesheet"><style data-jss="" data-meta="MuiPaper">
+.jss9 {
+  background-color: #fff;
+}
+.jss10 {
+  border-radius: 4px;
+}
+.jss11 {
+  box-shadow: none;
+}
+.jss12 {
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),0px 1px 1px 0px rgba(0, 0, 0, 0.14),0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+.jss13 {
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+}
+.jss14 {
+  box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.2),0px 3px 4px 0px rgba(0, 0, 0, 0.14),0px 3px 3px -2px rgba(0, 0, 0, 0.12);
+}
+.jss15 {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),0px 4px 5px 0px rgba(0, 0, 0, 0.14),0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+.jss16 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 5px 8px 0px rgba(0, 0, 0, 0.14),0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
+.jss17 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 6px 10px 0px rgba(0, 0, 0, 0.14),0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+.jss18 {
+  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2),0px 7px 10px 1px rgba(0, 0, 0, 0.14),0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+.jss19 {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),0px 8px 10px 1px rgba(0, 0, 0, 0.14),0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.jss20 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2),0px 9px 12px 1px rgba(0, 0, 0, 0.14),0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+.jss21 {
+  box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2),0px 10px 14px 1px rgba(0, 0, 0, 0.14),0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+.jss22 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2),0px 11px 15px 1px rgba(0, 0, 0, 0.14),0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+.jss23 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),0px 12px 17px 2px rgba(0, 0, 0, 0.14),0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+.jss24 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),0px 13px 19px 2px rgba(0, 0, 0, 0.14),0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+}
+.jss25 {
+  box-shadow: 0px 7px 9px -4px rgba(0, 0, 0, 0.2),0px 14px 21px 2px rgba(0, 0, 0, 0.14),0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+}
+.jss26 {
+  box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),0px 15px 22px 2px rgba(0, 0, 0, 0.14),0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+}
+.jss27 {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),0px 16px 24px 2px rgba(0, 0, 0, 0.14),0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+.jss28 {
+  box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2),0px 17px 26px 2px rgba(0, 0, 0, 0.14),0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+}
+.jss29 {
+  box-shadow: 0px 9px 11px -5px rgba(0, 0, 0, 0.2),0px 18px 28px 2px rgba(0, 0, 0, 0.14),0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+}
+.jss30 {
+  box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2),0px 19px 29px 2px rgba(0, 0, 0, 0.14),0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+}
+.jss31 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2),0px 20px 31px 3px rgba(0, 0, 0, 0.14),0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+}
+.jss32 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2),0px 21px 33px 3px rgba(0, 0, 0, 0.14),0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+}
+.jss33 {
+  box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.2),0px 22px 35px 3px rgba(0, 0, 0, 0.14),0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+}
+.jss34 {
+  box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2),0px 23px 36px 3px rgba(0, 0, 0, 0.14),0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+}
+.jss35 {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),0px 24px 38px 3px rgba(0, 0, 0, 0.14),0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+</style><style data-jss="" data-meta="MuiAppBar">
+.jss1 {
+  width: 100%;
+  display: flex;
+  z-index: 1100;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  flex-direction: column;
+}
+.jss2 {
+  top: 0;
+  left: auto;
+  right: 0;
+  position: fixed;
+}
+.jss3 {
+  top: 0;
+  left: auto;
+  right: 0;
+  position: absolute;
+}
+.jss4 {
+  top: 0;
+  left: auto;
+  right: 0;
+  position: sticky;
+}
+.jss5 {
+  position: static;
+}
+.jss6 {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #f5f5f5;
+}
+.jss7 {
+  color: #fff;
+  background-color: #2196f3;
+}
+.jss8 {
+  color: #fff;
+  background-color: #f50057;
+}
+</style><style data-jss="" data-meta="MuiToolbar">
+.jss36 {
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+.jss37 {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+@media (min-width:600px) {
+  .jss37 {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+.jss38 {
+  min-height: 56px;
+}
+@media (min-width:0px) and (orientation: landscape) {
+  .jss38 {
+    min-height: 48px;
+  }
+}
+@media (min-width:600px) {
+  .jss38 {
+    min-height: 64px;
+  }
+}
+.jss39 {
+  min-height: 48px;
+}
+</style><style data-jss="" data-meta="MuiInput">
+.jss67 {
+  color: rgba(0, 0, 0, 0.87);
+  display: inline-flex;
+  position: relative;
+  font-size: 1rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.1875em;
+}
+.jss67.jss70 {
+  color: rgba(0, 0, 0, 0.38);
+}
+label + .jss68 {
+  margin-top: 16px;
+}
+.jss71:after {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  position: absolute;
+  transform: scaleX(0);
+  transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  border-bottom: 2px solid #1976d2;
+  pointer-events: none;
+}
+.jss71.jss69:after {
+  transform: scaleX(1);
+}
+.jss71.jss72:after {
+  transform: scaleX(1);
+  border-bottom-color: #f44336;
+}
+.jss71:before {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "\00a0";
+  position: absolute;
+  transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  pointer-events: none;
+}
+.jss71:hover:not(.jss70):not(.jss69):not(.jss72):before {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.87);
+}
+.jss71.jss70:before {
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.42);
+}
+.jss73 {
+  padding: 6px 0 7px;
+}
+.jss74 {
+  width: 100%;
+}
+.jss75 {
+  font: inherit;
+  color: currentColor;
+  border: 0;
+  margin: 0;
+  padding: 6px 0 7px;
+  display: block;
+  min-width: 0;
+  flex-grow: 1;
+  box-sizing: content-box;
+  background: none;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+}
+.jss75::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.jss75::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.jss75:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.jss75::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.jss75:focus {
+  outline: 0;
+}
+.jss75:invalid {
+  box-shadow: none;
+}
+.jss75::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+.jss75.jss70 {
+  opacity: 1;
+}
+label[data-shrink=false] + .jss68 .jss75::-webkit-input-placeholder {
+  opacity: 0;
+}
+label[data-shrink=false] + .jss68 .jss75::-moz-placeholder {
+  opacity: 0;
+}
+label[data-shrink=false] + .jss68 .jss75:-ms-input-placeholder {
+  opacity: 0;
+}
+label[data-shrink=false] + .jss68 .jss75::-ms-input-placeholder {
+  opacity: 0;
+}
+label[data-shrink=false] + .jss68 .jss75:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+label[data-shrink=false] + .jss68 .jss75:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+label[data-shrink=false] + .jss68 .jss75:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+label[data-shrink=false] + .jss68 .jss75:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+.jss76 {
+  padding-top: 3px;
+}
+.jss77 {
+  resize: none;
+  padding: 0;
+}
+.jss78 {
+  height: 1.1875em;
+}
+.jss79 {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+}
+</style><style data-jss="" data-meta="MuiFormControl">
+.jss63 {
+  margin: 0;
+  border: 0;
+  display: inline-flex;
+  padding: 0;
+  position: relative;
+  min-width: 0;
+  flex-direction: column;
+}
+.jss64 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+.jss65 {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+.jss66 {
+  width: 100%;
+}
+</style><style data-jss="" data-meta="MuiModal">
+.jss116 {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1300;
+  position: fixed;
+}
+.jss117 {
+  visibility: hidden;
+}
+</style><style data-jss="" data-meta="MuiSvgIcon">
+.jss49 {
+  fill: currentColor;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  font-size: 24px;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  user-select: none;
+  flex-shrink: 0;
+}
+.jss50 {
+  color: #2196f3;
+}
+.jss51 {
+  color: #f50057;
+}
+.jss52 {
+  color: rgba(0, 0, 0, 0.54);
+}
+.jss53 {
+  color: #f44336;
+}
+.jss54 {
+  color: rgba(0, 0, 0, 0.26);
+}
+.jss55 {
+  font-size: inherit;
+}
+</style><style data-jss="" data-meta="MuiTouchRipple">
+.jss56 {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  position: absolute;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.jss57 {
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  opacity: 0;
+  position: absolute;
+}
+.jss58 {
+  opacity: 0.3;
+  transform: scale(1);
+  animation: mui-ripple-enter 550ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.jss59 {
+  animation-duration: 200ms;
+}
+.jss60 {
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  display: block;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+.jss61 {
+  opacity: 0;
+  animation: mui-ripple-exit 550ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.jss62 {
+  top: 0;
+  left: 0;
+  position: absolute;
+  animation: mui-ripple-pulsate 2500ms cubic-bezier(0.4, 0, 0.2, 1) 200ms infinite;
+}
+@keyframes mui-ripple-enter {
+  0% {
+    opacity: 0.1;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+@keyframes mui-ripple-exit {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes mui-ripple-pulsate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style><style data-jss="" data-meta="MuiButtonBase">
+.jss46 {
+  color: inherit;
+  cursor: pointer;
+  margin: 0;
+  border: 0;
+  display: inline-flex;
+  padding: 0;
+  outline: none;
+  position: relative;
+  user-select: none;
+  align-items: center;
+  border-radius: 0;
+  vertical-align: middle;
+  justify-content: center;
+  -moz-appearance: none;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.jss46::-moz-focus-inner {
+  border-style: none;
+}
+.jss46.jss47 {
+  cursor: default;
+  pointer-events: none;
+}
+</style><style data-jss="" data-meta="MuiButton">
+.jss80 {
+  color: rgba(0, 0, 0, 0.87);
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  min-width: 64px;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  min-height: 36px;
+  box-sizing: border-box;
+  line-height: 1.4em;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.jss80:hover {
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+.jss80.jss98 {
+  color: rgba(0, 0, 0, 0.26);
+}
+@media (hover: none) {
+  .jss80:hover {
+    background-color: transparent;
+  }
+}
+.jss80:hover.jss98 {
+  background-color: transparent;
+}
+.jss81 {
+  display: inherit;
+  align-items: inherit;
+  justify-content: inherit;
+}
+.jss83 {
+  color: #2196f3;
+}
+.jss83:hover {
+  background-color: rgba(33, 150, 243, 0.08);
+}
+@media (hover: none) {
+  .jss83:hover {
+    background-color: transparent;
+  }
+}
+.jss84 {
+  color: #f50057;
+}
+.jss84:hover {
+  background-color: rgba(245, 0, 87, 0.08);
+}
+@media (hover: none) {
+  .jss84:hover {
+    background-color: transparent;
+  }
+}
+.jss88 {
+  border: 1px solid rgba(0, 0, 0, 0.23);
+}
+.jss89 {
+  color: rgba(0, 0, 0, 0.87);
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  background-color: #e0e0e0;
+}
+.jss89.jss97 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 6px 10px 0px rgba(0, 0, 0, 0.14),0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+.jss89:active {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),0px 8px 10px 1px rgba(0, 0, 0, 0.14),0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.jss89.jss98 {
+  color: rgba(0, 0, 0, 0.26);
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+.jss89:hover {
+  background-color: #d5d5d5;
+}
+@media (hover: none) {
+  .jss89:hover {
+    background-color: #e0e0e0;
+  }
+}
+.jss89:hover.jss98 {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+.jss90 {
+  color: #fff;
+  background-color: #2196f3;
+}
+.jss90:hover {
+  background-color: #1976d2;
+}
+@media (hover: none) {
+  .jss90:hover {
+    background-color: #2196f3;
+  }
+}
+.jss91 {
+  color: #fff;
+  background-color: #f50057;
+}
+.jss91:hover {
+  background-color: #c51162;
+}
+@media (hover: none) {
+  .jss91:hover {
+    background-color: #f50057;
+  }
+}
+.jss95 {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  min-width: 0;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 6px 10px 0px rgba(0, 0, 0, 0.14),0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 50%;
+}
+.jss95:active {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),0px 12px 17px 2px rgba(0, 0, 0, 0.14),0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+.jss96 {
+  width: auto;
+  height: 48px;
+  padding: 0 16px;
+  min-width: 48px;
+  border-radius: 24px;
+}
+.jss99 {
+  color: inherit;
+}
+.jss100 {
+  width: 40px;
+  height: 40px;
+}
+.jss101 {
+  padding: 7px 8px;
+  min-width: 64px;
+  font-size: 0.8125rem;
+  min-height: 32px;
+}
+.jss102 {
+  padding: 8px 24px;
+  min-width: 112px;
+  font-size: 0.9375rem;
+  min-height: 40px;
+}
+.jss103 {
+  width: 100%;
+}
+</style><style data-jss="" data-meta="MuiIconButton">
+.jss40 {
+  flex: 0 0 auto;
+  width: 48px;
+  color: rgba(0, 0, 0, 0.54);
+  height: 48px;
+  padding: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 50%;
+}
+.jss40:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+.jss40.jss44 {
+  color: rgba(0, 0, 0, 0.26);
+}
+@media (hover: none) {
+  .jss40:hover {
+    background-color: transparent;
+  }
+}
+.jss40:hover.jss44 {
+  background-color: transparent;
+}
+.jss41 {
+  color: inherit;
+}
+.jss42 {
+  color: #2196f3;
+}
+.jss42:hover {
+  background-color: rgba(33, 150, 243, 0.08);
+}
+@media (hover: none) {
+  .jss42:hover {
+    background-color: transparent;
+  }
+}
+.jss43 {
+  color: #f50057;
+}
+.jss43:hover {
+  background-color: rgba(245, 0, 87, 0.08);
+}
+@media (hover: none) {
+  .jss43:hover {
+    background-color: transparent;
+  }
+}
+.jss45 {
+  width: 100%;
+  display: flex;
+  align-items: inherit;
+  justify-content: inherit;
+}
+</style><style data-jss="" data-meta="MuiDrawer">
+.jss105 {
+  flex: 0 0 auto;
+}
+.jss106 {
+  top: 0;
+  flex: 1 0 auto;
+  height: 100vh;
+  display: flex;
+  z-index: 1200;
+  outline: none;
+  position: fixed;
+  overflow-y: auto;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+}
+.jss107 {
+  left: 0;
+  right: auto;
+}
+.jss108 {
+  left: auto;
+  right: 0;
+}
+.jss109 {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  height: auto;
+  max-height: 100vh;
+}
+.jss110 {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  max-height: 100vh;
+}
+.jss111 {
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+.jss112 {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.jss113 {
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+.jss114 {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+</style><style data-jss="">
+.jss104 {
+  min-height: 56px;
+}
+@media (min-width:0px) and (orientation: landscape) {
+  .jss104 {
+    min-height: 48px;
+  }
+}
+@media (min-width:600px) {
+  .jss104 {
+    min-height: 64px;
+  }
+}
+</style></head><body><noscript>Complex Function Plotter — Unfortunately, this app cannot work with JavaScript disabled. Please enable JavaScript to use the plotter. :)</noscript><div id="root"><div id="app" data-reactroot=""><header class="jss9 jss15 jss1 jss2 jss7 mui-fixed" id="app-bar"><div class="jss36 jss38"><button tabindex="0" class="jss46 jss40" type="button"><span class="jss45"><svg class="jss49" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" d="M0 0h24v24H0z"></path><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg></span><span class="jss56"></span></button><div id="function-input"><div class="jss63 jss66"><div class="jss67 jss74 jss68 jss71"><input type="text" aria-invalid="false" autofocus="" class="jss75" id="function-input" placeholder="Enter a complex function of z" value="z"></div></div></div><div id="help-button"><button tabindex="0" class="jss46 jss80 jss82 jss85" type="button"><span class="jss81">Help</span><span class="jss56"></span></button></div></div></header><div id="function-plot"><div id="fallback-text">Unfortunately, your browser does not support WebGL.</div><canvas></canvas></div></div></div><script type="text/javascript" src="/complex-function-plotter/static/js/main.335648da.js"></script></body></html>
