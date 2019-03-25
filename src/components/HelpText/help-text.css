@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+.help-panel {
+  width: 580px;
+  height: 100% !important;
+}
+
+#help-text {
+  width: 500px;
+  padding: 30px calc(50% - 250px);
+}
+
+#help-text p,li {
+  font-size: 16px;
+  line-height: 1.3;
+
+  text-align: justify;
+  text-justify: inter-word;
+
+  font-family: 'Open Sans', sans-serif;
+
+  margin-top: 0;
+}
+
+#help-text li {
+  margin-bottom: 10px;
+}
+
+#help-text h1, h2, h3 {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+#help-text h1 {
+  font-weight: 300;
+  font-size: 42px;
+  color: #555;
+
+  margin-top: 0;
+}
+
+#help-text h2 {
+  font-weight: 400;
+  font-size: 32px;
+
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+#help-text h3 {
+  font-weight: 400;
+  font-size: 20px;
+  color: #555;
+
+  margin-bottom: 10px;
+}
+
+.help-indent {
+  margin-left: 20px;
+}
+
+
+/* Media Queries */
+
+@media (max-width: 900px) {
+  .help-panel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  #help-text {
+    width: calc(100% - 80px);
+    padding: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  #help-text {
+    width: calc(100% - 60px);
+    padding: 30px;
+  }
+
+  #help-text p,li {
+    text-align: left;
+  }
+}

@@ -1,0 +1,20 @@
+#app-bar {
+  display: inline-block;
+  padding: 0 8px;
+
+  z-index: 1300;
+  background-color: #FFF;
+}
+
+#function-input {
+  margin-left: 3px;
+  margin-right: 75px;
+
+  overflow: hidden;
+  flex-grow: 1
+}
+
+#help-button {
+  position: absolute;
+  right: 0;
+}
