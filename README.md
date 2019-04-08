@@ -8,3 +8,8 @@ Features
 * Several toggleable display and graphics options
 * Arbitrary number of auxiliary variables; smooth visualization of their effect on the plotted function
 * Custom functions via GLSL shader API
+
+Documentation
+-------------
+Full documentation is available within the app.
+Click the ‘Help’ button in the upper right to open.
