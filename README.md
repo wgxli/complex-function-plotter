@@ -1,7 +1,7 @@
 A fully-featured, responsive domain-coloring plotter for complex-analytic functions.
 
-![Screenshot showing domain-coloring plot of a polynomial.]{https://raw.githubusercontent.com/wgxli/complex-function-plotter/master/public/screenshot-1.png}
-![Screenshot showing a Julia fractal.]{https://raw.githubusercontent.com/wgxli/complex-function-plotter/master/public/screenshot-2.png}
+![Screenshot showing domain-coloring plot of a polynomial.](https://raw.githubusercontent.com/wgxli/complex-function-plotter/master/public/screenshot-1.png)
+![Screenshot showing a Julia fractal.](https://raw.githubusercontent.com/wgxli/complex-function-plotter/master/public/screenshot-2.png)
 
 Features
 --------
