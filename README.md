@@ -1,4 +1,4 @@
-# Complex Function Plotter ![App Icon](images/mini-icon.png)
+# Complex Function Plotter <img src="public/android-chrome-192x192.png" width=32 alt="App Icon">
 A fully-featured, responsive domain-coloring plotter for complex-analytic functions.
 
 ![Screenshot showing domain-coloring plot of a polynomial.](images/screenshot-1.png)
