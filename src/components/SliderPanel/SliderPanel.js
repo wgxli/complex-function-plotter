@@ -6,6 +6,8 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import VariableSlider from './VariableSlider.js';
 import VariableAdder from './VariableAdder.js';
 
+import Slider from './slider/Slider.js';
+
 import './slider-panel.css';
 
 
@@ -38,12 +40,12 @@ class SliderPanel extends React.Component {
 
       // Return slider component
       sliderList.push(
-	<VariableSlider 
+	<Slider 
 	  key={name}
 	  name={name}
 	  value={value}
-	  onChange={(event, value) => this.handleChange(name, value)}
-	  onDelete={(event) => this.props.onRemove(name)}
+	  onChange={(value) => this.handleChange(name, value)}
+	  onDelete={() => this.props.onRemove(name)}
 	/>
       );
     }

@@ -1,0 +1,19 @@
+.editable-value {
+	color: #777;
+	padding: 0;
+	border: 0;
+
+	transition: color 0.1s;
+}
+
+.editable-value:hover {
+	color: #444;
+}
+
+.editable-value.focus {
+	color: black;
+}
+
+.editable-value.invalid {
+	color: red;
+}
