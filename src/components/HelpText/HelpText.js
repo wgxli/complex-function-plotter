@@ -119,7 +119,7 @@ class HelpText extends React.PureComponent {
 	Variables can be added with the <span className={this.classes.buttonStyle}>Add</span> button and removed with the <DeleteIcon style={{fontSize: 20}}/> button.</p>
 
 	<p>
-	Values can be adjusted between 0 and 1 using the slider, allowing interactive visualization of a family of functions.
+	Click on the variable’s current value or the slider’s upper & lower bounds to edit them.
 	</p>
 	
 	<p>Any string of lowercase letters can be used as a variable name, except for reserved functions, the built-in variable <i>z</i>, and the constant <i>i</i>.</p>

@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react';
+import ContentEditable from 'react-contenteditable';
 
 import DEFAULT_PARSERS from './parsers.js';
 import './EditableValue.css';
@@ -32,38 +33,22 @@ class EditableValue extends PureComponent {
 	}
 
 	// Resets this.state.text to match this.props.value
-	reset() {this.setText(this.props.value);}
+	reset() {
+		const propText = this.props.value.toString();
+		if (propText !== this.state.text) {
+			this.setState({text: this.props.value.toString()});
+		}
+	}
 
 
 	/*** Event Handlers ***/
 	componentDidMount() {
-		this.reset();
-
-		const current = this.element.current;
-		if (current !== null) {
-			// Exit on Enter keypress
-			document.addEventListener('keydown', (e) => {
-				if (e.key === 'Enter') {current.blur();}
-			});
-
-		}
-	}
-
-	// Resize to fit text
-	setText(text) {
-		const current = this.element.current;
-		text = text.toString();
-		
-		if (current !== null) {
-			const style = window.getComputedStyle(current, null);
-			const fontSize = parseFloat(style.getPropertyValue('font-size'));
-
-			const textWidth = fontSize * text.length * 0.6;
-			console.log(text.length);
-			current.style.width = `${textWidth}px`;
-		}
-
-		this.setState({text: text});
+		// Exit on Enter keypress
+		document.addEventListener('keydown', ((e) => {
+			if (e.key === 'Enter' && this.state.focused) {
+				this.element.current.blur();
+			}
+		}).bind(this));
 	}
 
 	handleFocus(e) {
@@ -72,7 +57,7 @@ class EditableValue extends PureComponent {
 	}
 
 	handleChange(e) {
-		this.setText(e.target.value);
+		this.setState({text: e.target.value.toString()});
 	}
 
 	handleBlur(e) {
@@ -80,35 +65,39 @@ class EditableValue extends PureComponent {
 
 		if (this.valid()) {
 			this.props.onChange(this.parsedValue());
-		} else {
-			this.reset();
 		}
 	}
+
+	componentDidUpdate() {if (!this.state.focused) {this.reset();}}
 
 	render() {
 		const classes = ['editable-value', this.props.name];
 
-		if (this.state.focused) {classes.push('focus')};
-		if (!this.valid()) {classes.push('invalid')};
-
-		if (!this.state.focused) {this.reset();}
+		if (this.state.focused) {
+			classes.push('focus')
+			if (!this.valid()) {
+				classes.push('invalid')
+			};
+		}
 
 		const classString = classes.join(' ');
+		const current = this.element.current;
+		if (current !== null) {
+			this.element.current.setAttribute('class', classString);
+		}
+
+		const displayText = this.state.focused ? this.state.text : this.props.value.toString();
 
 		if (this.props.disabled) {
 			return (
-				<span
-					type='text'
-					className={classString}
-				>
-					{this.state.text}
+				<span className={classString}>
+					{displayText}
 				</span>
 			);
 		} else {
 			return (
-				<input
-					type='text'
-					value={this.state.text}
+				<ContentEditable
+					html={displayText}
 
 					onFocus={this.handleFocus.bind(this)}
 					onChange={this.handleChange.bind(this)}
@@ -116,7 +105,9 @@ class EditableValue extends PureComponent {
 
 					className={classString}
 
-					ref={this.element}
+					tagName='span'
+
+					innerRef={this.element}
 				/>
 			);
 		}

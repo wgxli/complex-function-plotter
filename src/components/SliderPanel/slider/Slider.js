@@ -13,44 +13,45 @@ import './Slider.css';
 class Slider extends PureComponent {
 	constructor() {
 		super();
-		this.state = {
-			min: 0,
-			max: 1,
-		}
+		this.state = {min: 0, max: 1};
 	}
 
 	setMin(value) {
 		this.setState({min: value});
-
-		// Clamp max to new min
-		if (value > this.state.max) {this.setState({max: value});}
-
-		// Clamp value to new min
-		if (this.props.value < value) {this.props.onChange(value);}
+		this.clampValue();
 	}
 
 	setMax(value) {
 		this.setState({max: value});
-
-		// Clamp min to new max
-		if (value < this.state.min) {this.setState({min: value});}
-
-		// Clamp value to new max
-		if (this.props.value > value) {this.props.onChange(value);}
+		this.clampValue();
 	}
 
 	setValue(value) {
-		if (value < this.state.min) {this.setState({min: value});}
-		if (value > this.state.max) {this.setState({max: value});}
+		this.ensureConsistency();
 		this.props.onChange(value);
 	}
-	handleSliderChange(e, value) {this.setValue(value);}
 
 	// Clamp this.props.value between min and max.
-	clamp() {
+	clampValue() {
 		const [min, max, value] = [this.state.min, this.state.max, this.props.value];
 		if (value < min) {this.props.onChange(min);}
-		if (value > max) {this.setState(max);}
+		if (value > max) {this.props.onChange(max);}
+	}
+
+	// Adjust this.state.min and this.state.max
+	// if this.props.value is out of bounds.
+	ensureConsistency() {
+		const [min, max, value] = [this.state.min, this.state.max, this.props.value];
+		if (min > value) {this.setState({min: value});}
+		if (max < value) {this.setState({max: value});}
+	}
+
+	componentDidUpdate() {
+		this.ensureConsistency();
+	}
+
+	componentDidMount() {
+		this.ensureConsistency();
 	}
 
 	render() {
@@ -85,7 +86,7 @@ class Slider extends PureComponent {
 								min={this.state.min}
 								max={this.state.max}
 								value={this.props.value}
-								onChange={this.handleSliderChange.bind(this)}
+								onChange={(e, v) => this.setValue(v)}
 							/>
 							<EditableValue
 								name='upper-bound'
