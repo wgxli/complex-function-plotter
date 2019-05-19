@@ -29,7 +29,7 @@ const styles = theme => ({
 const supportedFunctions = [
   {
     name: 'Operators',
-    entries: ['+', '-', '*', '/', '^']
+    entries: ['+', '-', '*', '/', '^', '!']
   },
   {
     name: 'Trigonometry',
