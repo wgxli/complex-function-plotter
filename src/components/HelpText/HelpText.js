@@ -154,7 +154,7 @@ class HelpText extends React.PureComponent {
 	<p>To share a graph, just copy and paste the URL! The address automatically changes to reflect the plotted expression.</p>
 
 	<h2>Advanced Features</h2>
-	<ExpansionPanel>
+	<ExpansionPanel style={{margin: '0 -5px'}}>
 	  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
 	    <Typography variant='caption'>
 	      Please read thoroughly iff you are using advanced options.

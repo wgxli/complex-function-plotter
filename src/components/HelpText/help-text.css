@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 .help-panel {
-  width: 580px;
+  max-width: 580px;
+  width: 100vw;
   height: 100% !important;
 }
 
 #help-text {
-  width: 500px;
-  padding: 30px calc(50% - 250px);
+  margin: 30px;
 }
 
 #help-text p,li {
@@ -59,12 +59,12 @@
 }
 
 #help-text h2 {
-  font-weight: 400;
-  font-size: 24px;
+  font-weight: 500;
+  font-size: 22px;
   line-height: 1.25;
   color: hsl(200, 10%, 15%);
 
-  margin-top: 30px;
+  margin-top: 40px;
   margin-bottom: 10px;
 }
 
@@ -84,29 +84,18 @@
   margin-left: 20px;
 }
 
-
 /* Media Queries */
+@media (max-width: 500px) {
+    #help-text h1 {
+        font-size: 22px;
+    }
 
-@media (max-width: 900px) {
-  .help-panel {
-    width: 100%;
-  }
-}
+    #help-text h1 .logo {
+        width: 50px;
+        margin-right: 15px;
+    }
 
-@media (max-width: 600px) {
-  #help-text {
-    width: calc(100% - 80px);
-    padding: 40px;
-  }
-}
-
-@media (max-width: 480px) {
-  #help-text {
-    width: calc(100% - 60px);
-    padding: 30px;
-  }
-
-  #help-text p,li {
-    text-align: left;
-  }
+    #help-text h2 {
+        font-size: 18px;
+    }
 }
