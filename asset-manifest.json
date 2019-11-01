@@ -1,13 +1,13 @@
 {
-  "main.css": "/complex-function-plotter/static/css/main.6c87f2b3.chunk.css",
-  "main.js": "/complex-function-plotter/static/js/main.ebe513bb.chunk.js",
-  "main.js.map": "/complex-function-plotter/static/js/main.ebe513bb.chunk.js.map",
+  "main.css": "/complex-function-plotter/static/css/main.8ed31bb3.chunk.css",
+  "main.js": "/complex-function-plotter/static/js/main.77f62fb7.chunk.js",
+  "main.js.map": "/complex-function-plotter/static/js/main.77f62fb7.chunk.js.map",
   "runtime~main.js": "/complex-function-plotter/static/js/runtime~main.d38a0d58.js",
   "runtime~main.js.map": "/complex-function-plotter/static/js/runtime~main.d38a0d58.js.map",
-  "static/js/2.9bba594c.chunk.js": "/complex-function-plotter/static/js/2.9bba594c.chunk.js",
-  "static/js/2.9bba594c.chunk.js.map": "/complex-function-plotter/static/js/2.9bba594c.chunk.js.map",
+  "static/js/2.df0909b4.chunk.js": "/complex-function-plotter/static/js/2.df0909b4.chunk.js",
+  "static/js/2.df0909b4.chunk.js.map": "/complex-function-plotter/static/js/2.df0909b4.chunk.js.map",
   "index.html": "/complex-function-plotter/index.html",
-  "precache-manifest.35645005fb53282cc45950f9bf7a26c2.js": "/complex-function-plotter/precache-manifest.35645005fb53282cc45950f9bf7a26c2.js",
+  "precache-manifest.f21aa6af216c3cd7d67bde8f99dd10cb.js": "/complex-function-plotter/precache-manifest.f21aa6af216c3cd7d67bde8f99dd10cb.js",
   "service-worker.js": "/complex-function-plotter/service-worker.js",
-  "static/css/main.6c87f2b3.chunk.css.map": "/complex-function-plotter/static/css/main.6c87f2b3.chunk.css.map"
+  "static/css/main.8ed31bb3.chunk.css.map": "/complex-function-plotter/static/css/main.8ed31bb3.chunk.css.map"
 }
