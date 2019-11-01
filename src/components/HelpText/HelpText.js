@@ -92,7 +92,7 @@ class HelpText extends React.PureComponent {
     return (
       <div id='help-text'>
 	<h1>
-                <img src='/android-chrome-192x192.png' className='logo'/>
+                <img src='android-chrome-192x192.png' className='logo'/>
                 <div className='text'>
                     Complex Function Plotter
                     <div className='subtitle'>
