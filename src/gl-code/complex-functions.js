@@ -1,4 +1,8 @@
+import nearley from 'nearley';
+import grammar from './grammar.js';
+
 import {parseExpression} from './parse-expression.js';
+const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
 
 
 const argument_names = ['z', 'w'];
@@ -44,6 +48,8 @@ const reciprocal = new ComplexFunction('reciprocal', `
 const cconj = new ComplexFunction('cconj', 'return vec2(z.x, -z.y);');
 const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);');
 const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);');
+const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);');
+const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);');
 
 // Exponentials
 const ccis = new ComplexFunction('ccis', 'return cexp(mul_i(z));');
@@ -234,13 +240,20 @@ var complex_functions = {
 	'ceta_right': ceta_right,
 	'square': csquare,
 
+	'real': creal,
+	're': creal,
+	'imag': cimag,
+	'im': cimag,
+
 	'conj': cconj,
 	'abs': cabs,
 	'arg': carg,
 	'cis': ccis,
+
 	'exp': cexp,
 	'log': clog,
 	'ln': clog,
+
 	'sqrt': csqrt,
 	'^': cpow,
 	'sin': csin,  'cos': ccos,  'tan': ctan,
@@ -263,60 +276,15 @@ var complex_functions = {
 };
 
 function translateExpression(expression) {
-	const tokens = parseExpression(expression);
-	const stack = [];
-
-	// Return null on parse error
-	if (tokens === null || tokens.length === 0) {return null;}
-
-
-	// Evaluate RPN
-	for (const token of tokens) {
-		if (token.type === 'variable') {
-			stack.push(token.text);
-		} else if (token.type === 'number') {
-			let text = token.text
-
-			if (text === 'i') {
-				stack.push('vec2(0, 1)');
-				continue;
-			}
-
-			let magnitude = parseFloat(text).toString();
-			if (magnitude.indexOf('.') === -1) {
-				magnitude += '.0';
-			}
-
-			if (text.endsWith('i')) {
-				stack.push(`vec2(0, ${magnitude})`);
-			} else {
-				stack.push(`vec2(${magnitude}, 0)`);
-			}
-		} else if (complex_functions.hasOwnProperty(token.text)) {
-			let f = complex_functions[token.text];
-			let arity = f.num_args;
-			let parameters = [];
-			if (stack.length < arity) {
-				console.log('Malformed expression!');
-				return null;
-			}
-			for (let i = 0; i < arity; i++) {
-				parameters.push(stack.pop());
-			}
-			parameters.reverse();
-			stack.push(f.apply(...parameters));
-		} else {
-			console.log(`Unknown token ${token.text}!`);
-			return null;
-		}
-	}
-
-	if (stack.length !== 1) {
-		console.log('Malformed expression!');
-		return null;
-	}
-
-	return stack[0];
+    try {
+        const parser = new nearley.Parser(compiledGrammar);
+        parser.feed(expression)
+        console.log(parser.results);
+        return 'vec2(z.x + z.y, 0)';
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 const declarations = new Set(Object.values(complex_functions).map(f => f.declaration))

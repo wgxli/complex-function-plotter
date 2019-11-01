@@ -9,8 +9,12 @@ const functions = new Set([
 	'arsinh', 'arcosh', 'artanh', 'arsech', 'arcsch', 'arcoth',
 	'exp', 'log', 'ln',
 	'sqrt', 'gamma', 'eta', 'zeta',
+
 	'abs', 'arg',
-	'conj', 'cis'
+	'conj', 'cis',
+
+	'real', 'imag',
+	're', 'im',
 ]);
 const constants = new Set([
 	'e', 'pi', 'tau', 'phi'
@@ -87,9 +91,9 @@ function wordParser(expression) {
 }
 
 const token_parsers = [
-	numberParser,
 	symbolParser,
-	wordParser
+	numberParser,
+	wordParser,
 ];
 
 // END PARSERS //
@@ -112,6 +116,8 @@ function tokenize(expression) {
 		// Loop through each parser and attempt to parse a token
 		for (const parser of token_parsers) {
 			let token = parser(expression, lastToken);
+
+                        console.log(token);
 
 			// If parse is successful, extract token and restart parsing
 			if (token.text !== null) {

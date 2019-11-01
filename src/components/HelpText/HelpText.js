@@ -53,7 +53,8 @@ const supportedFunctions = [
     entries: [
       'sqrt',
       'gamma', 'eta', 'zeta',
-      'abs', 'arg', 'conj', 'cis'
+      'abs', 'arg', 'conj', 'cis',
+      'real', 'imag',
     ]
   }
 ];
@@ -90,7 +91,15 @@ class HelpText extends React.PureComponent {
   render() {
     return (
       <div id='help-text'>
-	<h1>Complex Function Plotter</h1>
+	<h1>
+                <img src='/android-chrome-192x192.png' className='logo'/>
+                <div className='text'>
+                    Complex Function Plotter
+                    <div className='subtitle'>
+                        Made with {'<3'} by Samuel J. Li
+                    </div>
+                </div>
+        </h1>
 
 	<h2>Introduction</h2>
 	<p>Creates interactive, domain-colored plots of complex functions.</p>
@@ -187,8 +196,8 @@ class HelpText extends React.PureComponent {
 	<h2>Acknowledgements</h2>
 	<p>Inspired by David Bau’s <a href='http://davidbau.com/conformal'>Conformal Map Plotter</a>.</p>
 
-	<Typography variant='caption'>Complex Functions Plotter — Made with love by Samuel J. Li</Typography>
-	<Typography variant='caption'>Found a bug? — samuel.wgx@gmail.com</Typography>
+	<Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography>
+	<Typography variant='caption'>Found a bug? — bug.report@samuelj.li</Typography>
       </div>
     );
   }
