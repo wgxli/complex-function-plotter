@@ -2,7 +2,7 @@
   "name": "complex-function-plotter",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://wgxli.github.io/complex-function-plotter/",
+  "homepage": "https://samuelj.li/complex-function-plotter/",
   "dependencies": {
     "@babel/core": "7.2.2",
     "@material-ui/core": "^1.5.1",
