@@ -12,7 +12,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import {functions, constants} from '../../gl-code/parse-expression.js';
+import {constants} from '../../gl-code/parse-expression.js';
 
 import './help-text.css';
 

@@ -1,9 +1,7 @@
 import nearley from 'nearley';
 import grammar from './grammar.js';
 
-import {parseExpression} from './parse-expression.js';
 const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
-
 
 const argument_names = ['z', 'w'];
 
@@ -279,8 +277,8 @@ function translateExpression(expression) {
     try {
         const parser = new nearley.Parser(compiledGrammar);
         parser.feed(expression)
-        console.log(parser.results);
-        return 'vec2(z.x + z.y, 0)';
+        const result = parser.results[0];
+        return result || null;
     } catch (error) {
         console.error(error);
         return null;

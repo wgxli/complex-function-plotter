@@ -98,16 +98,103 @@ var grammar = {
             );
         }
         },
-    {"name": "expression", "symbols": ["expression", "binaryOperator", "expression"], "postprocess": 
-        (data) => `${data[1]}(${data[0]}, ${data[2]})`
+    {"name": "sum", "symbols": ["sum", "_", "sumOperator", "_", "product"], "postprocess": 
+        (data) => `${data[2]}(${data[0]}, ${data[4]})`
             },
-    {"name": "binaryOperator", "symbols": [{"literal":"+"}], "postprocess": () => 'cadd'},
-    {"name": "binaryOperator", "symbols": [{"literal":"-"}], "postprocess": () => 'csub'},
+    {"name": "sum", "symbols": ["product"], "postprocess": id},
+    {"name": "product", "symbols": ["product", "_", "productOperator", "_", "power"], "postprocess": 
+        (data) => `${data[2]}(${data[0]}, ${data[4]})`
+            },
+    {"name": "product", "symbols": ["power"], "postprocess": id},
+    {"name": "power", "symbols": ["parenthesis", "_", "powerOperator", "_", "power"], "postprocess": 
+        (data) => `cpow(${data[0]}, ${data[4]})`
+            },
+    {"name": "power", "symbols": ["parenthesis"], "postprocess": id},
+    {"name": "parenthesis", "symbols": [{"literal":"("}, "_", "sum", "_", {"literal":")"}], "postprocess": (data) => data[2]},
+    {"name": "parenthesis", "symbols": [{"literal":"["}, "_", "sum", "_", {"literal":"]"}], "postprocess": (data) => data[2]},
+    {"name": "parenthesis", "symbols": ["function"], "postprocess": id},
+    {"name": "function", "symbols": ["literal"], "postprocess": id},
+    {"name": "function", "symbols": ["literal", "_", {"literal":"!"}], "postprocess": (data) => `cfact(${data[0]})`},
+    {"name": "function", "symbols": ["unaryFunction", "_", "parenthesis"], "postprocess": 
+        (data) => `${data[0]}(${data[2]})`
+            },
+    {"name": "sumOperator", "symbols": [{"literal":"+"}], "postprocess": () => 'cadd'},
+    {"name": "sumOperator", "symbols": [{"literal":"-"}], "postprocess": () => 'csub'},
+    {"name": "productOperator", "symbols": [{"literal":"*"}], "postprocess": () => 'cmul'},
+    {"name": "productOperator", "symbols": [{"literal":"/"}], "postprocess": () => 'cdiv'},
+    {"name": "powerOperator$string$1", "symbols": [{"literal":"*"}, {"literal":"*"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "powerOperator", "symbols": ["powerOperator$string$1"]},
+    {"name": "powerOperator", "symbols": [{"literal":"^"}]},
+    {"name": "unaryFunction", "symbols": ["namedFunction"], "postprocess": (data) => 'c' + data[0]},
+    {"name": "unaryFunction", "symbols": [{"literal":"-"}], "postprocess": () => 'cneg'},
+    {"name": "namedFunction", "symbols": ["trigFunction"], "postprocess": id},
+    {"name": "namedFunction$string$1", "symbols": [{"literal":"c"}, {"literal":"i"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$1"]},
+    {"name": "namedFunction$string$2", "symbols": [{"literal":"e"}, {"literal":"x"}, {"literal":"p"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$2"]},
+    {"name": "namedFunction$string$3", "symbols": [{"literal":"l"}, {"literal":"o"}, {"literal":"g"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$3"]},
+    {"name": "namedFunction$string$4", "symbols": [{"literal":"l"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$4"], "postprocess": () => 'log'},
+    {"name": "namedFunction$string$5", "symbols": [{"literal":"s"}, {"literal":"q"}, {"literal":"r"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$5"]},
+    {"name": "namedFunction$string$6", "symbols": [{"literal":"g"}, {"literal":"a"}, {"literal":"m"}, {"literal":"m"}, {"literal":"a"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$6"]},
+    {"name": "namedFunction$string$7", "symbols": [{"literal":"e"}, {"literal":"t"}, {"literal":"a"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$7"]},
+    {"name": "namedFunction$string$8", "symbols": [{"literal":"z"}, {"literal":"e"}, {"literal":"t"}, {"literal":"a"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$8"]},
+    {"name": "namedFunction$string$9", "symbols": [{"literal":"a"}, {"literal":"b"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$9"]},
+    {"name": "namedFunction$string$10", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"n"}, {"literal":"j"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$10"]},
+    {"name": "namedFunction$string$11", "symbols": [{"literal":"c"}, {"literal":"i"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$11"]},
+    {"name": "namedFunction$string$12", "symbols": [{"literal":"r"}, {"literal":"e"}, {"literal":"a"}, {"literal":"l"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$12"]},
+    {"name": "namedFunction$string$13", "symbols": [{"literal":"i"}, {"literal":"m"}, {"literal":"a"}, {"literal":"g"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$13"]},
+    {"name": "namedFunction$string$14", "symbols": [{"literal":"r"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$14"], "postprocess": () => 'real'},
+    {"name": "namedFunction$string$15", "symbols": [{"literal":"i"}, {"literal":"m"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "namedFunction", "symbols": ["namedFunction$string$15"], "postprocess": () => 'imag'},
+    {"name": "baseTrigFunction$string$1", "symbols": [{"literal":"s"}, {"literal":"i"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$1"]},
+    {"name": "baseTrigFunction$string$2", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$2"]},
+    {"name": "baseTrigFunction$string$3", "symbols": [{"literal":"t"}, {"literal":"a"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$3"]},
+    {"name": "baseTrigFunction$string$4", "symbols": [{"literal":"s"}, {"literal":"e"}, {"literal":"c"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$4"]},
+    {"name": "baseTrigFunction$string$5", "symbols": [{"literal":"c"}, {"literal":"s"}, {"literal":"c"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$5"]},
+    {"name": "baseTrigFunction$string$6", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$6"]},
+    {"name": "hyperbolicTrigFunction", "symbols": ["trigFunction", {"literal":"h"}], "postprocess": (data) => data.join('')},
+    {"name": "trigFunction$ebnf$1$string$1", "symbols": [{"literal":"a"}, {"literal":"r"}, {"literal":"c"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "trigFunction$ebnf$1", "symbols": ["trigFunction$ebnf$1$string$1"], "postprocess": id},
+    {"name": "trigFunction$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+    {"name": "trigFunction", "symbols": ["trigFunction$ebnf$1", "baseTrigFunction"], "postprocess": (data) => data.join('')},
+    {"name": "trigFunction$ebnf$2$string$1", "symbols": [{"literal":"a"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "trigFunction$ebnf$2", "symbols": ["trigFunction$ebnf$2$string$1"], "postprocess": id},
+    {"name": "trigFunction$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
+    {"name": "trigFunction", "symbols": ["trigFunction$ebnf$2", "hyperbolicTrigFunction"], "postprocess": (data) => data.join('')},
+    {"name": "literal", "symbols": ["complexNumber"], "postprocess": id},
+    {"name": "literal", "symbols": ["variable"], "postprocess": id},
+    {"name": "variable$ebnf$1", "symbols": [/[a-z]/]},
+    {"name": "variable$ebnf$1", "symbols": ["variable$ebnf$1", /[a-z]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "variable", "symbols": ["variable$ebnf$1"], "postprocess": 
+        function(data) {
+            const constants = ['e', 'pi', 'tau', 'phi'];
+            const token = data[0].join('')
+            return constants.includes(token) ? ('C_' + token.toUpperCase()) : token;
+        }
+        },
     {"name": "complexNumber", "symbols": ["decimal"], "postprocess": (data) => `vec2(${data[0]}, 0)`},
-    {"name": "complexNumber", "symbols": ["decimal", {"literal":"i"}], "postprocess": ([imag, _]) => `vec2(0, ${imag})`},
+    {"name": "complexNumber", "symbols": ["decimal", {"literal":"i"}], "postprocess": (data) => `vec2(0, ${data[0]})`},
     {"name": "complexNumber", "symbols": [{"literal":"i"}], "postprocess": () => 'vec2(0, 1)'}
 ]
-  , ParserStart: "expression"
+  , ParserStart: "sum"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
    module.exports = grammar;
