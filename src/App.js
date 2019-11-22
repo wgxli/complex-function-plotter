@@ -12,6 +12,7 @@ import SidePanel from './components/SidePanel/SidePanel.js';
 import './components/control-panel.css';
 import SliderPanel from './components/SliderPanel/SliderPanel.js';
 import OptionsPanel from './components/OptionsPanel/OptionsPanel.js';
+import IntegralCalculator from './components/IntegralCalculator';
 import FunctionEditor from './components/FunctionEditor/FunctionEditor.js';
 
 import HelpText from './components/HelpText/HelpText.js';
@@ -227,6 +228,10 @@ class App extends React.Component {
 	    />
 	    {this.renderFunctionEditor()}
 	  </SidePanel>
+          <IntegralCalculator
+              expression={ast}
+              variables={variables}
+          />
 	  <FunctionPlot
 	    ref='plot'
 	    expression={ast}

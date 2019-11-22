@@ -78,7 +78,7 @@ class CoordinateOverlay extends PureComponent {
                     position: absolute;
                     bottom: 0;
                     right: 0;
-                    z-index: 11;
+                    z-index: 20;
 
                     padding: 5px 20px;
                     min-width: 180px;
@@ -89,7 +89,7 @@ class CoordinateOverlay extends PureComponent {
                     justify-content: center;
 
                     background-color: hsla(213, 5%, 15%, 0.3);
-                    border: 1px solid hsla(213, 5%, 85%, 0.1);
+                    border: 1px solid hsla(213, 5%, 90%, 0.1);
                     box-shadow: -1px -1px 4px hsla(213, 10%, 10%, 0.1);
 
                     border-radius: 8px 0 0 0;

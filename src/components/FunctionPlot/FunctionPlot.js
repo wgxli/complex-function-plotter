@@ -12,6 +12,28 @@ import './function-plot.css';
 
 const FPS_LIMIT = 60;
 
+let canvasSize = [];
+
+function pixelToPlot(x, y, variables) {
+    const scale = Math.exp(variables.log_scale);
+    const offset_x = variables.center_x;
+    const offset_y = variables.center_y;
+
+    const plot_x = (x - canvasSize[0]/2) / scale + offset_x;
+    const plot_y = (canvasSize[1]/2 - y) / scale + offset_y;
+    return [plot_x, plot_y];
+}
+
+function plotToPixel(plot_x, plot_y, variables) {
+    const scale = Math.exp(variables.log_scale);
+    const offset_x = variables.center_x;
+    const offset_y = variables.center_y;
+
+    const x = scale * (plot_x - offset_x) + canvasSize[0]/2;
+    const y = -scale * (plot_y - offset_y) - canvasSize[1]/2;
+    return [x, y];
+}
+
 class FunctionPlot extends PureComponent {
   state = {
       position: [NaN, NaN, 0],
@@ -23,11 +45,8 @@ class FunctionPlot extends PureComponent {
 
     this.gl = null;
 
-    this.variables = this.props.variables;
     this.variableLocations = {};
     this.initialized = false;
-
-    this.canvasSize = [];
 
     this.lastUpdate = null; // Timestamp of last update, for debouncing
 
@@ -62,26 +81,6 @@ class FunctionPlot extends PureComponent {
       this.lastMouseDown = mouseDown;
   }
 
-  pixelToPlot(x, y) {
-    const scale = Math.exp(this.variables.log_scale);
-    const offset_x = this.variables.center_x;
-    const offset_y = this.variables.center_y;
-
-    const plot_x = (x - this.canvasSize[0]/2) / scale + offset_x;
-    const plot_y = (this.canvasSize[1]/2 - y) / scale + offset_y;
-    return [plot_x, plot_y];
-  }
-
-  plotToPixel(plot_x, plot_y) {
-    const scale = Math.exp(this.variables.log_scale);
-    const offset_x = this.variables.center_x;
-    const offset_y = this.variables.center_y;
-
-    const x = scale * (plot_x - offset_x) + this.canvasSize[0]/2;
-    const y = -scale * (plot_y - offset_y) - this.canvasSize[1]/2;
-    return [x, y];
-  }
-
   getPosition(mouseEvent) {
     const nativeEvent = mouseEvent.nativeEvent;
     
@@ -109,25 +108,27 @@ class FunctionPlot extends PureComponent {
 
   handleZoom(wheelEvent, deltaLogScale) {
     const {position} = this.state;
+    const {variables} = this.props;
 
-    if (position.some(isNaN)) {return;}
+    if (!position.every(isFinite)) {return;}
+    const [x, y, _] = position;
 
     // Recenter plot at scroll location
-    const [mouse_plotx, mouse_ploty] = this.pixelToPlot(...position);
-    this.variables.center_x = mouse_plotx;
-    this.variables.center_y = mouse_ploty;
+    const [mouse_plotx, mouse_ploty] = pixelToPlot(x, y, variables);
+    variables.center_x = mouse_plotx;
+    variables.center_y = mouse_ploty;
     
     // Change scale
     if (deltaLogScale === undefined) {
       deltaLogScale = (wheelEvent.deltaY > 0) ? -0.05: 0.05;
     }
-    this.variables.log_scale += deltaLogScale;
+    variables.log_scale += deltaLogScale;
 
     // Move center back onto mouse
-    const [new_mouse_plotx, new_mouse_ploty] = this.pixelToPlot(...position);
+    const [new_mouse_plotx, new_mouse_ploty] = pixelToPlot(x, y, variables);
     const [x_shift, y_shift] = [new_mouse_plotx - mouse_plotx, new_mouse_ploty - mouse_ploty];
-    this.variables.center_x -= x_shift;
-    this.variables.center_y -= y_shift;
+    variables.center_x -= x_shift;
+    variables.center_y -= y_shift;
 
     this.updatePlot();
   }
@@ -143,6 +144,7 @@ class FunctionPlot extends PureComponent {
 
   handleMouseMove(event) {
     const {mouseDown} = this.state;
+    const {variables} = this.props;
 
     // Handle dragging of plot
     if (mouseDown) {
@@ -155,9 +157,9 @@ class FunctionPlot extends PureComponent {
 	logDistance - position[2]
       ];
 
-      const scale = Math.exp(this.variables.log_scale);
-      this.variables.center_x -= deltaPosition[0] / scale;
-      this.variables.center_y += deltaPosition[1] / scale;
+      const scale = Math.exp(variables.log_scale);
+      variables.center_x -= deltaPosition[0] / scale;
+      variables.center_y += deltaPosition[1] / scale;
       this.handleZoom(null, deltaPosition[2]);
       this.updatePlot();
     }
@@ -178,7 +180,7 @@ class FunctionPlot extends PureComponent {
 
   handleVariableUpdate(variables) {
     for (const [name, value] of Object.entries(variables)) {
-      this.variables[name] = value;
+      variables[name] = value;
     }
 
     this.updatePlot();
@@ -209,15 +211,15 @@ class FunctionPlot extends PureComponent {
     canvas.width = canvas.offsetWidth * dpr;
     canvas.height = canvas.offsetHeight * dpr;
 
-    this.canvasSize = [canvas.offsetWidth, canvas.offsetHeight];
+    canvasSize = [canvas.offsetWidth, canvas.offsetHeight];
     this.gl.viewport(0, 0, canvas.width, canvas.height);
 
     // Initialize scene and obtain WebGL variable pointers
     const variableLocations = initializeScene(
       this.gl,
       expression,
-      this.variables.custom_function > 0.5,
-      Object.keys(this.variables)
+      variables.custom_function > 0.5,
+      Object.keys(variables)
     );
 
     // Compile expression to JS function
@@ -231,8 +233,9 @@ class FunctionPlot extends PureComponent {
   }
 
   updatePlot() {
+    const {variables} = this.props;
     const variableAssignments = {};
-    for (const [name, value] of Object.entries(this.variables)) {
+    for (const [name, value] of Object.entries(variables)) {
       variableAssignments[name] = [this.variableLocations[name], value];
     }
 
@@ -246,10 +249,11 @@ class FunctionPlot extends PureComponent {
 
   render() {
     const {position, mouseDown} = this.state;
+    const {variables} = this.props;
 
-    const [x, y] = this.pixelToPlot(...position);
+    const [x, y] = pixelToPlot(position[0], position[1], variables);
 
-    const complexVariables = mapValues(this.variables,
+    const complexVariables = mapValues(variables,
         (x) => [x, 0]
     );
     const mapping = this.jsExpression === null ? null : (z => {
