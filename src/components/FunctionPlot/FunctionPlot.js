@@ -1,7 +1,5 @@
 import React, {PureComponent} from 'react';
 
-import {isNil} from 'lodash';
-
 import {initializeScene, drawScene} from '../../gl-code/scene.js';
 import {toJS} from '../../gl-code/translators';
 
@@ -246,7 +244,6 @@ class FunctionPlot extends PureComponent {
 
   render() {
     const {position, mouseDown} = this.state;
-    const {expression} = this.props;
 
     const [x, y] = this.pixelToPlot(...position);
 

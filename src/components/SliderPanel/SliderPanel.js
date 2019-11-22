@@ -3,7 +3,6 @@ import React from 'react';
 import List from '@material-ui/core/List';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
-import VariableSlider from './VariableSlider.js';
 import VariableAdder from './VariableAdder.js';
 
 import Slider from './slider/Slider.js';
