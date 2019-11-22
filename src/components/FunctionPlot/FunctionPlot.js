@@ -1,5 +1,7 @@
 import React, {PureComponent} from 'react';
 
+import {mapValues} from 'lodash';
+
 import {initializeScene, drawScene} from '../../gl-code/scene.js';
 import {toJS} from '../../gl-code/translators';
 
@@ -247,9 +249,9 @@ class FunctionPlot extends PureComponent {
 
     const [x, y] = this.pixelToPlot(...position);
 
-    const complexVariables = Object.fromEntries(Object.entries(this.variables).map(
-        ([k, v]) => [k, [v, 0]]
-    ));
+    const complexVariables = mapValues(this.variables,
+        (x) => [x, 0]
+    );
     const mapping = this.jsExpression === null ? null : (z => {
         try {
             return this.jsExpression(z, complexVariables);
