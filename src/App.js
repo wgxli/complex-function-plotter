@@ -48,6 +48,7 @@ class App extends React.Component {
       invert_gradient: 0,
       continuous_gradient: 0,
       antialiasing: 0,
+      anti_moire: 1,
       custom_function: 0
     }
   }
@@ -212,7 +213,7 @@ class App extends React.Component {
 		enable_checkerboard: 'Enable Checkerboard',
 		invert_gradient: 'Invert Gradient',
 		continuous_gradient: 'Continuous Gradient',
-		antialiasing: 'Enable Antialiasing'
+		antialiasing: 'Enable Antialiasing',
 	      }}
 	      onToggle={this.handleOptionToggle.bind(this)}
 	      variables={variables}

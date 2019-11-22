@@ -99,9 +99,12 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     precision mediump float;
   #endif
 
-  const float PI = 3.14159265358979323846;
-  const float TAU = 2.0*PI;
+  const float PI = 3.14159265358979323846264;
+  const float TAU = 2.0 * PI;
+  const float E = 2.718281845904523;
   const float LN2 = 0.69314718055994531;
+  const float PHI = 1.61803398874989484820459;
+  const float SQ2 = 1.41421356237309504880169;
 
   const float checkerboard_scale = 0.25;
 
@@ -109,8 +112,8 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   const vec2 I = vec2(0, 1);
   const vec2 C_PI = vec2(PI, 0);
   const vec2 C_TAU = vec2(TAU, 0);
-  const vec2 C_E = vec2(2.718281845904523, 0);
-  const vec2 C_PHI = vec2(1.61803398, 0);
+  const vec2 C_E = vec2(E, 0);
+  const vec2 C_PHI = vec2(PHI, 0);
 
   ${variableDeclarations}
 
@@ -122,7 +125,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
   }
 
-  vec3 get_color(vec2 z) {
+  vec3 get_color(vec2 z, float derivative) {
     float magnitude = length(z);
     float phase = atan(z.y, z.x);
 
@@ -152,6 +155,11 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     if (enable_checkerboard.x > 0.5) {
       vec2 checkerboard_components = floor(2.0 * fract(z/checkerboard_scale));
       float checkerboard = floor(2.0 * fract((checkerboard_components.x + checkerboard_components.y)/2.0));
+
+      // Anti-Moire
+      float decay_factor = clamp(derivative, 0.2, 20.0)/0.2 - 1.0;
+      checkerboard = 0.5 + (checkerboard - 0.5) / (1.0 + 2.0 * decay_factor);
+
       color_value *= 0.8 + 0.2 * checkerboard;
     }
 
@@ -161,17 +169,40 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   ${custom_code}
 
-  void main() {
-    const vec2 screen_offset = vec2(${x_offset}, ${y_offset});
+  const vec2 screen_offset = vec2(${x_offset}, ${y_offset});
+  vec2 from_pixel(vec2 xy) {
     vec2 plot_center = vec2(center_x.x, center_y.x);
 
     float scale = exp(log_scale.x) * ${dpr};
     if (antialiasing.x > 0.5) {scale *= 2.0;}
 
-    vec2 z = (gl_FragCoord.xy - screen_offset) / scale + plot_center;
-    vec2 w = ${glsl_expression};
+    return (xy - screen_offset) / scale + plot_center;
+  }
 
-    vec3 color = get_color(w);
+  vec2 internal_mapping(vec2 xy) {
+      vec2 z = from_pixel(xy);
+      return ${glsl_expression};
+  }
+
+  void main() {
+    vec2 w = internal_mapping(gl_FragCoord.xy);
+
+    float derivative = 0.0;
+
+    if (enable_checkerboard.x > 0.5) {
+        const vec2 dz = vec2(2.005, 1.997);
+
+        // Anti-Moire
+        vec2 w2 = internal_mapping(gl_FragCoord.xy + dz);
+        vec2 w1 = internal_mapping(gl_FragCoord.xy - dz);
+        derivative = length(w2 - w1);
+    }
+
+    if (antialiasing.x > 0.5) {
+        derivative *= 2.0;
+    }
+
+    vec3 color = get_color(w, derivative);
     gl_FragColor = vec4(color, 1.0);
   }
   `;
