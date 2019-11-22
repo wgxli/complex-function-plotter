@@ -19,7 +19,7 @@ import HelpText from './components/HelpText/HelpText.js';
 
 const defaultShader = `vec2 mapping(vec2 z) {
   vec2 c = z;
-  for (int i=0; i<32; i++) {
+  for (int i=0; i<64; i++) {
     z = cmul(z, z) + c;
   }
   return z;

@@ -1,13 +1,22 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
+
+import {isNil} from 'lodash';
 
 import {initializeScene, drawScene} from '../../gl-code/scene.js';
+
+import CurrentCoordinates from './CurrentCoordinates';
 
 import './function-plot.css';
 
 
 const FPS_LIMIT = 60;
 
-class FunctionPlot extends React.PureComponent {
+class FunctionPlot extends PureComponent {
+  state = {
+      position: [0, 0, 0],
+      mouseDown: false,
+  }
+
   constructor(props) {
     super(props);
 
@@ -17,25 +26,35 @@ class FunctionPlot extends React.PureComponent {
     this.variableLocations = {};
     this.initialized = false;
 
-    this.mouseDown = false;
-
     this.canvasSize = [];
-    this.position = null;
 
     this.lastUpdate = null; // Timestamp of last update, for debouncing
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.componentDidUpdate.bind(this));
+    window.addEventListener('resize', this.compilePlot.bind(this));
 
     this.initializeWebGL();
-    this.componentDidUpdate();
+    this.compilePlot();
   }
 
-  componentDidUpdate() {
+  // Perform a full update of the plot (expensive!)
+  compilePlot() {
     this.initializePlot();
     this.updatePlot();
     this.props.onError(!this.initialized);
+  }
+  
+  componentDidUpdate() {
+      const {position, mouseDown} = this.state;
+
+      // Only do a full update if something other than mouse position/state has changed
+      if (this.lastPosition === position && this.lastMouseDown === mouseDown) {
+          this.compilePlot();
+      }
+
+      this.lastPosition = position;
+      this.lastMouseDown = mouseDown;
   }
 
   pixelToPlot(x, y) {
@@ -80,12 +99,14 @@ class FunctionPlot extends React.PureComponent {
   }
 
   updatePosition(mouseEvent) {
-    this.position = this.getPosition(mouseEvent);
+      this.setState({position: this.getPosition(mouseEvent)});
   }
 
   handleZoom(wheelEvent, deltaLogScale) {
+    const {position} = this.state;
+
     // Recenter plot at scroll location
-    const [mouse_plotx, mouse_ploty] = this.pixelToPlot(this.position[0], this.position[1]);
+    const [mouse_plotx, mouse_ploty] = this.pixelToPlot(...position);
     this.variables.center_x = mouse_plotx;
     this.variables.center_y = mouse_ploty;
     
@@ -96,7 +117,7 @@ class FunctionPlot extends React.PureComponent {
     this.variables.log_scale += deltaLogScale;
 
     // Move center back onto mouse
-    const [new_mouse_plotx, new_mouse_ploty] = this.pixelToPlot(this.position[0], this.position[1]);
+    const [new_mouse_plotx, new_mouse_ploty] = this.pixelToPlot(...position);
     const [x_shift, y_shift] = [new_mouse_plotx - mouse_plotx, new_mouse_ploty - mouse_ploty];
     this.variables.center_x -= x_shift;
     this.variables.center_y -= y_shift;
@@ -106,22 +127,25 @@ class FunctionPlot extends React.PureComponent {
 
   handleMouseDown(event) {
     this.updatePosition(event);
-    this.mouseDown=true;
+    this.setState({mouseDown: true});
   }
 
   handleMouseUp(event) {
-    this.mouseDown=false;
+    this.setState({mouseDown: false});
   }
 
   handleMouseMove(event) {
+    const {mouseDown} = this.state;
+
     // Handle dragging of plot
-    if (this.mouseDown) {
+    if (mouseDown) {
+      const {position} = this.state;
       const [x, y, logDistance] = this.getPosition(event);
 
       const deltaPosition = [
-	x - this.position[0],
-	y - this.position[1],
-	logDistance - this.position[2]
+	x - position[0],
+	y - position[1],
+	logDistance - position[2]
       ];
 
       const scale = Math.exp(this.variables.log_scale);
@@ -209,6 +233,9 @@ class FunctionPlot extends React.PureComponent {
   }
 
   render() {
+    const {position, mouseDown} = this.state;
+    const [x, y] = this.pixelToPlot(...position);
+
     return (
       <div id='function-plot'>
 	<div id='fallback-text'>
@@ -229,7 +256,16 @@ class FunctionPlot extends React.PureComponent {
 	  onTouchEnd={(event) => this.handleTouchEnd(event)}
 
 	  onWheel={(event) => this.handleZoom(event)}
+
+          className='main-plot'
 	/>
+        {isNaN(x) || isNaN(y) ? null : <CurrentCoordinates x={x} y={y}/>}
+
+        <style jsx>{`
+            canvas.main-plot {
+                cursor: ${mouseDown ? 'grabbing' : 'grab'};
+            }
+        `}</style>
       </div>
     );
   }
