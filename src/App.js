@@ -48,7 +48,6 @@ class App extends React.Component {
       invert_gradient: 0,
       continuous_gradient: 0,
       antialiasing: 0,
-      anti_moire: 1,
       custom_function: 0
     }
   }
