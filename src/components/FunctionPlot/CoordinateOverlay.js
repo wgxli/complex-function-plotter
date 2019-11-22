@@ -72,7 +72,7 @@ class CoordinateOverlay extends PureComponent {
 
         return <div className='container'>
             <InlineMath>{'z = ' + formatComplex(x, y)}</InlineMath>
-            {isNaN(u) || isNaN(v) ? null : <InlineMath>{'f(z) = ' + formatComplex(u, v)}</InlineMath>}
+            {isFinite(u) && isFinite(v) ? <InlineMath>{'f(z) = ' + formatComplex(u, v)}</InlineMath> : null}
             <style jsx>{`
                 .container {
                     position: absolute;
@@ -88,13 +88,13 @@ class CoordinateOverlay extends PureComponent {
                     align-items: center;
                     justify-content: center;
 
-                    background-color: hsla(213, 10%, 10%, 0.3);
-                    border: 1px solid hsla(213, 10%, 0%, 0.1);
+                    background-color: hsla(213, 5%, 15%, 0.3);
+                    border: 1px solid hsla(213, 5%, 85%, 0.1);
                     box-shadow: -1px -1px 4px hsla(213, 10%, 10%, 0.1);
 
                     border-radius: 8px 0 0 0;
 
-                    backdrop-filter: blur(3px);
+                    backdrop-filter: blur(6px);
 
                     color: white;
                     font-size: 22px;

@@ -283,9 +283,9 @@ class FunctionPlot extends PureComponent {
 
           className='main-plot'
 	/>
-        {isNaN(x) || isNaN(y) ? null :
+        {isFinite(x) && isFinite(y) ?
             <CoordinateOverlay x={x} y={y} mapping={mapping}/>
-        }
+        : null}
 
         <style jsx>{`
             canvas.main-plot {
