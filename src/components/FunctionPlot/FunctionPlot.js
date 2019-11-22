@@ -5,6 +5,8 @@ import {initializeScene, drawScene} from '../../gl-code/scene.js';
 import './function-plot.css';
 
 
+const FPS_LIMIT = 60;
+
 class FunctionPlot extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -19,6 +21,8 @@ class FunctionPlot extends React.PureComponent {
 
     this.canvasSize = [];
     this.position = null;
+
+    this.lastUpdate = null; // Timestamp of last update, for debouncing
   }
 
   componentDidMount() {
@@ -51,7 +55,7 @@ class FunctionPlot extends React.PureComponent {
 
     const x = scale * (plot_x - offset_x) + this.canvasSize[0]/2;
     const y = -scale * (plot_y - offset_y) - this.canvasSize[1]/2;
-    return[x, y];
+    return [x, y];
   }
 
   getPosition(mouseEvent) {
@@ -195,7 +199,13 @@ class FunctionPlot extends React.PureComponent {
     for (const [name, value] of Object.entries(this.variables)) {
       variableAssignments[name] = [this.variableLocations[name], value];
     }
-    drawScene(this.gl, variableAssignments);
+
+    // Debounce
+    const now = +new Date();
+    if (this.lastUpdate === null || now - this.lastUpdate > 1e3 / FPS_LIMIT) {
+        drawScene(this.gl, variableAssignments);
+        this.lastUpdate = now;
+    }
   }
 
   render() {
