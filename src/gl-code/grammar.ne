@@ -5,19 +5,19 @@
 
 sum ->
     sum _ sumOperator _ product {%
-        (data) => `${data[2]}(${data[0]}, ${data[4]})`
+        (data) => [data[2], data[0], data[4]]
     %}
     | product {% id %}
 
 product ->
     product _ productOperator _ power {%
-        (data) => `${data[2]}(${data[0]}, ${data[4]})`
+        (data) => [data[2], data[0], data[4]]
     %}
     | power {% id %}
 
 power ->
     parenthesis _ powerOperator _ power {%
-        (data) => `cpow(${data[0]}, ${data[4]})`
+        (data) => ['pow', data[0], data[4]]
     %}
     | parenthesis {% id %}
 
@@ -28,26 +28,26 @@ parenthesis ->
 
 function ->
     literal {% id %}
-    | literal _ "!" {% (data) => `cfact(${data[0]})` %}
+    | literal _ "!" {% (data) => ['factorial', data[0]] %}
     | unaryFunction _ parenthesis {%
-        (data) => `${data[0]}(${data[2]})`
+        (data) => [data[0], data[2]]
     %}
 
 ##### Operators #####
 sumOperator ->
-    "+" {% () => 'cadd' %}
-    | "-" {% () => 'csub' %}
+    "+" {% () => 'add' %}
+    | "-" {% () => 'sub' %}
 
 productOperator ->
-    "*" {% () => 'cmul' %}
-    | "/" {% () => 'cdiv' %}
+    "*" {% () => 'mul' %}
+    | "/" {% () => 'div' %}
 
 powerOperator -> "**" | "^"
 
 ##### Functions #####
 unaryFunction ->
-   namedFunction {% (data) => 'c' + data[0] %}
-   | "-" {% () => 'cneg' %}
+   namedFunction {% id %}
+   | "-" {% () => 'neg' %}
 
 namedFunction ->
    trigFunction {% id %}
@@ -60,6 +60,7 @@ namedFunction ->
    | "eta"
    | "zeta"
    | "abs"
+   | "arg"
    | "conj"
    | "cis"
    | "real"
@@ -76,6 +77,7 @@ hyperbolicTrigFunction ->
 
 trigFunction ->
    "arc":? baseTrigFunction {% (data) => data.join('') %}
+   | "a" baseTrigFunction {% (data) => 'arc' + data[1] %}
    | "ar":? hyperbolicTrigFunction {% (data) => data.join('') %}
 
 ##### Literals #####
@@ -88,11 +90,11 @@ variable -> [a-z]:+ {%
     function(data) {
         const constants = ['e', 'pi', 'tau', 'phi'];
         const token = data[0].join('')
-        return constants.includes(token) ? ('C_' + token.toUpperCase()) : token;
+        return constants.includes(token) ? ['constant', token] : ['variable', token];
     }
 %}
 
 complexNumber ->
-    decimal {% (data) => `vec2(${data[0]}, 0)` %}
-    | decimal "i" {% (data) => `vec2(0, ${data[0]})` %}
-    | "i" {% () => 'vec2(0, 1)' %}
+    decimal {% (data) => ['number', data[0], 0] %}
+    | decimal "i" {% (data) => ['number', 0, data[0]] %}
+    | "i" {% () => ['number', 0, 1] %}

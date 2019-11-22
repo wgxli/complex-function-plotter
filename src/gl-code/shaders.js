@@ -1,7 +1,9 @@
 import {
   functionDefinitions,
-  translateExpression
 } from './complex-functions.js';
+import {
+    toGLSL
+} from './translators';
 
 function loadShader(gl, type, source) {
   // Create and compile shader
@@ -84,7 +86,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     custom_code = expression;
     glsl_expression = 'mapping(z)';
   } else {
-    glsl_expression = translateExpression(expression);
+    glsl_expression = toGLSL(expression);
   }
   if (glsl_expression === null) {return null;}
 

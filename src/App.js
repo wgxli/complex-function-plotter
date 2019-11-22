@@ -16,6 +16,8 @@ import FunctionEditor from './components/FunctionEditor/FunctionEditor.js';
 
 import HelpText from './components/HelpText/HelpText.js';
 
+import {parseExpression} from './gl-code/complex-functions';
+
 
 const defaultShader = `vec2 mapping(vec2 z) {
   vec2 c = z;
@@ -26,29 +28,27 @@ const defaultShader = `vec2 mapping(vec2 z) {
 }`;
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expression: 'z',
-      expressionError: false,
+  state = {
+    expressionText: 'z',
+    expression: ['variable', 'z'],
+    expressionError: false,
 
-      customShader: defaultShader,
-      shaderError: false,
+    customShader: defaultShader,
+    shaderError: false,
 
-      menuOpen: false,
-      helpOpen: false,
+    menuOpen: false,
+    helpOpen: false,
 
-      variables: {
-	log_scale: 5,
-	center_x: 0,
-	center_y: 0,
-	t: 0.3,
-	enable_checkerboard: 1,
-	invert_gradient: 0,
-	continuous_gradient: 0,
-	antialiasing: 0,
-	custom_function: 0
-      }
+    variables: {
+      log_scale: 5,
+      center_x: 0,
+      center_y: 0,
+      t: 0.3,
+      enable_checkerboard: 1,
+      invert_gradient: 0,
+      continuous_gradient: 0,
+      antialiasing: 0,
+      custom_function: 0
     }
   }
 
@@ -77,7 +77,6 @@ class App extends React.Component {
       return event;
     }
   }
-
 
   // Toolbar buttons
   handleMenuButton() {
@@ -113,18 +112,20 @@ class App extends React.Component {
   }
 
   setErrorMessage(message) {
-    if (this.state.variables.custom_function > 0.5) {
-      if (message !== this.state.shaderError) {
+    const {variables, expressionError, shaderError} = this.state;
+
+    if (variables.custom_function > 0.5) {
+      if (message !== shaderError) {
 	this.setState({shaderError: message});
       }
     } else {
-      if (message !== this.state.expressionError) {
+      if (message !== expressionError) {
 	this.setState({expressionError: message});
       }
     }
   }
 
-  handleHashChange(event) {
+  handleHashChange() {
     const hash = window.location.hash;
     if (hash === '') {
       return;
@@ -140,7 +141,11 @@ class App extends React.Component {
       undefined, undefined,
       '#' + encodeURIComponent(text)
     );
-    this.setState({expression: text});
+
+    this.setState({
+        expressionText: text,
+        expression: parseExpression(text),
+    });
   }
 
   setCustomShader(text) {
@@ -148,12 +153,13 @@ class App extends React.Component {
   }
 
   renderFunctionEditor() {
-    if (this.state.variables.custom_function > 0.5) {
+    const {variables, customShader, shaderError} = this.state;
+    if (variables.custom_function > 0.5) {
       return (
 	<FunctionEditor
-	  onChange={(text) => this.setCustomShader(text)}
-	  errorMessage={this.state.shaderError}
-	  value={this.state.customShader}
+	  onChange={this.setCustomShader}
+	  errorMessage={shaderError}
+	  value={customShader}
 	/>
       );
     } else {
@@ -162,39 +168,43 @@ class App extends React.Component {
   }
 
   render() {
-    const expression = (this.state.variables.custom_function > 0.5) ? this.state.customShader : this.state.expression;
+    const {
+        variables,
+        customShader,
+        expression, expressionText,
+        menuOpen, helpOpen,
+        expressionError,
+    } = this.state;
+
+    const useCustomShader = variables.custom_function > 0.5;
+
+    const ast = useCustomShader ? customShader : expression;
 
     return (
       <MuiThemeProvider theme={theme}>
 	<div id='app'>
 	  <ControlBar
-	    menuOpen={this.state.menuOpen}
-	    helpOpen={this.state.helpOpen}
-	    onMenuButton={() => this.handleMenuButton()}
-	    onHelpButton={() => this.handleHelpButton()}
+	    menuOpen={menuOpen}
+	    helpOpen={helpOpen}
+	    onMenuButton={this.handleMenuButton.bind(this)}
+	    onHelpButton={this.handleHelpButton.bind(this)}
 
-	    onChange={(text) => this.setExpression(text)}
-	    value={this.state.expression}
-	    error={this.state.expressionError}
+	    onChange={this.setExpression.bind(this)}
+	    value={expressionText}
+	    error={expressionError}
 	  />
 	  <SidePanel
 	    className='control-panel'
-	    open={this.state.menuOpen} 
-	    onToggle={() => this.handleMenuButton()}
+	    open={menuOpen} 
+	    onToggle={this.handleMenuButton.bind(this)}
 	    anchor='left'
 	    transitionWidth={480}
 	  >
 	    <SliderPanel
-	      variables={this.state.variables}
-	      onUpdate={
-		(variables) => this.handleVariableUpdate(variables)
-	      }
-	      onAdd={
-		(name, value) => this.handleVariableAdd(name, value)
-	      }
-	      onRemove={
-		(name) => this.handleVariableRemove(name)
-	      }
+	      variables={variables}
+	      onUpdate={this.handleVariableUpdate.bind(this)}
+	      onAdd={this.handleVariableAdd.bind(this)}
+	      onRemove={this.handleVariableRemove.bind(this)}
 	    />
 	    <OptionsPanel
 	      heading='Graphics Options'
@@ -204,30 +214,30 @@ class App extends React.Component {
 		continuous_gradient: 'Continuous Gradient',
 		antialiasing: 'Enable Antialiasing'
 	      }}
-	      onToggle={(name) => this.handleOptionToggle(name)}
-	      variables={this.state.variables}
+	      onToggle={this.handleOptionToggle.bind(this)}
+	      variables={variables}
 	    />
 	    <OptionsPanel
 	      heading='Advanced Options'
 	      options={{
 		custom_function: 'Custom Function'
 	      }}
-	      onToggle={(name) => this.handleOptionToggle(name)}
-	      variables={this.state.variables}
+	      onToggle={this.handleOptionToggle.bind(this)}
+	      variables={variables}
 	    />
 	    {this.renderFunctionEditor()}
 	  </SidePanel>
 	  <FunctionPlot
 	    ref='plot'
-	    expression={expression}
-	    variables={this.state.variables}
-	    onError={(message) => this.setErrorMessage(message)}
+	    expression={ast}
+	    variables={variables}
+	    onError={this.setErrorMessage.bind(this)}
 	  />
 	  <SidePanel
 	    className='help-panel'
-	    open={this.state.helpOpen}
+	    open={helpOpen}
 	    anchor='right'
-	    onToggle={() => this.handleHelpButton()}
+	    onToggle={this.handleHelpButton}
 	    transitionWidth={900}
 	  >
 	    <HelpText/>

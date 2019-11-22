@@ -3,8 +3,9 @@ import React, {PureComponent} from 'react';
 import {isNil} from 'lodash';
 
 import {initializeScene, drawScene} from '../../gl-code/scene.js';
+import {toJS} from '../../gl-code/translators';
 
-import CurrentCoordinates from './CurrentCoordinates';
+import CoordinateOverlay from './CoordinateOverlay';
 
 import './function-plot.css';
 
@@ -13,7 +14,7 @@ const FPS_LIMIT = 60;
 
 class FunctionPlot extends PureComponent {
   state = {
-      position: [0, 0, 0],
+      position: [NaN, NaN, 0],
       mouseDown: false,
   }
 
@@ -29,20 +30,24 @@ class FunctionPlot extends PureComponent {
     this.canvasSize = [];
 
     this.lastUpdate = null; // Timestamp of last update, for debouncing
+
+    this.jsExpression = null; // Currently plotted expression as a JS object
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.compilePlot.bind(this));
 
     this.initializeWebGL();
+    this.componentDidUpdate();
     this.compilePlot();
   }
 
   // Perform a full update of the plot (expensive!)
   compilePlot() {
+    const {onError} = this.props;
     this.initializePlot();
     this.updatePlot();
-    this.props.onError(!this.initialized);
+    onError(!this.initialized);
   }
   
   componentDidUpdate() {
@@ -104,6 +109,8 @@ class FunctionPlot extends PureComponent {
 
   handleZoom(wheelEvent, deltaLogScale) {
     const {position} = this.state;
+
+    if (position.some(isNaN)) {return;}
 
     // Recenter plot at scroll location
     const [mouse_plotx, mouse_ploty] = this.pixelToPlot(...position);
@@ -182,17 +189,19 @@ class FunctionPlot extends PureComponent {
     this.gl = canvas.getContext('webgl');
 
     if (this.gl === null) {
-      console.log('Unable to initialize WebGL.');
+      console.error('Unable to initialize WebGL.');
       return null;
     }
   }
 
   initializePlot() {
+    const {expression, variables} = this.props;
+
     const canvas = this.refs.canvas;
     let dpr = window.devicePixelRatio;
 
     // Antialiasing
-    if (this.props.variables.antialiasing > 0.5) {
+    if (variables.antialiasing > 0.5) {
       dpr *= 2;
     }
 
@@ -206,10 +215,13 @@ class FunctionPlot extends PureComponent {
     // Initialize scene and obtain WebGL variable pointers
     const variableLocations = initializeScene(
       this.gl,
-      this.props.expression,
+      expression,
       this.variables.custom_function > 0.5,
       Object.keys(this.variables)
     );
+
+    // Compile expression to JS function
+    if (expression !== null) {this.jsExpression = toJS(expression);}
 
     // Check if initialized
     this.initialized = (variableLocations !== null);
@@ -234,7 +246,20 @@ class FunctionPlot extends PureComponent {
 
   render() {
     const {position, mouseDown} = this.state;
+    const {expression} = this.props;
+
     const [x, y] = this.pixelToPlot(...position);
+
+    const complexVariables = Object.fromEntries(Object.entries(this.variables).map(
+        ([k, v]) => [k, [v, 0]]
+    ));
+    const mapping = this.jsExpression === null ? null : (z => {
+        try {
+            return this.jsExpression(z, complexVariables);
+        } catch {
+            return [NaN, NaN];
+        }
+    });
 
     return (
       <div id='function-plot'>
@@ -259,7 +284,9 @@ class FunctionPlot extends PureComponent {
 
           className='main-plot'
 	/>
-        {isNaN(x) || isNaN(y) ? null : <CurrentCoordinates x={x} y={y}/>}
+        {isNaN(x) || isNaN(y) ? null :
+            <CoordinateOverlay x={x} y={y} mapping={mapping}/>
+        }
 
         <style jsx>{`
             canvas.main-plot {

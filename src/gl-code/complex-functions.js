@@ -88,8 +88,13 @@ const ccsc = new ComplexFunction('ccsc', 'return reciprocal(csin(z));');
 const ccot = new ComplexFunction('ccot', 'return cdiv(ccos(z), csin(z));');
 
 // Inverse Trigonomeric Functions
-const carcsin = new ComplexFunction('carcsin',
+const carcsin_bottom = new ComplexFunction('carcsin_bottom',
 	'return -mul_i(clog(mul_i(z) + csqrt(ONE - csquare(z))));');
+const carcsin_top = new ComplexFunction('carcsin_top',
+	'return -mul_i(clog(reciprocal(csqrt(ONE - csquare(z)) - mul_i(z))));');
+const carcsin = new ComplexFunction('carcsin',
+	'if (z.y < 0.0) {return carcsin_bottom(z);} else {return carcsin_top(z);}');
+
 const carccos = new ComplexFunction('carccos',
 	'return -mul_i(clog(z + csqrt(csquare(z) - ONE)));');
 const carctan = new ComplexFunction('carctan',`
@@ -256,6 +261,10 @@ var complex_functions = {
 	'^': cpow,
 	'sin': csin,  'cos': ccos,  'tan': ctan,
 	'sec': csec,  'csc': ccsc,  'cot': ccot,
+
+	'carcsin_top': carcsin_top,
+	'carcsin_bottom': carcsin_bottom,
+
 	'arcsin': carcsin,  'arccos': carccos,  'arctan': carctan,
 	'arcsec': carcsec,  'arccsc': carccsc,  'arccot': carccot,
 	'sinh': csinh, 'cosh': ccosh, 'tanh': ctanh,
@@ -273,7 +282,7 @@ var complex_functions = {
 	'zeta': czeta
 };
 
-function translateExpression(expression) {
+function parseExpression(expression) {
     try {
         const parser = new nearley.Parser(compiledGrammar);
         parser.feed(expression)
@@ -293,4 +302,4 @@ const definitionString = Array.from(definitions).join('\n');
 
 const functionDefinitions = `${declarationString}\n\n${definitionString}`;
 
-export {complex_functions, translateExpression, functionDefinitions};
+export {complex_functions, parseExpression, functionDefinitions};

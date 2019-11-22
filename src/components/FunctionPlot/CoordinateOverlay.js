@@ -1,5 +1,7 @@
 import React, {PureComponent} from 'react';
 
+import {isNil} from 'lodash';
+
 import 'katex/dist/katex.min.css';
 import {InlineMath} from 'react-katex';
 
@@ -64,10 +66,13 @@ class CoordinateOverlay extends PureComponent {
 
     render() {
         const {faded} = this.state;
-        const {x, y} = this.props;
+        const {x, y, mapping} = this.props;
+
+        const [u, v] = isNil(mapping) ? [null, null] : mapping([x, y]);
 
         return <div className='container'>
-            <InlineMath>{formatComplex(x, y)}</InlineMath>
+            <InlineMath>{'z = ' + formatComplex(x, y)}</InlineMath>
+            {isNaN(u) || isNaN(v) ? null : <InlineMath>{'f(z) = ' + formatComplex(u, v)}</InlineMath>}
             <style jsx>{`
                 .container {
                     position: absolute;
@@ -79,7 +84,7 @@ class CoordinateOverlay extends PureComponent {
                     min-width: 180px;
 
                     display: flex;
-                    flex-direction: row;
+                    flex-direction: column;
                     align-items: center;
                     justify-content: center;
 
