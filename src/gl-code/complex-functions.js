@@ -249,16 +249,16 @@ const zeta_character = new ComplexFunction('zeta_character', `
 
 // Riemann-Siegel Formula
 const ceta_strip = new ComplexFunction('ceta_strip', `
-    const int N = 64;
+    const int N = 50;
 
     vec2 zetaA = vec2(0.0, 0.0); // Estimate zeta(z)
-    vec2 zetaB = vec2(0.0, 0.0); // Estimate zeta(1-z)
+    vec2 zetaB = vec2(0.0, 0.0); // Estimate of zeta(1-z)
     
     for (int i=1; i <= N; i++) {
         float n = float(i);
         float base = log(n);
         vec2 term = cexp(-base * z);
-        zetaA += cexp(-base * z);
+        zetaA += term;
         zetaB += reciprocal(n * term);
     }
 
