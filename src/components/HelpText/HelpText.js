@@ -133,7 +133,26 @@ class HelpText extends React.PureComponent {
 	
 	<p>Any string of lowercase letters can be used as a variable name, except for reserved functions, the built-in variable <i>z</i>, and the constant <i>i</i>.</p>
 
-	<h2>Options</h2>
+	<h2>Contour Integrals</h2>
+	<p>The calculator is able to compute arbitrary contour integrals and residues. The following options
+        are available under the ‘Contour Integral’ section of the left pane:</p>
+	
+	<div className='help-indent'>
+	  <h3>Freeform</h3>
+	  <p>After selecting this option, click and drag to draw an arbitrary contour. The integral of the currently plotted function along the given contour will be displayed.</p>
+
+	  <h3>Freeform (Closed Loop)</h3>
+	  <p>Same as ‘Freeform,’ except that the contour is closed with a line segment connecting the start and end points after it is drawn.</p>
+
+	  <h3>Circular Contour</h3>
+	  <p>After selecting this option, click and drag to draw a circular contour. The integral of the currently plotted function along the given circle (with counterclockwise orientation) will be displayed.</p>
+	</div>
+
+        <p>Note that custom functions and some of the more intricate built-in functions are not yet supported.
+        The computed values are generally accurate to within one part in a trillion unless the function is highly pathological.</p>
+
+
+	<h2>Graphics Options</h2>
 	<p>The following options can be found below the variables panel:</p>
 	
 	<div className='help-indent'>
@@ -145,9 +164,6 @@ class HelpText extends React.PureComponent {
 
 	  <h3>Continuous Gradient</h3>
 	  <p>Use a continuous magnitude gradient rather than the “stepped” default. Reduces the range of visually discernible magnitudes, but removes shading artifacts in certain situations.</p>
-
-	  <h3>Enable Antialiasing</h3>
-	  <p>Enables antialiasing for higher-quality output. May degrade performance. Enabling this option is not recommended on mobile devices.</p>
 	</div>
 
 	<h2>Tips</h2>

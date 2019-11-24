@@ -9,15 +9,16 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 class BooleanOption extends React.PureComponent {
   render() {
+    const {onClick, checked, label} = this.props;
     return (
       <ListItem
 	button
-	onClick={this.props.onClick}
+	onClick={onClick}
       >
 	<Checkbox
-	  checked={this.props.checked}
+	  checked={checked}
 	/>
-	<ListItemText>{this.props.label}</ListItemText>
+	<ListItemText>{label}</ListItemText>
       </ListItem>
     );
   }

@@ -49,8 +49,6 @@ class FunctionPlot extends PureComponent {
     this.initialized = false;
 
     this.lastUpdate = null; // Timestamp of last update, for debouncing
-
-    this.jsExpression = null; // Currently plotted expression as a JS object
   }
 
   componentDidMount() {
@@ -202,11 +200,6 @@ class FunctionPlot extends PureComponent {
     const canvas = this.refs.canvas;
     let dpr = window.devicePixelRatio;
 
-    // Antialiasing
-    if (variables.antialiasing > 0.5) {
-      dpr *= 2;
-    }
-
     // Resize canvas and WebGL viewport
     canvas.width = canvas.offsetWidth * dpr;
     canvas.height = canvas.offsetHeight * dpr;
@@ -221,9 +214,6 @@ class FunctionPlot extends PureComponent {
       variables.custom_function > 0.5,
       Object.keys(variables)
     );
-
-    // Compile expression to JS function
-    if (expression !== null) {this.jsExpression = toJS(expression);}
 
     // Check if initialized
     this.initialized = (variableLocations !== null);
@@ -249,20 +239,10 @@ class FunctionPlot extends PureComponent {
 
   render() {
     const {position, mouseDown} = this.state;
-    const {variables} = this.props;
+    const {expression, variables} = this.props;
 
     const [x, y] = pixelToPlot(position[0], position[1], variables);
-
-    const complexVariables = mapValues(variables,
-        (x) => [x, 0]
-    );
-    const mapping = this.jsExpression === null ? null : (z => {
-        try {
-            return this.jsExpression(z, complexVariables);
-        } catch {
-            return [NaN, NaN];
-        }
-    });
+    const mapping = toJS(expression, variables);
 
     return (
       <div id='function-plot'>
@@ -301,4 +281,5 @@ class FunctionPlot extends PureComponent {
   }
 }
 
+export {pixelToPlot, plotToPixel};
 export default FunctionPlot;

@@ -1,6 +1,6 @@
 import {get} from 'lodash';
 
-import rawToJS from './to-js';
+import toJS from './to-js';
 
 function toGLSL(ast) {
     if (ast === null) {return null;}
@@ -31,8 +31,5 @@ function toGLSL(ast) {
 
     return internalName + '(' + args.map(toGLSL).join(', ') + ')';
 }
-
-// Remove extraneous variable output of rawToJS
-const toJS = ast => ((z, v) => rawToJS(ast)(z, v)[0]);
 
 export {toGLSL, toJS};

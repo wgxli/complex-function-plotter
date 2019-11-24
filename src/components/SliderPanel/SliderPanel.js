@@ -14,7 +14,6 @@ const hiddenVariables = new Set([
   'log_scale', 'center_x', 'center_y',
   'enable_checkerboard',
   'invert_gradient', 'continuous_gradient',
-  'antialiasing',
   'custom_function'
 ]);
 

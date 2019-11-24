@@ -157,8 +157,8 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
       float checkerboard = floor(2.0 * fract((checkerboard_components.x + checkerboard_components.y)/2.0));
 
       // Anti-Moire
-      float decay_factor = clamp(derivative, 0.2, 20.0)/0.2 - 1.0;
-      checkerboard = 0.5 + (checkerboard - 0.5) / (1.0 + 2.0 * decay_factor);
+      float decay_factor = clamp(40.0 * derivative, 1.0, 10000.0) - 1.0;
+      checkerboard = 0.5 + (checkerboard - 0.5) / (1.0 + 3.0 * decay_factor);
 
       color_value *= 0.8 + 0.2 * checkerboard;
     }
@@ -174,7 +174,6 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     vec2 plot_center = vec2(center_x.x, center_y.x);
 
     float scale = exp(log_scale.x) * ${dpr};
-    if (antialiasing.x > 0.5) {scale *= 2.0;}
 
     return (xy - screen_offset) / scale + plot_center;
   }
@@ -185,24 +184,27 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   }
 
   void main() {
-    vec2 w = internal_mapping(gl_FragCoord.xy);
+    // Set up for supersampling
+    const vec2 A = vec2(0.125, 0.375);
+    const vec2 B = vec2(0.375, -0.125);
+    vec2 xy = gl_FragCoord.xy;
 
-    float derivative = 0.0;
+    // 4-Rook supersampling
+    vec2 w1 = internal_mapping(xy + A);
+    vec2 w2 = internal_mapping(xy - A);
+    vec2 w3 = internal_mapping(xy + B);
+    vec2 w4 = internal_mapping(xy - B);
 
-    if (enable_checkerboard.x > 0.5) {
-        const vec2 dz = vec2(2.005, 1.997);
+    // Anti-Moire
+    float derivative = 0.5 * (length(w1 - w2) + length(w3 - w4));
 
-        // Anti-Moire
-        vec2 w2 = internal_mapping(gl_FragCoord.xy + dz);
-        vec2 w1 = internal_mapping(gl_FragCoord.xy - dz);
-        derivative = length(w2 - w1);
-    }
+    vec3 color1 = get_color(w1, derivative);
+    vec3 color2 = get_color(w2, derivative);
+    vec3 color3 = get_color(w3, derivative);
+    vec3 color4 = get_color(w4, derivative);
 
-    if (antialiasing.x > 0.5) {
-        derivative *= 2.0;
-    }
+    vec3 color = 0.25 * (color1 + color2 + color3 + color4);
 
-    vec3 color = get_color(w, derivative);
     gl_FragColor = vec4(color, 1.0);
   }
   `;

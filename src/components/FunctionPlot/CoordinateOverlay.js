@@ -2,30 +2,10 @@ import React, {PureComponent} from 'react';
 
 import {isNil} from 'lodash';
 
-import 'katex/dist/katex.min.css';
 import {InlineMath} from 'react-katex';
 
-function formatComplex(x, y) {
-    return formatReal(x, false) + formatReal(y, true) + '\\, i';
-}
+import {formatComplex} from '../util';
 
-function formatReal(x, forceSign) {
-    const magnitude = Math.abs(x);
-
-    let exponent = magnitude > 0 ? Math.floor(Math.log10(magnitude)) : 0;
-    if (Math.abs(exponent) < 3) {exponent = 0;}
-
-    const mantissa = magnitude * Math.pow(10, -exponent);
-
-    const formattedMagnitude = mantissa.toFixed(3);
-    const formattedExponent = exponent === 0 ? '' : `\\times 10^{${exponent}}`;
-
-    const sign = x < 0 ? '-' : (
-        forceSign ? '+' : ''
-    );
-
-    return sign + formattedMagnitude + formattedExponent;
-}
 
 class CoordinateOverlay extends PureComponent {
     state = {
@@ -68,7 +48,7 @@ class CoordinateOverlay extends PureComponent {
         const {faded} = this.state;
         const {x, y, mapping} = this.props;
 
-        const [u, v] = isNil(mapping) ? [null, null] : mapping([x, y]);
+        const [u, v] = mapping([x, y]);
 
         return <div className='container'>
             <InlineMath>{'z = ' + formatComplex(x, y)}</InlineMath>

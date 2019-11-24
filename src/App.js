@@ -1,18 +1,24 @@
 import React from 'react';
 import './App.css';
+import 'katex/dist/katex.min.css';
+
+import {isNil} from 'lodash';
 
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import theme from './theme.js';
 
 import ControlBar from './components/ControlBar/ControlBar.js';
-import FunctionPlot from './components/FunctionPlot/FunctionPlot.js';
+import FunctionPlot from './components/FunctionPlot';
 
 import SidePanel from './components/SidePanel/SidePanel.js';
-
 import './components/control-panel.css';
+
 import SliderPanel from './components/SliderPanel/SliderPanel.js';
 import OptionsPanel from './components/OptionsPanel/OptionsPanel.js';
+
 import IntegralCalculator from './components/IntegralCalculator';
+import IntegralPanel from './components/IntegralCalculator/IntegralPanel';
+
 import FunctionEditor from './components/FunctionEditor/FunctionEditor.js';
 
 import HelpText from './components/HelpText/HelpText.js';
@@ -40,6 +46,8 @@ class App extends React.Component {
     menuOpen: false,
     helpOpen: false,
 
+    integrationStrategy: null,
+
     variables: {
       log_scale: 5,
       center_x: 0,
@@ -48,8 +56,7 @@ class App extends React.Component {
       enable_checkerboard: 1,
       invert_gradient: 0,
       continuous_gradient: 0,
-      antialiasing: 0,
-      custom_function: 0
+      custom_function: 0,
     }
   }
 
@@ -146,6 +153,7 @@ class App extends React.Component {
     this.setState({
         expressionText: text,
         expression: parseExpression(text),
+        integrationStrategy: null,
     });
   }
 
@@ -175,6 +183,7 @@ class App extends React.Component {
         expression, expressionText,
         menuOpen, helpOpen,
         expressionError,
+        integrationStrategy,
     } = this.state;
 
     const useCustomShader = variables.custom_function > 0.5;
@@ -207,13 +216,17 @@ class App extends React.Component {
 	      onAdd={this.handleVariableAdd.bind(this)}
 	      onRemove={this.handleVariableRemove.bind(this)}
 	    />
+            <IntegralPanel
+              variables={variables}
+              hidePanels={() => this.setState({helpOpen: false, menuOpen: false})}
+              openCalculator={integrationStrategy => this.setState({integrationStrategy})}
+            />
 	    <OptionsPanel
 	      heading='Graphics Options'
 	      options={{
 		enable_checkerboard: 'Enable Checkerboard',
 		invert_gradient: 'Invert Gradient',
 		continuous_gradient: 'Continuous Gradient',
-		antialiasing: 'Enable Antialiasing',
 	      }}
 	      onToggle={this.handleOptionToggle.bind(this)}
 	      variables={variables}
@@ -231,6 +244,8 @@ class App extends React.Component {
           <IntegralCalculator
               expression={ast}
               variables={variables}
+              integrator={integrationStrategy}
+              onClose={() => this.setState({integrationStrategy: null})}
           />
 	  <FunctionPlot
 	    ref='plot'
@@ -242,7 +257,7 @@ class App extends React.Component {
 	    className='help-panel'
 	    open={helpOpen}
 	    anchor='right'
-	    onToggle={this.handleHelpButton}
+	    onToggle={this.handleHelpButton.bind(this)}
 	    transitionWidth={900}
 	  >
 	    <HelpText/>

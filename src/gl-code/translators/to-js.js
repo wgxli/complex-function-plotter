@@ -33,18 +33,14 @@ const fns = {
  *
  * Inputs of the returned function
  * are [real, imag],
- * representing the complex input,
- * and an object {'variable_name': [real, imag]}
- * representing user-defined variables.
- *
+ * representing the complex input.
  * The returned function outputs a
  * 2-tuple [real, imag]
- * representing the complex output,
- * along with a copy of the inputted variables (for internal reasons).
+ * representing the complex output.
  */
-function toJS(ast) {
-    const errorValue = [NaN, NaN]
-    if (ast === null) {return (z, v) => [errorValue, v];}
+function toJS(ast, variables) {
+    const errorValue = [NaN, NaN];
+    if (ast === null) {return z => errorValue;}
 
     const constants = {
         'e': Math.E,
@@ -53,30 +49,36 @@ function toJS(ast) {
         'phi': (1 + Math.sqrt(5))/2,
     }
 
+    // Destructure this level of the AST
     const [operator, ...args] = ast;
 
-    if (operator === 'number') {return (z, v) => [args, v];}
+    // Complex number literal
+    if (operator === 'number') {return z => args;}
+
+    // User-defined variable
     if (operator === 'variable') {
         const [name] = args;
-        if (name === 'z') {return (z, v) => [z, v];}
-        return (z, v) => [get(v, name, errorValue), v];
+        if (name === 'z') {return z => z;}
+        return z => [get(variables, name, NaN), 0];
     }
-    if (operator === 'constant') {return (z, v) => [[constants[args[0]], 0], v];}
 
+    // Built-in constant
+    if (operator === 'constant') {
+        const [name] = args;
+        return z => [constants[name], 0];
+    }
+
+    // Built-in function
     const func = math[operator] || fns[operator];
     if (!isNil(func)) {
         const destructure = z => isNil(z.re) ? [z, 0] : [z.re, z.im];
-        return (z, v) => [
-            destructure(func(
-                ...args.map(
-                    subtree => math.complex(...toJS(subtree)(z, v)[0])
-                )
-            )),
-            v
-        ];
-    } else {
-        return (z, v) => [errorValue, v];
+        return z => destructure(func(...args.map(
+                subtree => math.complex(...toJS(subtree, variables)(z))
+        )));
     }
+
+    // Fallback if no match
+    return z => errorValue;
 }
 
 export default toJS;
