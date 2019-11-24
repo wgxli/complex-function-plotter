@@ -184,6 +184,13 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   }
 
   void main() {
+    /*
+     * The plot is rendered with 4-Rook supersampling
+     * on desktop devices,
+     * downgraded to 2-point supersampling
+     * on mobile.
+     */
+
     // Set up for supersampling
     const vec2 A = vec2(0.125, 0.375);
     const vec2 B = vec2(0.375, -0.125);
@@ -192,18 +199,37 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     // 4-Rook supersampling
     vec2 w1 = internal_mapping(xy + A);
     vec2 w2 = internal_mapping(xy - A);
-    vec2 w3 = internal_mapping(xy + B);
-    vec2 w4 = internal_mapping(xy - B);
+    vec2 w3;
+    vec2 w4;
 
-    // Anti-Moire
-    float derivative = 0.5 * (length(w1 - w2) + length(w3 - w4));
+    float derivative;
+
+    if (enable_supersampling.x > 0.5) {
+        w3 = internal_mapping(xy + B);
+        w4 = internal_mapping(xy - B);
+
+        // Anti-Moire
+        derivative = 0.5 * (length(w1 - w2) + length(w3 - w4));
+    } else {
+        // Anti-Moire
+        derivative = length(w1 - w2);
+    }
 
     vec3 color1 = get_color(w1, derivative);
     vec3 color2 = get_color(w2, derivative);
-    vec3 color3 = get_color(w3, derivative);
-    vec3 color4 = get_color(w4, derivative);
+    vec3 color3;
+    vec3 color4;
 
-    vec3 color = 0.25 * (color1 + color2 + color3 + color4);
+    vec3 color;
+
+    if (enable_supersampling.x > 0.5) {
+        color3 = get_color(w3, derivative);
+        color4 = get_color(w4, derivative);
+
+        color = 0.25 * (color1 + color2 + color3 + color4);
+    } else {
+        color = 0.5 * (color1 + color2);
+    }
 
     gl_FragColor = vec4(color, 1.0);
   }
