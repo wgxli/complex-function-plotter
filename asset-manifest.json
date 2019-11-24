@@ -1,16 +1,16 @@
 {
-  "main.css": "/complex-function-plotter/static/css/main.72da676a.chunk.css",
-  "main.js": "/complex-function-plotter/static/js/main.ad06c358.chunk.js",
-  "main.js.map": "/complex-function-plotter/static/js/main.ad06c358.chunk.js.map",
+  "main.css": "/complex-function-plotter/static/css/main.99527b2c.chunk.css",
+  "main.js": "/complex-function-plotter/static/js/main.86183dc0.chunk.js",
+  "main.js.map": "/complex-function-plotter/static/js/main.86183dc0.chunk.js.map",
   "runtime~main.js": "/complex-function-plotter/static/js/runtime~main.d38a0d58.js",
   "runtime~main.js.map": "/complex-function-plotter/static/js/runtime~main.d38a0d58.js.map",
   "static/css/2.7f004549.chunk.css": "/complex-function-plotter/static/css/2.7f004549.chunk.css",
-  "static/js/2.2fc3846a.chunk.js": "/complex-function-plotter/static/js/2.2fc3846a.chunk.js",
-  "static/js/2.2fc3846a.chunk.js.map": "/complex-function-plotter/static/js/2.2fc3846a.chunk.js.map",
+  "static/js/2.89ee366b.chunk.js": "/complex-function-plotter/static/js/2.89ee366b.chunk.js",
+  "static/js/2.89ee366b.chunk.js.map": "/complex-function-plotter/static/js/2.89ee366b.chunk.js.map",
   "index.html": "/complex-function-plotter/index.html",
-  "precache-manifest.627bdbc7f17bf5d9ef88b073acfd9500.js": "/complex-function-plotter/precache-manifest.627bdbc7f17bf5d9ef88b073acfd9500.js",
+  "precache-manifest.2aaacc2f6184a9c14a4edbd89ab28709.js": "/complex-function-plotter/precache-manifest.2aaacc2f6184a9c14a4edbd89ab28709.js",
   "service-worker.js": "/complex-function-plotter/service-worker.js",
   "static/css/2.7f004549.chunk.css.map": "/complex-function-plotter/static/css/2.7f004549.chunk.css.map",
-  "static/css/main.72da676a.chunk.css.map": "/complex-function-plotter/static/css/main.72da676a.chunk.css.map",
+  "static/css/main.99527b2c.chunk.css.map": "/complex-function-plotter/static/css/main.99527b2c.chunk.css.map",
   "static/media/katex.min.css": "/complex-function-plotter/static/media/KaTeX_Typewriter-Regular.f43e8696.woff2"
 }
