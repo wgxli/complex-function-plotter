@@ -102,7 +102,7 @@ class HelpText extends React.PureComponent {
         </h1>
 
 	<h2>Introduction</h2>
-	<p>Creates interactive, domain-colored plots of complex functions.</p>
+	<p>Creates interactive domain-coloring plots of complex functions.</p>
 	<p>Each point on the complex plane is colored according to the value of the function at that point.
 	Hue and brightness are used to display phase and magnitude, respectively.</p>
 	<p>To increase the displayable range of values, brightness cycles from dark to light repeatedly with magnitude, jumping at every power of two.

@@ -85,7 +85,7 @@
 }
 
 /* Media Queries */
-@media (max-width: 500px) {
+@media (max-width: 600px) {
     #help-text h1 {
         font-size: 22px;
     }
@@ -97,5 +97,9 @@
 
     #help-text h2 {
         font-size: 18px;
+    }
+
+    #help-text p,li {
+        font-size: 14px;
     }
 }
