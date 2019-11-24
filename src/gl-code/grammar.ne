@@ -9,10 +9,14 @@ sum ->
     %}
     | product {% id %}
 
-product ->
-    product _ productOperator _ power {%
+product -> 
+    product _ productOperator _ function {%
         (data) => [data[2], data[0], data[4]]
     %}
+    | function {% id %}
+
+function ->
+    unaryFunction _ power {% data => [data[0], data[2]] %}
     | power {% id %}
 
 power ->
@@ -22,16 +26,11 @@ power ->
     | parenthesis {% id %}
 
 parenthesis ->
-    "(" _ sum _ ")" {% (data) => data[2] %}
-    | "[" _ sum _ "]" {% (data) => data[2] %}
-    | function {% id %}
+    "(" sum ")" {% (data) => data[1] %}
+    | "[" sum "]" {% (data) => data[1] %}
+    | literal {% id %}
+    | literal "!" {% (data) => ['factorial', data[0]] %}
 
-function ->
-    literal {% id %}
-    | literal _ "!" {% (data) => ['factorial', data[0]] %}
-    | unaryFunction _ parenthesis {%
-        (data) => [data[0], data[2]]
-    %}
 
 ##### Operators #####
 sumOperator ->

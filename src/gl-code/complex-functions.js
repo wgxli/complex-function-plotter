@@ -177,17 +177,26 @@ const cgamma_right = new ComplexFunction('cgamma_right', `
 const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);');
 
 // Dirichlet eta function
-const ceta = new ComplexFunction('ceta',
-	'if (z.x < 0.0) {return ceta_left(z);} else {return ceta_right(z);}');
+const ceta = new ComplexFunction('ceta', `
+    vec2 conjugate_mask = vec2(1.0, 1.0);
+
+    if (z.y < 0.0) {
+        z = cconj(z);
+        conjugate_mask.y *= -1.0;
+    }
+
+    vec2 result;
+
+    if (z.x < 0.0) {
+        result = ceta_left(z);
+    } else {
+        result = ceta_right(z);
+    }
+
+    return result * conjugate_mask;
+`);
 const ceta_left = new ComplexFunction('ceta_left', `
-	z = -z;
-
-        vec2 conjugate_mask = vec2(1.0, 1.0);
-
-        if (z.y < 0.0) {
-            z.y *= -1.0;
-            conjugate_mask.y *= -1.0;
-        }
+	z.x *= -1.0;
 
 	vec2 component_a;
         const float SQ2PI2 = 1.2533141373155001;
@@ -216,44 +225,91 @@ const ceta_left = new ComplexFunction('ceta_left', `
 	vec2 component = cmul(component_a, component_b);
 	vec2 multiplier = cmul(multiplier_a, multiplier_b);
 
-	return 2.0 * conjugate_mask * cmul(component, multiplier);
-	`);
+	return 2.0 * cconj(cmul(component, multiplier));
+`);
+
+// Charater chi in zeta(z) = chi(1-z) zeta(1-z)
+const zeta_character = new ComplexFunction('zeta_character', `
+    const vec2 A = vec2(-1.0 - 2.0*LN2, PI/2.0); // -1 + ln(i/4)
+    const vec2 B = vec2(1.0 + LN2, 0);
+
+    // Asymptotic approximation to
+    // gamma(0.5 * z) / gamma((1-z)/2)
+    // Good for Im(z) > 10
+    vec2 multiplier = cexp(
+        cmul(z, A + clog(ONE - 2.0 * z))
+        + 0.5 * (B - clog(z))
+    );
+
+    return cmul(
+        cexp((0.5 * LNPI) * (ONE - 2.0 * z)),
+        multiplier
+    );
+`);
+
+// Riemann-Siegel Formula
+const ceta_strip = new ComplexFunction('ceta_strip', `
+    const int N = 64;
+
+    vec2 zetaA = vec2(0.0, 0.0); // Estimate zeta(z)
+    vec2 zetaB = vec2(0.0, 0.0); // Estimate zeta(1-z)
+    
+    for (int i=1; i <= N; i++) {
+        float n = float(i);
+        float base = log(n);
+        vec2 term = cexp(-base * z);
+        zetaA += cexp(-base * z);
+        zetaB += reciprocal(n * term);
+    }
+
+    // Convert to an estimate of zeta(z) via the functional equation
+    zetaB = cmul(zetaB, cconj(zeta_character(ONE - cconj(z))));
+
+    // Interpolate between the two estimates of zeta(z)
+    float t = 1.0 - min(z.x, 1.0);
+    float alpha = t*t * (3.0 - 2.0*t); // Hermite interpolation (smoothstep)
+    vec2 zeta_val = mix(zetaA, zetaB, alpha);
+
+    // Convert to eta(z) via functional equation
+    return cmul(ONE - cexp(LN2 * (ONE - z)), zeta_val);
+`);
 
 const ceta_right = new ComplexFunction('ceta_right', `
-	vec2 result = vec2(1.000000000000000, 0.0);
-	result -= 1.00000000000000000000 * cexp(-0.69314718055994528623 * z);
-	result += 1.00000000000000000000 * cexp(-1.09861228866810978211 * z);
-	result -= 1.00000000000000000000 * cexp(-1.38629436111989057245 * z);
-	result += 0.99999999999999555911 * cexp(-1.60943791243410028180 * z);
-	result -= 0.99999999999979938270 * cexp(-1.79175946922805495731 * z);
-	result += 0.99999999999386091076 * cexp(-1.94591014905531323187 * z);
-	result -= 0.99999999986491050485 * cexp(-2.07944154167983574766 * z);
-	result += 0.99999999776946757457 * cexp(-2.19722457733621956422 * z);
-	result -= 0.99999997147371189055 * cexp(-2.30258509299404590109 * z);
-	result += 0.99999971045373836631 * cexp(-2.39789527279837066942 * z);
-	result -= 0.99999762229395061652 * cexp(-2.48490664978800035456 * z);
-	result += 0.99998395846577381452 * cexp(-2.56494935746153673861 * z);
-	result -= 0.99990996358087780305 * cexp(-2.63905732961525840707 * z);
-	result += 0.99957522481587246510 * cexp(-2.70805020110221006391 * z);
-	result -= 0.99830090896564482872 * cexp(-2.77258872223978114491 * z);
-	result += 0.99419535104495204703 * cexp(-2.83321334405621616526 * z);
-	result -= 0.98295446518722640050 * cexp(-2.89037175789616451738 * z);
-	result += 0.95672573151919981793 * cexp(-2.94443897916644026225 * z);
-	result -= 0.90449212250748245445 * cexp(-2.99573227355399085425 * z);
-	result += 0.81569498718756294764 * cexp(-3.04452243772342301398 * z);
-	result -= 0.68698555062628596790 * cexp(-3.09104245335831606667 * z);
-	result += 0.52834368695773525904 * cexp(-3.13549421592914967505 * z);
-	result -= 0.36280435095576935023 * cexp(-3.17805383034794575181 * z);
-	result += 0.21751716776255453079 * cexp(-3.21887582486820056360 * z);
-	result -= 0.11124997091266028426 * cexp(-3.25809653802148213586 * z);
-	result += 0.04729731398489586680 * cexp(-3.29583686600432912428 * z);
-	result -= 0.01619245778522847637 * cexp(-3.33220451017520380432 * z);
-	result += 0.00427566222821304867 * cexp(-3.36729582998647414271 * z);
-	result -= 0.00081524972526846008 * cexp(-3.40119738166215546116 * z);
-	result += 0.00009970680093076545 * cexp(-3.43398720448514627179 * z);
-	result -= 0.00000586510593565794 * cexp(-3.46573590279972654216 * z);
-	return result;
-	`);
+    if (z.x < 3.0 && z.y > 50.0) {return ceta_strip(z);}
+    vec2 result = vec2(1.000000000000000, 0.0);
+    result -= 1.00000000000000000000 * cexp(-0.69314718055994528623 * z);
+    result += 1.00000000000000000000 * cexp(-1.09861228866810978211 * z);
+    result -= 1.00000000000000000000 * cexp(-1.38629436111989057245 * z);
+    result += 0.99999999999999555911 * cexp(-1.60943791243410028180 * z);
+    result -= 0.99999999999979938270 * cexp(-1.79175946922805495731 * z);
+    result += 0.99999999999386091076 * cexp(-1.94591014905531323187 * z);
+    result -= 0.99999999986491050485 * cexp(-2.07944154167983574766 * z);
+    result += 0.99999999776946757457 * cexp(-2.19722457733621956422 * z);
+    result -= 0.99999997147371189055 * cexp(-2.30258509299404590109 * z);
+    result += 0.99999971045373836631 * cexp(-2.39789527279837066942 * z);
+    result -= 0.99999762229395061652 * cexp(-2.48490664978800035456 * z);
+    result += 0.99998395846577381452 * cexp(-2.56494935746153673861 * z);
+    result -= 0.99990996358087780305 * cexp(-2.63905732961525840707 * z);
+    result += 0.99957522481587246510 * cexp(-2.70805020110221006391 * z);
+    result -= 0.99830090896564482872 * cexp(-2.77258872223978114491 * z);
+    result += 0.99419535104495204703 * cexp(-2.83321334405621616526 * z);
+    result -= 0.98295446518722640050 * cexp(-2.89037175789616451738 * z);
+    result += 0.95672573151919981793 * cexp(-2.94443897916644026225 * z);
+    result -= 0.90449212250748245445 * cexp(-2.99573227355399085425 * z);
+    result += 0.81569498718756294764 * cexp(-3.04452243772342301398 * z);
+    result -= 0.68698555062628596790 * cexp(-3.09104245335831606667 * z);
+    result += 0.52834368695773525904 * cexp(-3.13549421592914967505 * z);
+    result -= 0.36280435095576935023 * cexp(-3.17805383034794575181 * z);
+    result += 0.21751716776255453079 * cexp(-3.21887582486820056360 * z);
+    result -= 0.11124997091266028426 * cexp(-3.25809653802148213586 * z);
+    result += 0.04729731398489586680 * cexp(-3.29583686600432912428 * z);
+    result -= 0.01619245778522847637 * cexp(-3.33220451017520380432 * z);
+    result += 0.00427566222821304867 * cexp(-3.36729582998647414271 * z);
+    result -= 0.00081524972526846008 * cexp(-3.40119738166215546116 * z);
+    result += 0.00009970680093076545 * cexp(-3.43398720448514627179 * z);
+    result -= 0.00000586510593565794 * cexp(-3.46573590279972654216 * z);
+    return result;
+`);
 
 // Riemann zeta function
 const czeta = new ComplexFunction('czeta',
@@ -261,51 +317,56 @@ const czeta = new ComplexFunction('czeta',
 
 
 var complex_functions = {
-	'mul_i': mul_i,
-	'reciprocal': reciprocal,
-	'cgamma_left': cgamma_left,
-	'cgamma_right': cgamma_right,
-	'ceta_left': ceta_left,
-	'ceta_right': ceta_right,
-	'square': csquare,
+    'mul_i': mul_i,
+    'reciprocal': reciprocal,
+    'square': csquare,
 
-	'real': creal,
-	're': creal,
-	'imag': cimag,
-	'im': cimag,
+    'real': creal,
+    're': creal,
+    'imag': cimag,
+    'im': cimag,
 
-	'conj': cconj,
-	'abs': cabs,
-	'arg': carg,
-	'cis': ccis,
+    'conj': cconj,
+    'abs': cabs,
+    'arg': carg,
+    'cis': ccis,
 
-	'exp': cexp,
-	'log': clog,
-	'ln': clog,
+    'exp': cexp,
+    'log': clog,
+    'ln': clog,
 
-	'sqrt': csqrt,
-	'^': cpow,
-	'sin': csin,  'cos': ccos,  'tan': ctan,
-	'sec': csec,  'csc': ccsc,  'cot': ccot,
+    'sqrt': csqrt,
+    '^': cpow,
+    'sin': csin,  'cos': ccos,  'tan': ctan,
+    'sec': csec,  'csc': ccsc,  'cot': ccot,
 
-	'carcsin_top': carcsin_top,
-	'carcsin_bottom': carcsin_bottom,
+    'carcsin_top': carcsin_top,
+    'carcsin_bottom': carcsin_bottom,
 
-	'arcsin': carcsin,  'arccos': carccos,  'arctan': carctan,
-	'arcsec': carcsec,  'arccsc': carccsc,  'arccot': carccot,
-	'sinh': csinh, 'cosh': ccosh, 'tanh': ctanh,
-	'sech': csech, 'csch': ccsch, 'coth': ccoth,
-	'arsinh': carsinh, 'arcosh': carcosh, 'artanh': cartanh,
-	'arsech': carsech, 'arcsch': carcsch, 'arcoth': carcoth,
-	'$': cneg,
-	'+': cadd,
-	'-': csub,
-	'*': cmul,
-	'/': cdiv,
-	'!': cfact,
-	'gamma': cgamma,
-	'eta': ceta,
-	'zeta': czeta
+    'arcsin': carcsin,  'arccos': carccos,  'arctan': carctan,
+    'arcsec': carcsec,  'arccsc': carccsc,  'arccot': carccot,
+    'sinh': csinh, 'cosh': ccosh, 'tanh': ctanh,
+    'sech': csech, 'csch': ccsch, 'coth': ccoth,
+    'arsinh': carsinh, 'arcosh': carcosh, 'artanh': cartanh,
+    'arsech': carsech, 'arcsch': carcsch, 'arcoth': carcoth,
+    '$': cneg,
+    '+': cadd,
+    '-': csub,
+    '*': cmul,
+    '/': cdiv,
+    '!': cfact,
+
+    'cgamma_left': cgamma_left,
+    'cgamma_right': cgamma_right,
+    'gamma': cgamma,
+
+    'ceta_left': ceta_left,
+    'ceta_strip': ceta_strip,
+    'ceta_right': ceta_right,
+    'eta': ceta,
+
+    'zeta_character': zeta_character,
+    'zeta': czeta
 };
 
 function parseExpression(expression) {

@@ -32,9 +32,7 @@ function initializeScene(gl, expression, customShader, variableNames) {
   );
 
   if (shaderProgram === null) {
-    console.log(
-      `Expression ${expression} could not be compiled!`
-    );
+    console.error('AST could not be compiled:', expression);
     return null;
   }
 

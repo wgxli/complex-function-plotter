@@ -20,7 +20,7 @@ function toGLSL(ast) {
     if (operator === 'variable') {return args[0];}
     if (operator === 'constant') {return 'C_' + args[0].toUpperCase();}
     if (operator in infixOperators) {
-        return toGLSL(args[0]) + infixOperators[operator] + toGLSL(args[1]);
+        return toGLSL(args[0]) + infixOperators[operator] + '(' + toGLSL(args[1]) + ')';
     }
 
     // Unary function

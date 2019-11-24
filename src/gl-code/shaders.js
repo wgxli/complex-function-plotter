@@ -13,7 +13,7 @@ function loadShader(gl, type, source) {
 
   // Test for successful compilation
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.log('Shader failed to compile: '
+    console.error('Shader failed to compile: '
       + gl.getShaderInfoLog(shader));
     gl.deleteShader(shader);
     return null;
@@ -51,7 +51,7 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
 
   // Test for successful linkage
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    console.log('Shader program failed to initialize: '
+    console.error('Shader program failed to initialize: '
       + gl.getProgramInfoLog(shaderProgram));
     return null;
   }
@@ -90,6 +90,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   }
   if (glsl_expression === null) {return null;}
 
+  console.log('AST:', expression);
   console.log('Shader Code:', glsl_expression);
 
   return `
@@ -103,6 +104,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   const float TAU = 2.0 * PI;
   const float E = 2.718281845904523;
   const float LN2 = 0.69314718055994531;
+  const float LNPI = 1.1447298858494001741434;
   const float PHI = 1.61803398874989484820459;
   const float SQ2 = 1.41421356237309504880169;
 

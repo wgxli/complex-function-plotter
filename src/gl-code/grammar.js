@@ -102,22 +102,20 @@ var grammar = {
         (data) => [data[2], data[0], data[4]]
             },
     {"name": "sum", "symbols": ["product"], "postprocess": id},
-    {"name": "product", "symbols": ["product", "_", "productOperator", "_", "power"], "postprocess": 
+    {"name": "product", "symbols": ["product", "_", "productOperator", "_", "function"], "postprocess": 
         (data) => [data[2], data[0], data[4]]
             },
-    {"name": "product", "symbols": ["power"], "postprocess": id},
+    {"name": "product", "symbols": ["function"], "postprocess": id},
+    {"name": "function", "symbols": ["unaryFunction", "_", "power"], "postprocess": data => [data[0], data[2]]},
+    {"name": "function", "symbols": ["power"], "postprocess": id},
     {"name": "power", "symbols": ["parenthesis", "_", "powerOperator", "_", "power"], "postprocess": 
         (data) => ['pow', data[0], data[4]]
             },
     {"name": "power", "symbols": ["parenthesis"], "postprocess": id},
-    {"name": "parenthesis", "symbols": [{"literal":"("}, "_", "sum", "_", {"literal":")"}], "postprocess": (data) => data[2]},
-    {"name": "parenthesis", "symbols": [{"literal":"["}, "_", "sum", "_", {"literal":"]"}], "postprocess": (data) => data[2]},
-    {"name": "parenthesis", "symbols": ["function"], "postprocess": id},
-    {"name": "function", "symbols": ["literal"], "postprocess": id},
-    {"name": "function", "symbols": ["literal", "_", {"literal":"!"}], "postprocess": (data) => ['factorial', data[0]]},
-    {"name": "function", "symbols": ["unaryFunction", "_", "parenthesis"], "postprocess": 
-        (data) => [data[0], data[2]]
-            },
+    {"name": "parenthesis", "symbols": [{"literal":"("}, "sum", {"literal":")"}], "postprocess": (data) => data[1]},
+    {"name": "parenthesis", "symbols": [{"literal":"["}, "sum", {"literal":"]"}], "postprocess": (data) => data[1]},
+    {"name": "parenthesis", "symbols": ["literal"], "postprocess": id},
+    {"name": "parenthesis", "symbols": ["literal", {"literal":"!"}], "postprocess": (data) => ['factorial', data[0]]},
     {"name": "sumOperator", "symbols": [{"literal":"+"}], "postprocess": () => 'add'},
     {"name": "sumOperator", "symbols": [{"literal":"-"}], "postprocess": () => 'sub'},
     {"name": "productOperator", "symbols": [{"literal":"*"}], "postprocess": () => 'mul'},
