@@ -182,15 +182,41 @@ const ceta = new ComplexFunction('ceta',
 const ceta_left = new ComplexFunction('ceta_left', `
 	z = -z;
 
-	vec2 component_a = cmul(z, csin(z * PI/2.0));
-	vec2 component_b = cmul(cgamma(z), ceta_right(z + ONE));
+        vec2 conjugate_mask = vec2(1.0, 1.0);
+
+        if (z.y < 0.0) {
+            z.y *= -1.0;
+            conjugate_mask.y *= -1.0;
+        }
+
+	vec2 component_a;
+        const float SQ2PI2 = 1.2533141373155001;
+        float log_r = log(length(z));
+        if (z.y > 200.0) {
+            component_a = SQ2PI2 * mul_i(cexp(
+                vec2(z.x, 0)
+                + (log_r - 1.0) * z
+                - vec2(log_r/2.0, PI/4.0)
+            ));
+        } else if (z.y > 20.0) {
+            float theta = atan(z.y, z.x);
+            component_a = SQ2PI2 * mul_i(cexp(
+                (theta - PI/2.0) * mul_i(z)
+                + (log_r - 1.0) * z
+                - 0.5 * vec2(log_r, theta)
+            ));
+        } else {
+            component_a = cmul(cgamma(z), csin(z * PI/2.0));
+        }
+	vec2 component_b = cmul(z, ceta_right(z + ONE));
+
 	vec2 multiplier_a = cexp(-log(PI) * (z + ONE));
 	vec2 multiplier_b = cdiv(ONE - cexp(-LN2 * (z + ONE)), ONE - cexp(-LN2 * z));
 
 	vec2 component = cmul(component_a, component_b);
 	vec2 multiplier = cmul(multiplier_a, multiplier_b);
 
-	return 2.0 * cmul(component, multiplier);
+	return 2.0 * conjugate_mask * cmul(component, multiplier);
 	`);
 
 const ceta_right = new ComplexFunction('ceta_right', `

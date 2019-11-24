@@ -87,9 +87,10 @@ literal ->
 
 
 variable -> [a-z]:+ {%
-    function(data) {
+    function(data, l, reject) {
         const constants = ['e', 'pi', 'tau', 'phi'];
         const token = data[0].join('')
+        if (token === 'i') {return reject;}
         return constants.includes(token) ? ['constant', token] : ['variable', token];
     }
 %}

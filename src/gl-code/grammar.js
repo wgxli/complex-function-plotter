@@ -187,9 +187,10 @@ var grammar = {
     {"name": "variable$ebnf$1", "symbols": [/[a-z]/]},
     {"name": "variable$ebnf$1", "symbols": ["variable$ebnf$1", /[a-z]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "variable", "symbols": ["variable$ebnf$1"], "postprocess": 
-        function(data) {
+        function(data, l, reject) {
             const constants = ['e', 'pi', 'tau', 'phi'];
             const token = data[0].join('')
+            if (token === 'i') {return reject;}
             return constants.includes(token) ? ['constant', token] : ['variable', token];
         }
         },

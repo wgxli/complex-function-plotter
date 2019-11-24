@@ -1,5 +1,7 @@
 import {get, isNil} from 'lodash';
+import {zeta, eta, gamma} from './custom-functions.js'
 const math = require('mathjs');
+
 
 const I = math.complex(0, 1);
 const fns = {
@@ -25,6 +27,10 @@ const fns = {
     arcoth: math.acoth,
 
     cis: z => math.exp(math.multiply(z, I)),
+
+    gamma,
+    eta,
+    zeta,
 }
 
 /**
@@ -69,7 +75,7 @@ function toJS(ast, variables) {
     }
 
     // Built-in function
-    const func = math[operator] || fns[operator];
+    const func = fns[operator] || math[operator];
     if (!isNil(func)) {
         const destructure = z => isNil(z.re) ? [z, 0] : [z.re, z.im];
         return z => destructure(func(...args.map(

@@ -153,7 +153,7 @@ class App extends React.Component {
 
     this.setState({
         expressionText: text,
-        expression: parseExpression(text),
+        expression: parseExpression(text.trim()),
         integrationStrategy: null,
     });
   }
