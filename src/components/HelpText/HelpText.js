@@ -149,7 +149,7 @@ class HelpText extends React.PureComponent {
 	</div>
 
         <p>Note that custom functions and some of the more intricate built-in functions are not yet supported.
-        The computed values are generally accurate to within one part in a trillion unless the function is highly pathological.</p>
+        The computed values are generally accurate to the displayed precision unless the function is highly pathological.</p>
 
 
 	<h2>Graphics Options</h2>

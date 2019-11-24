@@ -1,18 +1,18 @@
-function formatComplex(x, y) {
+function formatComplex(x, y, precision) {
     if (x !== 0) {
         if (y !== 0) {
-            return formatReal(x, false) + formatReal(y, true) + '\\, i';
+            return formatReal(x, false, precision) + formatReal(y, true, precision) + '\\, i';
         } else {
-            return formatReal(x, false);
+            return formatReal(x, false, precision);
         }
     } else if (y !== 0) {
-        return formatReal(y, false) + '\\, i';
+        return formatReal(y, false, precision) + '\\, i';
     } else {
         return '0';
     }
 }
 
-function formatReal(x, forceSign) {
+function formatReal(x, forceSign, precision) {
     const magnitude = Math.abs(x);
 
     let exponent = magnitude > 0 ? Math.floor(Math.log10(magnitude)) : 0;
@@ -20,7 +20,7 @@ function formatReal(x, forceSign) {
 
     const mantissa = magnitude * Math.pow(10, -exponent);
 
-    const formattedMagnitude = mantissa.toFixed(3);
+    const formattedMagnitude = mantissa.toFixed(precision);
     const formattedExponent = exponent === 0 ? '' : `\\times 10^{${exponent}}`;
 
     const sign = x < 0 ? '-' : (

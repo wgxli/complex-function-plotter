@@ -51,8 +51,8 @@ class CoordinateOverlay extends PureComponent {
         const [u, v] = mapping([x, y]);
 
         return <div className='container'>
-            <InlineMath>{'z = ' + formatComplex(x, y)}</InlineMath>
-            {isFinite(u) && isFinite(v) ? <InlineMath>{'f(z) = ' + formatComplex(u, v)}</InlineMath> : null}
+            <InlineMath>{'z = ' + formatComplex(x, y, 3)}</InlineMath>
+            {isFinite(u) && isFinite(v) ? <InlineMath>{'f(z) = ' + formatComplex(u, v, 3)}</InlineMath> : null}
             <style jsx>{`
                 .container {
                     position: absolute;

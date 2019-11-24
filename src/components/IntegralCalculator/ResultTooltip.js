@@ -22,7 +22,7 @@ if (isFinite(x) && isFinite(y)) {
     if (window.innerWidth < 700) {
         contents = <div className='math'>
         <InlineMath>{PREFIX}</InlineMath>
-        <InlineMath>{formatComplex(x, y)}</InlineMath>
+        <InlineMath>{formatComplex(x, y, 3)}</InlineMath>
         <style jsx>{`
             .math {
                 font-size: 16px;
@@ -38,7 +38,7 @@ if (isFinite(x) && isFinite(y)) {
         </div>;
     } else {
         contents = <div className='math'>
-        <BlockMath>{PREFIX + formatComplex(x, y)}</BlockMath>
+        <BlockMath>{PREFIX + formatComplex(x, y, 5)}</BlockMath>
         <style jsx>{`
             .math {
                 margin: -10px 0;
