@@ -36,9 +36,11 @@ parenthesis ->
 sumOperator ->
     "+" {% () => 'add' %}
     | "-" {% () => 'sub' %}
+    | "−" {% () => 'sub' %}
 
 productOperator ->
     "*" {% () => 'mul' %}
+    | "×" {% () => 'mul' %}
     | "/" {% () => 'div' %}
 
 powerOperator -> "**" | "^"
