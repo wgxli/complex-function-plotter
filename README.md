@@ -5,11 +5,12 @@ A fully-featured, responsive [domain-coloring plotter](https://samuelj.li/comple
 ![Screenshot showing a Julia fractal.](images/screenshot-2.png)
 
 ## Features
-* Several toggleable display and graphics options
-* Fully anti-aliased and anti-Moiré'd visual output
+* Beautiful, fast, interactive domain-coloring plots of complex functions
 * Computation of arbitrary contour integrals and residues
 * Arbitrary number of auxiliary variables; fast + smooth visualization of their effect on the plotted function
 * Arbitrary custom functions via GLSL shader API
+* Several toggleable display and graphics options
+* Fully anti-aliased and anti-Moiré'd visual output
 
 ## Documentation
 Full documentation is available within the app.
