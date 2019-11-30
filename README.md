@@ -3,6 +3,7 @@ A fully-featured, responsive [domain-coloring plotter](https://samuelj.li/comple
 
 ![Screenshot showing domain-coloring plot of a polynomial.](images/screenshot-1.png)
 ![Screenshot showing a Julia fractal.](images/screenshot-2.png)
+![Screenshot showing a the built-in contour integrator.](images/contour-integral.png)
 
 ## Features
 * Beautiful, fast, interactive domain-coloring plots of complex functions
