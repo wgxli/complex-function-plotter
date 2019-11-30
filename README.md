@@ -6,8 +6,10 @@ A fully-featured, responsive [domain-coloring plotter](https://samuelj.li/comple
 
 ## Features
 * Several toggleable display and graphics options
-* Arbitrary number of auxiliary variables; smooth visualization of their effect on the plotted function
-* Custom functions via GLSL shader API
+* Fully anti-aliased and anti-Moiré'd visual output
+* Computation of arbitrary contour integrals and residues
+* Arbitrary number of auxiliary variables; fast + smooth visualization of their effect on the plotted function
+* Arbitrary custom functions via GLSL shader API
 
 ## Documentation
 Full documentation is available within the app.
