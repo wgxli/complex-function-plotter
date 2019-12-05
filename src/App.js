@@ -167,7 +167,7 @@ class App extends React.Component {
     if (variables.custom_function > 0.5) {
       return (
 	<FunctionEditor
-	  onChange={this.setCustomShader}
+	  onChange={this.setCustomShader.bind(this)}
 	  errorMessage={shaderError}
 	  value={customShader}
 	/>
