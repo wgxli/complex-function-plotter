@@ -12,9 +12,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import {Light as SyntaxHighlighter} from 'react-syntax-highlighter';
+import glslHighlighter from 'react-syntax-highlighter/dist/esm/languages/hljs/glsl';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
 import {constants} from '../../gl-code/parse-expression.js';
 
 import './help-text.css';
+
+SyntaxHighlighter.registerLanguage('glsl', glslHighlighter);
 
 
 const styles = theme => ({
@@ -195,6 +201,20 @@ class HelpText extends React.PureComponent {
 	      <ul>
 		<li>URL-based sharing doesn’t currently work for custom functions. You may share the code directly instead.</li>
 		<li>The editor will show a red underline if your code fails to compile, but currently does not show useful error information. For now, this information is visible in the developer console.</li>
+                <li><i>(Thanks to Tim N. for pointing this out.)</i> Due to low-level limitations of GLSL, variable-length loops such as the following do not work:
+                <SyntaxHighlighter language='glsl' style={docco}>{`for (int i=0; i<x; i++) {
+    // do stuff
+}`}</SyntaxHighlighter>
+                The following workaround is available:
+                <SyntaxHighlighter language='glsl' style={docco}>{`for (int i=0; i<1000; i++) {
+    if (i<x) {
+        // do stuff
+    }
+}`}</SyntaxHighlighter>
+                This effectively requires setting an arbitrary but finite limit on the number of iterations you wish to do;
+                however, this may be acceptable in several applications.
+                Note that the loop will be unrolled during compilation, so setting an excessively high limit will lead to poor performance.
+                </li>
 	      </ul>
 
 	      <h3>Tips</h3>
@@ -213,7 +233,8 @@ class HelpText extends React.PureComponent {
 	<p>Inspired by David Bau’s <a href='http://davidbau.com/conformal'>Conformal Map Plotter</a>.</p>
 
 	<Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography>
-	<Typography variant='caption'>Found a bug? — bug.report@samuelj.li</Typography>
+	<Typography variant='caption'><a href='https://github.com/wgxli/complex-function-plotter'>View the source</a> on GitHub</Typography>
+	<Typography variant='caption'>Found a bug? — <a href='mailto:bug.report@samuelj.li'>bug.report@samuelj.li</a></Typography>
       </div>
     );
   }
