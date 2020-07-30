@@ -1,7 +1,5 @@
 import React, {PureComponent} from 'react';
 
-import {isNil} from 'lodash';
-
 import {InlineMath} from 'react-katex';
 
 import {formatComplex} from '../util';

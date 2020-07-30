@@ -1,7 +1,5 @@
 import React, {PureComponent} from 'react';
 
-import {mapValues} from 'lodash';
-
 import {initializeScene, drawScene} from '../../gl-code/scene.js';
 import {toJS} from '../../gl-code/translators';
 

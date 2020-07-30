@@ -2,8 +2,6 @@ import React from 'react';
 import './App.css';
 import 'katex/dist/katex.min.css';
 
-import {isNil} from 'lodash';
-
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import theme from './theme.js';
 

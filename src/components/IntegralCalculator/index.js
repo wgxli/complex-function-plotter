@@ -111,7 +111,7 @@ class IntegralCalculator extends PureComponent {
     }
 
     render() {
-        const {onClose, integrator} = this.props;
+        const {integrator} = this.props;
         const {done, mouseDown, mousePosition, strategy} = this.state;
 
         if (isNil(integrator)) {
