@@ -31,6 +31,8 @@ const fns = {
     gamma,
     eta,
     zeta,
+
+    factorial: z => math.gamma(math.add(z, 1)),
 }
 
 /**
