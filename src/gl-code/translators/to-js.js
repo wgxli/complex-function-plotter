@@ -32,7 +32,7 @@ const fns = {
     eta,
     zeta,
 
-    factorial: z => math.gamma(math.add(z, 1)),
+    factorial: z => gamma(math.add(z, 1)),
 }
 
 /**
