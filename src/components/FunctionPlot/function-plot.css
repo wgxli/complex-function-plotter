@@ -21,23 +21,29 @@
 
 #fallback-text {
   position: absolute;
-  display: block;
-
-  width: 80%;
-  height: 50%;
-  margin: auto;
-
-  text-align: center;
-  font-size: 40px;
-
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 
-  color: #EEE;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  font-size: 40px;
+
+  background-color: hsl(200, 15%, 10%);
+  color: white;
 
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 
   z-index: 1;
+}
+
+#fallback-text .small {
+    font-size: 16px;
+    margin: 0 30px;
+    margin-top: 15px;
 }

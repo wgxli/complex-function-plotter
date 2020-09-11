@@ -245,7 +245,8 @@ class FunctionPlot extends PureComponent {
     return (
       <div id='function-plot'>
 	<div id='fallback-text'>
-	  Please enable WebGL to use the plotter.
+            Loading...
+            <div className='small'>If nothing happens, please check that Javascript and WebGL are enabled.</div>
 	</div>
 	<canvas
 	  ref='canvas'
