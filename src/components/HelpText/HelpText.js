@@ -229,6 +229,11 @@ class HelpText extends React.PureComponent {
 	  </ExpansionPanelDetails>
 	</ExpansionPanel>
 
+	<h2>Citations</h2>
+          <p>If you use this tool to produce images for a publication, I would greatly appreciate a citation! Something along the lines of:</p>
+          <ul><li>Li, Samuel Jinglian, 2018. “Complex Function Plotter.” <a href='https://samuelj.li/complex-function-plotter/'>https://samuelj.li/complex-function-plotter/</a>.</li></ul>
+          <p>or the equivalent in your journal's citation style is enough.</p>
+
 	<h2>Acknowledgements</h2>
 	<p>Inspired by David Bau’s <a href='http://davidbau.com/conformal'>Conformal Map Plotter</a>.</p>
 
