@@ -354,7 +354,7 @@ return -mul_i(clog(q))/PI;`); // Computes tau from elliptic modulus k
 const jacobi_reduce = new ComplexFunction('jacobi_reduce',
 `vec2 t00 = theta000(w);
 vec2 zz = cdiv(z, PI * csquare(t00));
-float n = 2.0 * floor(0.5 * zz.y / w.y);
+float n = 2.0 * floor(0.5 * zz.y / w.y + 0.5);
 return zz - n * w;`, 2); // Given (z, tau), reduce z to fundamental period
 
 const invert_code = `vec2 tau = invert_tau(w);
@@ -382,7 +382,7 @@ return cdiv(
 // Weierstrass p-function
 const cwp = new ComplexFunction('cwp',
 `
-float n = floor(z.y/w.y);
+float n = floor(z.y/w.y + 0.5);
 vec2 zz = z - n * w;
 vec2 t002 = csquare(theta000(w));
 vec2 t102 = csquare(ctheta10(vec2(0,0), w));

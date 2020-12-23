@@ -142,7 +142,7 @@ function jacobi_reduce(z, k) {
     const tau = invert_tau(k);
     const t00 = theta00(0, tau);
     const zz = cdiv(z, cmul(Math.PI, t00, t00));
-    const n = 2 * Math.floor(0.5 * zz.im/tau.im);
+    const n = 2 * Math.round(0.5 * zz.im/tau.im);
     return [csub(zz, cmul(n, tau)), tau];
 }
 
@@ -176,7 +176,7 @@ function dn(z, k) {
 
 // Weierstrass p-function
 function wp(z, tau) {
-    const n = Math.floor(z.im/tau.im);
+    const n = Math.round(z.im/tau.im);
     const zz = csub(z, cmul(n, tau));
 
     const t002 = csquare(theta00(0, tau));
