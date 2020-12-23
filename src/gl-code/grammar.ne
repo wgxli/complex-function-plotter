@@ -20,9 +20,14 @@ function ->
     | power {% id %}
 
 power ->
-    parenthesis _ powerOperator _ power {%
+    tightFunction _ powerOperator _ power {%
         (data) => ['pow', data[0], data[4]]
     %}
+    | tightFunction {% id %}
+
+tightFunction ->
+    binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
+    | binaryFunction "[" sum "," _ sum "]" {% data => [data[0][0], data[2], data[5]] %}
     | parenthesis {% id %}
 
 parenthesis ->
@@ -49,6 +54,16 @@ powerOperator -> "**" | "^"
 unaryFunction ->
    namedFunction {% id %}
    | "-" {% () => 'neg' %}
+
+binaryFunction ->
+   "sn"
+   | "cn"
+   | "dn"
+   | "wp"
+   | "theta00"
+   | "theta01"
+   | "theta10"
+   | "theta11"
 
 namedFunction ->
    trigFunction {% id %}

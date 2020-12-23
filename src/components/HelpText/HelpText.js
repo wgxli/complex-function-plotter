@@ -55,6 +55,19 @@ const supportedFunctions = [
     entries: Array.from(constants)
   },
   {
+    name: 'Elliptic',
+    entries: [
+      'sn(z, k)',
+      'cn(z, k)',
+      'dn(z, k)',
+      'wp(z, τ)',
+      'theta00(z, τ)',
+      'theta01(z, τ)',
+      'theta10(z, τ)',
+      'theta11(z, τ)',
+    ]
+  },
+  {
     name: 'Miscellaneous',
     entries: [
       'sqrt',
@@ -65,6 +78,31 @@ const supportedFunctions = [
   }
 ];
 
+
+const EXAMPLES = {
+    '+': 'z + t',
+    '-': 'z - t',
+    '*': 't * z',
+    '/': '1/z',
+    '^': 'z^z^z^z^z^z^z',
+    '!': 'z!',
+
+    'e': null,
+    'pi': null,
+    'tau': null,
+    'phi': null,
+
+    'sn(z, k)': 'sn(z, t + i)',
+    'cn(z, k)': 'cn(z, t + i)',
+    'dn(z, k)': 'dn(z, t + i)',
+    'wp(z, τ)': 'wp(z, t + i)',
+    'theta00(z, τ)': 'theta00(z, t + i)',
+    'theta01(z, τ)': 'theta01(z, t + i)',
+    'theta10(z, τ)': 'theta10(z, t + i)',
+    'theta11(z, τ)': 'theta11(z, t + i)',
+};
+
+
 class HelpText extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -72,10 +110,15 @@ class HelpText extends React.PureComponent {
   }
 
   renderChips(entries) {
+    const {setExpression} = this.props;
+    const showExample = (label) => setExpression(
+        EXAMPLES[label] || `${label}(z)`
+    );
     return entries.map(label =>
       <Chip 
 	key={label}
 	label={label}
+      onClick={EXAMPLES[label] === null ? undefined : () => showExample(label)}
 	className={this.classes.chip}
       />
     );
@@ -123,6 +166,7 @@ class HelpText extends React.PureComponent {
 	<p>Drag the plot to pan, and use the scroll wheel to zoom in and out.</p>
 
 	<h2>Supported Functions</h2>
+        <p>Click on any function to see an example.</p>
 	<div className='help-indent'>
 	  {this.renderSupportedFunctions()}
 	</div>
@@ -235,7 +279,11 @@ class HelpText extends React.PureComponent {
           <p>or the equivalent in your journal's citation style is enough.</p>
 
 	<h2>Acknowledgements</h2>
-	<p>Inspired by David Bau’s <a href='http://davidbau.com/conformal'>Conformal Map Plotter</a>.</p>
+        <ul>
+            <li>Inspired by David Bau’s <a href='http://davidbau.com/conformal'>Conformal Map Plotter</a>.</li>
+            <li>Thanks to Tim N. for helping improve the custom function documentation for variable-length loops.</li>
+            <li>Thanks to (anonymous) for requesting the implementation of elliptic functions.</li>
+        </ul>
 
 	<Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography>
 	<Typography variant='caption'><a href='https://github.com/wgxli/complex-function-plotter'>View the source</a> on GitHub</Typography>

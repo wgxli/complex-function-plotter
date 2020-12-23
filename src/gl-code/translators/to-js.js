@@ -1,5 +1,10 @@
 import {get, isNil} from 'lodash';
-import {zeta, eta, gamma} from './custom-functions.js'
+import {
+    zeta, eta, gamma,
+    theta00, theta01, theta10, theta11,
+    sn, cn, dn,
+    wp
+} from './custom-functions.js'
 const math = require('mathjs');
 
 
@@ -33,6 +38,10 @@ const fns = {
     zeta,
 
     factorial: z => gamma(math.add(z, 1)),
+
+    theta00, theta01, theta10, theta11,
+    sn, cn, dn,
+    wp,
 }
 
 /**

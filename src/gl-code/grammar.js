@@ -1,4 +1,4 @@
-// Generated automatically by nearley, version 2.19.0
+// Generated automatically by nearley, version 2.20.1
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
@@ -108,10 +108,13 @@ var grammar = {
     {"name": "product", "symbols": ["function"], "postprocess": id},
     {"name": "function", "symbols": ["unaryFunction", "_", "power"], "postprocess": data => [data[0], data[2]]},
     {"name": "function", "symbols": ["power"], "postprocess": id},
-    {"name": "power", "symbols": ["parenthesis", "_", "powerOperator", "_", "power"], "postprocess": 
+    {"name": "power", "symbols": ["tightFunction", "_", "powerOperator", "_", "power"], "postprocess": 
         (data) => ['pow', data[0], data[4]]
             },
-    {"name": "power", "symbols": ["parenthesis"], "postprocess": id},
+    {"name": "power", "symbols": ["tightFunction"], "postprocess": id},
+    {"name": "tightFunction", "symbols": ["binaryFunction", {"literal":"("}, "sum", {"literal":","}, "_", "sum", {"literal":")"}], "postprocess": data => [data[0][0], data[2], data[5]]},
+    {"name": "tightFunction", "symbols": ["binaryFunction", {"literal":"["}, "sum", {"literal":","}, "_", "sum", {"literal":"]"}], "postprocess": data => [data[0][0], data[2], data[5]]},
+    {"name": "tightFunction", "symbols": ["parenthesis"], "postprocess": id},
     {"name": "parenthesis", "symbols": [{"literal":"("}, "sum", {"literal":")"}], "postprocess": (data) => data[1]},
     {"name": "parenthesis", "symbols": [{"literal":"["}, "sum", {"literal":"]"}], "postprocess": (data) => data[1]},
     {"name": "parenthesis", "symbols": ["literal"], "postprocess": id},
@@ -127,6 +130,22 @@ var grammar = {
     {"name": "powerOperator", "symbols": [{"literal":"^"}]},
     {"name": "unaryFunction", "symbols": ["namedFunction"], "postprocess": id},
     {"name": "unaryFunction", "symbols": [{"literal":"-"}], "postprocess": () => 'neg'},
+    {"name": "binaryFunction$string$1", "symbols": [{"literal":"s"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$1"]},
+    {"name": "binaryFunction$string$2", "symbols": [{"literal":"c"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$2"]},
+    {"name": "binaryFunction$string$3", "symbols": [{"literal":"d"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$3"]},
+    {"name": "binaryFunction$string$4", "symbols": [{"literal":"w"}, {"literal":"p"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$4"]},
+    {"name": "binaryFunction$string$5", "symbols": [{"literal":"t"}, {"literal":"h"}, {"literal":"e"}, {"literal":"t"}, {"literal":"a"}, {"literal":"0"}, {"literal":"0"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$5"]},
+    {"name": "binaryFunction$string$6", "symbols": [{"literal":"t"}, {"literal":"h"}, {"literal":"e"}, {"literal":"t"}, {"literal":"a"}, {"literal":"0"}, {"literal":"1"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$6"]},
+    {"name": "binaryFunction$string$7", "symbols": [{"literal":"t"}, {"literal":"h"}, {"literal":"e"}, {"literal":"t"}, {"literal":"a"}, {"literal":"1"}, {"literal":"0"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$7"]},
+    {"name": "binaryFunction$string$8", "symbols": [{"literal":"t"}, {"literal":"h"}, {"literal":"e"}, {"literal":"t"}, {"literal":"a"}, {"literal":"1"}, {"literal":"1"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "binaryFunction", "symbols": ["binaryFunction$string$8"]},
     {"name": "namedFunction", "symbols": ["trigFunction"], "postprocess": id},
     {"name": "namedFunction$string$1", "symbols": [{"literal":"c"}, {"literal":"i"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "namedFunction", "symbols": ["namedFunction$string$1"]},

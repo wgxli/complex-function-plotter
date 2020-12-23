@@ -1,11 +1,17 @@
 const math = require('mathjs');
 
+const I = math.complex(0, 1);
+
 const cadd = math.sum;
 const csub = math.subtract;
 const cdiv = math.divide;
 const cmul = math.multiply;
 const csin = math.sin;
 const cexp = math.exp;
+const clog = math.log;
+const csqrt = math.sqrt;
+const cpow = math.pow;
+const csquare = z => cmul(z, z);
 
 const gamma_right = math.gamma;
 const gamma_left = z => math.divide(math.pi, math.multiply(
@@ -68,8 +74,6 @@ function eta_left(w) {
         const log_r = math.log(math.abs(z));
         const theta = math.arg(z);
 
-        const I = math.complex(0, 1);
-
         component_a = cmul(
             Math.sqrt(2 * Math.PI) / 2,
             I,
@@ -95,8 +99,100 @@ function eta_left(w) {
 }
 
 const eta = z => z.re < 0 ? eta_left(z) : eta_right(z);
-
-
 const zeta = z => cdiv(eta(z), csub(1, cexp(cmul(Math.LN2, csub(1, z)))));
 
-export {zeta, eta, gamma};
+/***** Elliptic Functions *****/
+function theta00(z, tau) {
+    let result = 1;
+    for (let n = 1; n < 8; n++) {
+        const A = math.complex(0, Math.PI * n);
+        const B = cmul(A, 2, z);
+        const C = cmul(A, n, tau);
+        result = cadd(
+            result,
+            cexp(cadd(C, B)),
+            cexp(csub(C, B))
+        );
+    }
+    return result;
+}
+const theta01 = (z, tau) => theta00(cadd(z, 0.5), tau);
+const theta10 = (z, tau) => cmul(
+    cexp(cmul(math.complex(0, Math.PI/4), cadd(tau, cmul(4, z)))),
+    theta00(cadd(z, cmul(0.5, tau)), tau)
+);
+const theta11 = (z, tau) => cmul(
+    cexp(cmul(math.complex(0, Math.PI/4), cadd(tau, cmul(4, z), 2))),
+    theta00(cadd(z, cmul(0.5, tau), 0.5), tau)
+);
+
+function invert_tau(k) {
+    const root_k = csqrt(csqrt(csub(1, cmul(k, k))));
+    const l = cmul(0.5, cdiv(csub(1, root_k), cadd(1, root_k)));
+    const q = cadd(
+        l,
+        cmul(2, cpow(l, 5)),
+        cmul(15, cpow(l, 9)),
+        cmul(150, cpow(l, 13))
+    );
+    return cmul(clog(q), math.complex(0, -1/Math.PI));
+}
+
+function jacobi_reduce(z, k) {
+    const tau = invert_tau(k);
+    const t00 = theta00(0, tau);
+    const zz = cdiv(z, cmul(Math.PI, t00, t00));
+    const n = 2 * Math.floor(0.5 * zz.im/tau.im);
+    return [csub(zz, cmul(n, tau)), tau];
+}
+
+function sn(z, k) {
+    const [zz, tau] = jacobi_reduce(z, k);
+    return cdiv(cmul(
+        -1, theta00(0, tau), theta11(zz, tau)
+    ), cmul(
+        theta10(0, tau), theta01(zz, tau)
+    ));
+}
+
+function cn(z, k) {
+    const [zz, tau] = jacobi_reduce(z, k);
+    return cdiv(cmul(
+        theta01(0, tau), theta10(zz, tau)
+    ), cmul(
+        theta10(0, tau), theta01(zz, tau)
+    ));
+}
+
+function dn(z, k) {
+    const [zz, tau] = jacobi_reduce(z, k);
+    return cdiv(cmul(
+        theta01(0, tau), theta00(zz, tau)
+    ), cmul(
+        theta00(0, tau), theta01(zz, tau)
+    ));
+}
+
+
+// Weierstrass p-function
+function wp(z, tau) {
+    const n = Math.floor(z.im/tau.im);
+    const zz = csub(z, cmul(n, tau));
+
+    const t002 = csquare(theta00(0, tau));
+    const t102 = csquare(theta10(0, tau));
+    const e2 = cmul(-Math.PI*Math.PI/3, cadd(csquare(t102), csquare(t002)));
+    return cadd(cmul(
+        Math.PI*Math.PI,
+        t002, t102,
+        csquare(cdiv(theta01(zz, tau), theta11(zz, tau)))
+    ), e2);
+}
+
+
+export {
+    zeta, eta, gamma,
+    theta00, theta01, theta10, theta11,
+    sn, cn, dn,
+    wp,
+};

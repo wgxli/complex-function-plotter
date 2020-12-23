@@ -259,7 +259,7 @@ class App extends React.Component {
 	    onToggle={this.handleHelpButton.bind(this)}
 	    transitionWidth={900}
 	  >
-	    <HelpText/>
+	    <HelpText setExpression={this.setExpression.bind(this)}/>
 	  </SidePanel>
 	</div>
       </MuiThemeProvider>

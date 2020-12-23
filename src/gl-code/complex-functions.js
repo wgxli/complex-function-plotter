@@ -3,7 +3,7 @@ import grammar from './grammar.js';
 
 const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
 
-const argument_names = ['z', 'w'];
+const argument_names = ['z', 'w', 'w1', 'w2'];
 
 class ComplexFunction {
 	constructor(name, body, num_args) {
@@ -316,6 +316,80 @@ const czeta = new ComplexFunction('czeta',
 	'return cdiv(ceta(z), ONE - cexp(LN2 * (ONE - z)));');
 
 
+
+/***** Elliptic Functions *****/
+// Jacobi Theta functions
+const ctheta00 = new ComplexFunction('ctheta00',
+`vec2 result = vec2(1.0, 0.0);
+vec2 A = 2.0 * z;
+for (int i = 1; i < 8; i++) {
+    float n = float(i);
+    vec2 B = n * w;
+    result += ccis(PI * n * (B + A));
+    result += ccis(PI * n * (B - A));
+}
+return result;
+`, 2);
+const ctheta01 = new ComplexFunction('ctheta01', 'return ctheta00(z + 0.5 * ONE, w);', 2);
+const ctheta10 = new ComplexFunction('ctheta10',
+'return cmul(ccis(PI * (z + 0.25 * w)), ctheta00(z + 0.5 * w, w));', 2);
+const ctheta11 = new ComplexFunction('ctheta11',
+'return cmul(ccis(0.25 * PI * (w + 4.0 * z + 2.0 * ONE)), ctheta00(z + 0.5 * (w + ONE), w));', 2);
+
+const theta000 = new ComplexFunction('theta000',
+`vec2 result = vec2(1.0, 0.0);
+for (int i = 1; i < 8; i++) {
+    float n = float(i);
+    result += 2.0 * ccis(PI * n * n * z);
+}
+return result;`); // theta00(0, z);
+
+// Jacobi elliptic functions
+const invert_tau = new ComplexFunction('invert_tau',
+`
+vec2 rt_k = csqrt(csqrt(ONE - csquare(z)));
+vec2 ell = 0.5 * cdiv(ONE - rt_k, ONE + rt_k);
+vec2 q = ell + 2.0 * cpow(ell, 5.0 * ONE) + 15.0 * cpow(ell, 9.0 * ONE);
+return -mul_i(clog(q))/PI;`); // Computes tau from elliptic modulus k
+const jacobi_reduce = new ComplexFunction('jacobi_reduce',
+`vec2 t00 = theta000(w);
+vec2 zz = cdiv(z, PI * csquare(t00));
+float n = 2.0 * floor(0.5 * zz.y / w.y);
+return zz - n * w;`, 2); // Given (z, tau), reduce z to fundamental period
+
+const invert_code = `vec2 tau = invert_tau(w);
+vec2 zz = jacobi_reduce(z, tau);`;
+const csn = new ComplexFunction('csn',
+`${invert_code}
+return -cdiv(
+    cmul(theta000(tau), ctheta11(zz, tau)),
+    cmul(ctheta10(vec2(0, 0), tau), ctheta01(zz, tau))
+);`, 2);
+const ccn = new ComplexFunction('ccn',
+`${invert_code}
+return cdiv(
+    cmul(ctheta01(vec2(0, 0), tau), ctheta10(zz, tau)),
+    cmul(ctheta10(vec2(0, 0), tau), ctheta01(zz, tau))
+);`, 2);
+const cdn = new ComplexFunction('cdn',
+`${invert_code}
+return cdiv(
+    cmul(ctheta01(vec2(0, 0), tau), ctheta00(zz, tau)),
+    cmul(theta000(tau), ctheta01(zz, tau))
+);`, 2);
+
+
+// Weierstrass p-function
+const cwp = new ComplexFunction('cwp',
+`
+float n = floor(z.y/w.y);
+vec2 zz = z - n * w;
+vec2 t002 = csquare(theta000(w));
+vec2 t102 = csquare(ctheta10(vec2(0,0), w));
+vec2 e2 = -(PI*PI/3.0) * (csquare(t102) + csquare(t002));
+return PI*PI*cmul(cmul(t002, t102), csquare(cdiv(ctheta01(zz, w), ctheta11(zz, w)))) + e2;` , 2);
+
+
 var complex_functions = {
     'mul_i': mul_i,
     'reciprocal': reciprocal,
@@ -366,7 +440,22 @@ var complex_functions = {
     'eta': ceta,
 
     'zeta_character': zeta_character,
-    'zeta': czeta
+    'zeta': czeta,
+
+    'invert_tau': invert_tau,
+    'jacobi_reduce': jacobi_reduce,
+    'theta000': theta000,
+
+    'theta00': ctheta00,
+    'theta01': ctheta01,
+    'theta10': ctheta10,
+    'theta11': ctheta11,
+
+    'sn': csn,
+    'cn': ccn,
+    'dn': cdn,
+
+    'wp': cwp,
 };
 
 function parseExpression(expression) {
