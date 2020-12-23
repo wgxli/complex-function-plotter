@@ -2,6 +2,7 @@
 A fully-featured, responsive [domain-coloring plotter](https://samuelj.li/complex-function-plotter) for complex-analytic functions.
 
 ![Screenshot showing domain-coloring plot of a polynomial.](images/screenshot-1.png)
+![Screenshot showing a Jacobi elliptic function.](images/elliptic.png)
 ![Screenshot showing a Julia fractal.](images/screenshot-2.png)
 ![Screenshot showing the j-invariant.](images/j-invariant.png)
 ![Screenshot showing a the built-in contour integrator.](images/contour-integral.png)
