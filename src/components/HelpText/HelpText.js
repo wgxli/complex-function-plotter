@@ -282,7 +282,7 @@ class HelpText extends React.PureComponent {
         <ul>
             <li>Inspired by David Bau’s <a href='http://davidbau.com/conformal'>Conformal Map Plotter</a>.</li>
             <li>Thanks to Tim N. for helping improve the custom function documentation for variable-length loops.</li>
-            <li>Thanks to (anonymous) for requesting the implementation of elliptic functions.</li>
+            <li>Thanks to Liu Yi (Ireis, CAS) for requesting the implementation of elliptic functions.</li>
         </ul>
 
 	<Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography>
