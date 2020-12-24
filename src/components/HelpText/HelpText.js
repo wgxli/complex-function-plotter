@@ -174,8 +174,8 @@ class HelpText extends React.PureComponent {
 	<h2>Variables</h2>
 	<p>Expressions can contain arbitrary user-defined variables.</p>
 	<p>
-	Click on the <MenuIcon style={{fontSize: 20}}/> icon in the upper-left corner to open the variables panel.
-	Variables can be added with the <span className={this.classes.buttonStyle}>Add</span> button and removed with the <DeleteIcon style={{fontSize: 20}}/> button.</p>
+        Click on the <MenuIcon style={{fontSize: 20, marginBottom: -5}}/> icon in the upper-left corner to open the variables panel.
+            Variables can be added with the <span className={this.classes.buttonStyle}>Add</span> button and removed with the <DeleteIcon style={{fontSize: 20, marginBottom: -5}}/> button.</p>
 
 	<p>
 	Click on the variable’s current value or the slider’s upper & lower bounds to edit them.

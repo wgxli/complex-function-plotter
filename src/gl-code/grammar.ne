@@ -22,8 +22,8 @@ power ->
     | function {% id %}
 
 function ->
-    unaryFunction "(" sum ")" {% data => [data[0], data[2]] %}
-    | unaryFunction "[" sum "]" {% data => [data[0], data[2]] %}
+    unaryFunction "(" sum ")" {% data => [data[0][0], data[2]] %}
+    | unaryFunction "[" sum "]" {% data => [data[0][0], data[2]] %}
     | binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
     | binaryFunction "[" sum "," _ sum "]" {% data => [data[0][0], data[2], data[5]] %}
     | parenthesis {% id %}
@@ -67,11 +67,11 @@ binaryFunction ->
    | "cm"
 
 namedFunction ->
-   trigFunction {% id %}
+   trigFunction
    | "cis"
    | "exp"
    | "log"
-   | "ln" {% () => 'log' %}
+   | "ln" {% () => ['log'] %}
    | "sqrt"
    | "gamma"
    | "eta"
@@ -79,11 +79,10 @@ namedFunction ->
    | "abs"
    | "arg"
    | "conj"
-   | "cis"
    | "real"
    | "imag"
-   | "re" {% () => 'real' %}
-   | "im" {% () => 'imag' %}
+   | "re" {% () => ['real'] %}
+   | "im" {% () => ['imag'] %}
 
 # Trigonometric functions
 baseTrigFunction ->

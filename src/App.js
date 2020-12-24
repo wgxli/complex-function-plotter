@@ -55,7 +55,6 @@ class App extends React.Component {
       invert_gradient: 0,
       continuous_gradient: 0,
       custom_function: 0,
-      enable_supersampling: (window.innerWidth > 800) ? 1 : 0,
     }
   }
 
