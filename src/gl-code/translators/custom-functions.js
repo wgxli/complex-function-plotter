@@ -146,8 +146,7 @@ function jacobi_reduce(z, k) {
     return [csub(zz, cmul(n, tau)), tau];
 }
 
-function sn(z, k) {
-    const [zz, tau] = jacobi_reduce(z, k);
+function raw_sn(zz, tau) {
     return cdiv(cmul(
         -1, theta00(0, tau), theta11(zz, tau)
     ), cmul(
@@ -155,8 +154,7 @@ function sn(z, k) {
     ));
 }
 
-function cn(z, k) {
-    const [zz, tau] = jacobi_reduce(z, k);
+function raw_cn(zz, tau) {
     return cdiv(cmul(
         theta01(0, tau), theta10(zz, tau)
     ), cmul(
@@ -164,14 +162,17 @@ function cn(z, k) {
     ));
 }
 
-function dn(z, k) {
-    const [zz, tau] = jacobi_reduce(z, k);
+function raw_dn(zz, tau) {
     return cdiv(cmul(
         theta01(0, tau), theta00(zz, tau)
     ), cmul(
         theta00(0, tau), theta01(zz, tau)
     ));
 }
+
+const sn = (z, k) => raw_sn(...jacobi_reduce(z, k));
+const cn = (z, k) => raw_cn(...jacobi_reduce(z, k));
+const dn = (z, k) => raw_dn(...jacobi_reduce(z, k));
 
 
 // Weierstrass p-function
@@ -189,10 +190,32 @@ function wp(z, tau) {
     ), e2);
 }
 
+function wpp(z, tau) {
+    const n = Math.round(z.im/tau.im);
+    const zz = csub(z, cmul(n, tau));
+
+    const t004 = csquare(csquare(theta00(0, tau)));
+    const t104 = csquare(csquare(theta10(0, tau)));
+    const t014 = csquare(csquare(theta01(0, tau)));
+
+    const PI2_3 = Math.PI * Math.PI / 3;
+    const e1 = cmul(PI2_3, cadd(t004, t014));
+    const e3 = cmul(PI2_3, csub(t104, t014));
+    const A = csqrt(csub(e1, e3));
+
+    console.log(A);
+    console.log(math.abs(A));
+
+    return cmul(-2,
+        cpow(cdiv(A, raw_sn(zz, tau)), 3),
+        raw_cn(zz, tau), raw_dn(zz, tau)
+    );
+}
+
 
 export {
     zeta, eta, gamma,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
-    wp,
+    wp, wpp
 };

@@ -3,7 +3,7 @@ import {
     zeta, eta, gamma,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
-    wp
+    wp, wpp
 } from './custom-functions.js'
 const math = require('mathjs');
 
@@ -41,7 +41,7 @@ const fns = {
 
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
-    wp,
+    wp, wpp,
 }
 
 /**

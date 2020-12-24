@@ -119,7 +119,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   ${variableDeclarations}
 
-  ${functionDefinitions}
+  ${functionDefinitions(expression)}
 
   vec3 hsv2rgb(vec3 c) {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);

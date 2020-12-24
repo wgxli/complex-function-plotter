@@ -13,20 +13,18 @@ product ->
     product _ productOperator _ function {%
         (data) => [data[2], data[0], data[4]]
     %}
-    | function {% id %}
-
-function ->
-    unaryFunction _ power {% data => [data[0], data[2]] %}
     | power {% id %}
 
 power ->
-    tightFunction _ powerOperator _ power {%
+    function _ powerOperator _ power {%
         (data) => ['pow', data[0], data[4]]
     %}
-    | tightFunction {% id %}
+    | function {% id %}
 
-tightFunction ->
-    binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
+function ->
+    unaryFunction "(" sum ")" {% data => [data[0], data[2]] %}
+    | unaryFunction "[" sum "]" {% data => [data[0], data[2]] %}
+    | binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
     | binaryFunction "[" sum "," _ sum "]" {% data => [data[0][0], data[2], data[5]] %}
     | parenthesis {% id %}
 
@@ -60,10 +58,13 @@ binaryFunction ->
    | "cn"
    | "dn"
    | "wp"
+   | "wp'" {% () => ['wpp'] %}
    | "theta00"
    | "theta01"
    | "theta10"
    | "theta11"
+   | "sm"
+   | "cm"
 
 namedFunction ->
    trigFunction {% id %}

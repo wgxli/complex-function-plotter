@@ -25,6 +25,8 @@ function initBuffers(gl) {
 }
 
 function initializeScene(gl, expression, customShader, variableNames) {
+  if (expression === null) {return null;}
+
   const shaderProgram = createShaderProgram(
     gl,
     expression, customShader,
