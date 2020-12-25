@@ -432,8 +432,9 @@ return raw_wpp(zz, A, tau);`, [
 
 // Dixon ellptic functions
 // Here e1, e2, e3 are roots of 4z^3 = 1/27.
-const csm = new ComplexFunction('csm', 'return ccm(1.7666387502854499*ONE-z);', ['cm']);
-const ccm = new ComplexFunction('ccm', 
+const csm = new ComplexFunction('csm', 'return raw_cm(1.7666387502854499*ONE-z);', ['raw_cm']);
+const ccm = new ComplexFunction('ccm', 'return raw_cm(1e-10 * ONE + z);', ['raw_cm']); // For some reason it runs much faster if you add a tiny number (???)
+const raw_cm = new ComplexFunction('raw_cm', 
 `const vec2 A = vec2(0.42644336004913946, 0.42644336004913946);
 const vec2 tau = vec2(-0.5, 0.8660254037844386);
 vec2 u = cmul(z, A);
@@ -500,6 +501,7 @@ var complex_functions = {
     'wp': cwp,
     'wpp': cwpp,
 
+    raw_cm,
     'sm': csm,
     'cm': ccm,
 };
