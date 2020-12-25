@@ -66,6 +66,7 @@ const supportedFunctions = [
       'theta01(z, τ)',
       'theta10(z, τ)',
       'theta11(z, τ)',
+      'sm', 'cm',
     ]
   },
   {

@@ -190,6 +190,14 @@ function wp(z, tau) {
     ), e2);
 }
 
+function raw_wpp(zz, A, tau) {
+    return cmul(
+        -2,
+        cpow(cdiv(A, raw_sn(zz, tau)), 3),
+        raw_cn(zz, tau), raw_dn(zz, tau)
+    );
+}
+
 function wpp(z, tau) {
     const t004 = csquare(csquare(theta00(0, tau)));
     const t104 = csquare(csquare(theta10(0, tau)));
@@ -206,17 +214,37 @@ function wpp(z, tau) {
     const k = cdiv(B, A);
     const [zz, tau2] = jacobi_reduce(u, k);
 
-    return cmul(
-        -2,
-        cpow(cdiv(A, raw_sn(zz, tau2)), 3),
-        raw_cn(zz, tau2), raw_dn(zz, tau2)
-    );
+    return raw_wpp(zz, A, tau2);
 }
+
+
+// Dixon elliptic functions
+const e2 = math.complex(0.20998684165, 0);
+const e1 = math.complex(-0.10499342083, 0.18185393933);
+const e3 = math.complex(-0.10499342083, -0.18185393933);
+
+const A = csqrt(csub(e1, e3));
+const B = csqrt(csub(e2, e3));
+const k = cdiv(B, A);
+
+console.log(A, k, invert_tau(k));
+
+function cm(z) {
+    const u = cmul(z, A);
+    const [zz, tau] = jacobi_reduce(u, k);
+    return cadd(1, cdiv(2, csub(cmul(3, raw_wpp(zz, A, tau)), 1)));
+}
+
+function sm(z) {
+    return cm(csub(1.7666387502854499, z));
+}
+
 
 
 export {
     zeta, eta, gamma,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
-    wp, wpp
+    wp, wpp,
+    sm, cm
 };

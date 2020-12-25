@@ -397,6 +397,14 @@ vec2 t102 = csquare(ctheta10(vec2(0,0), w));
 vec2 e2 = -(PI*PI/3.0) * (csquare(t102) + csquare(t002));
 return PI*PI*cmul(cmul(t002, t102), csquare(cdiv(ctheta01(zz, w), ctheta11(zz, w)))) + e2;` ,
 ['square', 'div', 'mul', 'theta000', 'theta10', 'theta01', 'theta11'], 2);
+const raw_wpp = new ComplexFunction('raw_wpp',
+`return -2.0 * cmul(
+    cpow(cdiv(w, raw_sn(z, w1)), 3.0*ONE),
+    cmul(raw_cn(z, w1), raw_dn(z, w1))
+);`, [
+    'mul', 'pow', 'div',
+    'raw_sn', 'raw_cn', 'raw_dn',
+], 3); // wp'(zz, A, tau), post-reduction
 const cwpp = new ComplexFunction('cwpp',
 `vec2 t004 = csquare(csquare(theta000(w)));
 vec2 t104 = csquare(csquare(ctheta10(vec2(0, 0), w)));
@@ -406,6 +414,7 @@ const float PI2_3 = PI*PI/3.0;
 vec2 e1 = PI2_3 * (t004 + t014);
 vec2 e2 = -PI2_3 * (t104 + t004);
 vec2 e3 = PI2_3 * (t104 - t014);
+
 vec2 A = csqrt(e1 - e3);
 vec2 B = csqrt(e2 - e3);
 
@@ -414,19 +423,26 @@ vec2 k = cdiv(B, A);
 vec2 tau = invert_tau(k);
 vec2 zz = jacobi_reduce(u, tau);
 
-return -2.0 * cmul(
-    cpow(cdiv(A, raw_sn(zz, tau)), 3.0*ONE),
-    cmul(raw_cn(zz, tau), raw_dn(zz, tau))
-);`, [
-    'sqrt', 'square', 'mul', 'pow',
+return raw_wpp(zz, A, tau);`, [
+    'mul', 'div', 'sqrt', 'square', 
     'theta000', 'theta10', 'theta01',
-    'raw_sn', 'raw_cn', 'raw_dn',
     'invert_tau', 'jacobi_reduce',
+    'raw_wpp',
 ], 2);
 
+// Dixon ellptic functions
+// Here e1, e2, e3 are roots of 4z^3 = 1/27.
+const csm = new ComplexFunction('csm', 'return ccm(1.7666387502854499*ONE-z);', ['cm']);
+const ccm = new ComplexFunction('ccm', 
+`const vec2 A = vec2(0.42644336004913946, 0.42644336004913946);
+const vec2 tau = vec2(-0.5, 0.8660254037844386);
+vec2 u = cmul(z, A);
+vec2 zz = jacobi_reduce(u, tau);
+return ONE + 2.0 * reciprocal(3.0 * raw_wpp(zz, A, tau) - ONE);`,
+['reciprocal', 'jacobi_reduce', 'raw_wpp']);
+
 var complex_functions = {
-    'mul_i': mul_i,
-    'reciprocal': reciprocal,
+    mul_i, reciprocal,
     'square': csquare,
 
     'real': creal,
@@ -445,8 +461,8 @@ var complex_functions = {
     'sin': csin,  'cos': ccos,  'tan': ctan,
     'sec': csec,  'csc': ccsc,  'cot': ccot,
 
-    'carcsin_top': carcsin_top,
-    'carcsin_bottom': carcsin_bottom,
+    carcsin_top,
+    carcsin_bottom,
 
     'arcsin': carcsin,  'arccos': carccos,  'arctan': carctan,
     'arcsec': carcsec,  'arccsc': carccsc,  'arccot': carccot,
@@ -461,37 +477,31 @@ var complex_functions = {
     'div': cdiv,
     'factorial': cfact,
 
-    'cgamma_left': cgamma_left,
-    'cgamma_right': cgamma_right,
+    cgamma_left, cgamma_right,
     'gamma': cgamma,
 
-    'ceta_left': ceta_left,
-    'ceta_strip': ceta_strip,
-    'ceta_right': ceta_right,
+    ceta_left, ceta_strip, ceta_right,
+    zeta_character,
     'eta': ceta,
-
-    'zeta_character': zeta_character,
     'zeta': czeta,
 
-    'invert_tau': invert_tau,
-    'jacobi_reduce': jacobi_reduce,
-    'theta000': theta000,
-
+    invert_tau, jacobi_reduce, theta000,
     'theta00': ctheta00,
     'theta01': ctheta01,
     'theta10': ctheta10,
     'theta11': ctheta11,
 
-    'raw_sn': raw_sn,
-    'raw_cn': raw_cn,
-    'raw_dn': raw_dn,
-
+    raw_sn, raw_cn, raw_dn,
     'sn': csn,
     'cn': ccn,
     'dn': cdn,
 
+    raw_wpp,
     'wp': cwp,
     'wpp': cwpp,
+
+    'sm': csm,
+    'cm': ccm,
 };
 
 function parseExpression(expression) {

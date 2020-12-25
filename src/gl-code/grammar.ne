@@ -63,8 +63,6 @@ binaryFunction ->
    | "theta01"
    | "theta10"
    | "theta11"
-   | "sm"
-   | "cm"
 
 namedFunction ->
    trigFunction
@@ -83,6 +81,8 @@ namedFunction ->
    | "imag"
    | "re" {% () => ['real'] %}
    | "im" {% () => ['imag'] %}
+   | "sm"
+   | "cm"
 
 # Trigonometric functions
 baseTrigFunction ->
