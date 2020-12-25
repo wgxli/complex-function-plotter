@@ -10,7 +10,7 @@ sum ->
     | product {% id %}
 
 product -> 
-    product _ productOperator _ function {%
+    product _ productOperator _ power {%
         (data) => [data[2], data[0], data[4]]
     %}
     | power {% id %}

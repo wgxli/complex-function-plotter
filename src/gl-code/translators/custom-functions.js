@@ -191,24 +191,25 @@ function wp(z, tau) {
 }
 
 function wpp(z, tau) {
-    const n = Math.round(z.im/tau.im);
-    const zz = csub(z, cmul(n, tau));
-
     const t004 = csquare(csquare(theta00(0, tau)));
     const t104 = csquare(csquare(theta10(0, tau)));
     const t014 = csquare(csquare(theta01(0, tau)));
 
     const PI2_3 = Math.PI * Math.PI / 3;
     const e1 = cmul(PI2_3, cadd(t004, t014));
+    const e2 = cmul(-PI2_3, cadd(t104, t004));
     const e3 = cmul(PI2_3, csub(t104, t014));
     const A = csqrt(csub(e1, e3));
+    const B = csqrt(csub(e2, e3));
 
-    console.log(A);
-    console.log(math.abs(A));
+    const u = cmul(z, A);
+    const k = cdiv(B, A);
+    const [zz, tau2] = jacobi_reduce(u, k);
 
-    return cmul(-2,
-        cpow(cdiv(A, raw_sn(zz, tau)), 3),
-        raw_cn(zz, tau), raw_dn(zz, tau)
+    return cmul(
+        -2,
+        cpow(cdiv(A, raw_sn(zz, tau2)), 3),
+        raw_cn(zz, tau2), raw_dn(zz, tau2)
     );
 }
 

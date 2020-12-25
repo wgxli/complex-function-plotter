@@ -102,7 +102,7 @@ var grammar = {
         (data) => [data[2], data[0], data[4]]
             },
     {"name": "sum", "symbols": ["product"], "postprocess": id},
-    {"name": "product", "symbols": ["product", "_", "productOperator", "_", "function"], "postprocess": 
+    {"name": "product", "symbols": ["product", "_", "productOperator", "_", "power"], "postprocess": 
         (data) => [data[2], data[0], data[4]]
             },
     {"name": "product", "symbols": ["power"], "postprocess": id},

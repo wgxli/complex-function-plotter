@@ -319,7 +319,7 @@ const czeta = new ComplexFunction('czeta',
 const ctheta00 = new ComplexFunction('ctheta00',
 `vec2 result = vec2(1.0, 0.0);
 vec2 A = 2.0 * z;
-for (int i = 1; i < 8; i++) {
+for (int i = 1; i < 6; i++) {
     float n = float(i);
     vec2 B = n * w;
     result += ccis(PI * n * (B + A));
@@ -346,8 +346,9 @@ const invert_tau = new ComplexFunction('invert_tau',
 `
 vec2 rt_k = csqrt(csqrt(ONE - csquare(z)));
 vec2 ell = 0.5 * cdiv(ONE - rt_k, ONE + rt_k);
-vec2 q = ell + 2.0 * cpow(ell, 5.0 * ONE) + 15.0 * cpow(ell, 9.0 * ONE);
-return -mul_i(clog(q))/PI;`, ['sqrt', 'div', 'pow', 'mul_i', 'log']); // Computes tau from elliptic modulus k
+vec2 log_l = clog(ell);
+vec2 q = ell + 2.0 * cexp(5.0 * log_l) + 15.0 * cexp(9.0 * log_l);
+return -mul_i(clog(q))/PI;`, ['sqrt', 'div', 'exp', 'mul_i', 'log']); // Computes tau from elliptic modulus k
 const jacobi_reduce = new ComplexFunction('jacobi_reduce',
 `vec2 t00 = theta000(w);
 vec2 zz = cdiv(z, PI * csquare(t00));
@@ -397,25 +398,30 @@ vec2 e2 = -(PI*PI/3.0) * (csquare(t102) + csquare(t002));
 return PI*PI*cmul(cmul(t002, t102), csquare(cdiv(ctheta01(zz, w), ctheta11(zz, w)))) + e2;` ,
 ['square', 'div', 'mul', 'theta000', 'theta10', 'theta01', 'theta11'], 2);
 const cwpp = new ComplexFunction('cwpp',
-`float n = floor(z.y/w.y + 0.5);
-vec2 zz = z - n * w;
-
-vec2 t004 = csquare(csquare(theta000(w)));
+`vec2 t004 = csquare(csquare(theta000(w)));
 vec2 t104 = csquare(csquare(ctheta10(vec2(0, 0), w)));
 vec2 t014 = csquare(csquare(ctheta01(vec2(0, 0), w)));
 
 const float PI2_3 = PI*PI/3.0;
 vec2 e1 = PI2_3 * (t004 + t014);
+vec2 e2 = -PI2_3 * (t104 + t004);
 vec2 e3 = PI2_3 * (t104 - t014);
 vec2 A = csqrt(e1 - e3);
+vec2 B = csqrt(e2 - e3);
+
+vec2 u = cmul(z, A);
+vec2 k = cdiv(B, A);
+vec2 tau = invert_tau(k);
+vec2 zz = jacobi_reduce(u, tau);
 
 return -2.0 * cmul(
-    cpow(cdiv(A, raw_sn(zz, w)), 3.0*ONE),
-    cmul(raw_cn(zz, w), raw_dn(zz, w))
+    cpow(cdiv(A, raw_sn(zz, tau)), 3.0*ONE),
+    cmul(raw_cn(zz, tau), raw_dn(zz, tau))
 );`, [
-    'pow', 'sqrt', 'square', 'mul',
+    'sqrt', 'square', 'mul', 'pow',
     'theta000', 'theta10', 'theta01',
-    'raw_sn', 'raw_cn', 'raw_dn'
+    'raw_sn', 'raw_cn', 'raw_dn',
+    'invert_tau', 'jacobi_reduce',
 ], 2);
 
 var complex_functions = {

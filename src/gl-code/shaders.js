@@ -24,6 +24,8 @@ function loadShader(gl, type, source) {
 
 
 function createShaderProgram(gl, expression, customShader, variableNames) {
+  if (expression === null) {return null;}
+
   const fragmentShaderSource = getFragmentShaderSource(
     expression,
     customShader, 
