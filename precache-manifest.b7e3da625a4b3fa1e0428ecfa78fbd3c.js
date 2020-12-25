@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_Fraktur-Regular.c5b430bf.woff"
   },
   {
-    "revision": "f2c08c50ec6cefa50c3b",
+    "revision": "93ef9232ca8eb5955efc",
     "url": "/complex-function-plotter/static/css/main.9da568aa.chunk.css"
   },
   {
@@ -44,12 +44,12 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_Size3-Regular.0387ab38.woff"
   },
   {
-    "revision": "3c14ed11dd8eea981c93bf283193856d",
-    "url": "/complex-function-plotter/static/media/KaTeX_Size4-Regular.3c14ed11.woff2"
-  },
-  {
     "revision": "726db3bd435c8a6e45e44741dae67263",
     "url": "/complex-function-plotter/static/media/KaTeX_Size4-Regular.726db3bd.woff"
+  },
+  {
+    "revision": "3c14ed11dd8eea981c93bf283193856d",
+    "url": "/complex-function-plotter/static/media/KaTeX_Size4-Regular.3c14ed11.woff2"
   },
   {
     "revision": "970d3e76493b82fccf21ad5888ddee77",
@@ -76,12 +76,12 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Italic.1057b702.woff2"
   },
   {
-    "revision": "f9e06d59e70de05c5f0b7f7f65c14565",
-    "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Regular.f9e06d59.woff2"
-  },
-  {
     "revision": "ae1fad1f4d1c227c9d567da8ea9f988c",
     "url": "/complex-function-plotter/static/media/KaTeX_Script-Regular.ae1fad1f.woff2"
+  },
+  {
+    "revision": "f9e06d59e70de05c5f0b7f7f65c14565",
+    "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Regular.f9e06d59.woff2"
   },
   {
     "revision": "60febfa114c5e32f0ce73050476aa39f",
@@ -124,8 +124,8 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_Fraktur-Regular.135ccd74.woff2"
   },
   {
-    "revision": "f2c08c50ec6cefa50c3b",
-    "url": "/complex-function-plotter/static/js/main.4636b383.chunk.js"
+    "revision": "93ef9232ca8eb5955efc",
+    "url": "/complex-function-plotter/static/js/main.30335111.chunk.js"
   },
   {
     "revision": "0719833c23aeba83786a29e84a165875",
@@ -152,12 +152,12 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Italic.95c5a3d4.woff"
   },
   {
-    "revision": "f43e86963e9cfda37bb2e958ddedcaad",
-    "url": "/complex-function-plotter/static/media/KaTeX_Typewriter-Regular.f43e8696.woff2"
-  },
-  {
     "revision": "ba01f72a8db89265149f3f712dc7f9a3",
     "url": "/complex-function-plotter/static/media/KaTeX_Typewriter-Regular.ba01f72a.woff"
+  },
+  {
+    "revision": "f43e86963e9cfda37bb2e958ddedcaad",
+    "url": "/complex-function-plotter/static/media/KaTeX_Typewriter-Regular.f43e8696.woff2"
   },
   {
     "revision": "35bda414c6c2f75940b086de18f42e72",
@@ -180,12 +180,12 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Italic.f9c440ab.ttf"
   },
   {
-    "revision": "2eae604dbbc4b2c0ceede62c61c9e8df",
-    "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Regular.2eae604d.ttf"
-  },
-  {
     "revision": "e9169ca7b32608b6235ec9ffff742a71",
     "url": "/complex-function-plotter/static/media/KaTeX_Script-Regular.e9169ca7.ttf"
+  },
+  {
+    "revision": "2eae604dbbc4b2c0ceede62c61c9e8df",
+    "url": "/complex-function-plotter/static/media/KaTeX_SansSerif-Regular.2eae604d.ttf"
   },
   {
     "revision": "3d8245dcb4489694a6a263b05c1cca01",
@@ -208,12 +208,12 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/media/KaTeX_Main-Bold.0ba875a1.woff"
   },
   {
-    "revision": "1fd21713706a2b70960faf21b1fa4e26",
-    "url": "/complex-function-plotter/static/media/KaTeX_Main-Regular.1fd21713.woff"
-  },
-  {
     "revision": "29b27903a08a71f8171be21ba413d4dd",
     "url": "/complex-function-plotter/static/media/KaTeX_Main-Regular.29b27903.woff2"
+  },
+  {
+    "revision": "1fd21713706a2b70960faf21b1fa4e26",
+    "url": "/complex-function-plotter/static/media/KaTeX_Main-Regular.1fd21713.woff"
   },
   {
     "revision": "9123667cef81279761df5cd62ec8c46e",
@@ -248,7 +248,7 @@ self.__precacheManifest = [
     "url": "/complex-function-plotter/static/css/2.6293742a.chunk.css"
   },
   {
-    "revision": "679a5c4173e973a5aa60543376313430",
+    "revision": "2c6bb7a33e301922d577d89cb88d3717",
     "url": "/complex-function-plotter/index.html"
   }
 ];
