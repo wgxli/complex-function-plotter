@@ -13,6 +13,7 @@ product ->
     product _ productOperator _ power {%
         (data) => [data[2], data[0], data[4]]
     %}
+    | "-" _ power {% data => ['neg', data[2]] %}
     | power {% id %}
 
 power ->
@@ -49,10 +50,6 @@ productOperator ->
 powerOperator -> "**" | "^"
 
 ##### Functions #####
-unaryFunction ->
-   namedFunction {% id %}
-   | "-" {% () => 'neg' %}
-
 binaryFunction ->
    "sn"
    | "cn"
@@ -64,7 +61,7 @@ binaryFunction ->
    | "theta10"
    | "theta11"
 
-namedFunction ->
+unaryFunction ->
    trigFunction
    | "cis"
    | "exp"
