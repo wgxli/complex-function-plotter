@@ -113,7 +113,7 @@ class HelpText extends React.PureComponent {
   }
 
   renderChips(entries) {
-    const {setExpression} = this.props;
+    const {setExpression, closeMenu} = this.props;
     const showExample = (label) => setExpression(
         EXAMPLES[label] || `${label}(z)`
     );
@@ -121,7 +121,10 @@ class HelpText extends React.PureComponent {
       <Chip 
 	key={label}
 	label={label}
-      onClick={EXAMPLES[label] === null ? undefined : () => showExample(label)}
+        onClick={EXAMPLES[label] === null ? undefined : () => {
+            if (window.innerWidth <= 900) {closeMenu();}
+            showExample(label);
+        }}
 	className={this.classes.chip}
       />
     );

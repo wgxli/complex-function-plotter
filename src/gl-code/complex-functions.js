@@ -77,14 +77,13 @@ return -0.5 * mul_i(cexp(iz) - cexp(-iz));`, ['mul_i', 'exp']);
 const ccos = new ComplexFunction('ccos',
 `vec2 iz = mul_i(z);
 return 0.5 * (cexp(iz) + cexp(-iz));`, ['mul_i', 'exp']);
-const ctan = new ComplexFunction('ctan', 'return cdiv(csin(z), ccos(z));',
-    ['div', 'sin', 'cos']);
+const ctan = new ComplexFunction('ctan', 'return mul_i(ctanh(-mul_i(z)));', ['mul_i', 'tanh']);
 const csec = new ComplexFunction('csec', 'return reciprocal(ccos(z));',
     ['reciprocal', 'cos']);
 const ccsc = new ComplexFunction('ccsc', 'return reciprocal(csin(z));',
     ['reciprocal', 'sin']);
-const ccot = new ComplexFunction('ccot', 'return cdiv(ccos(z), csin(z));',
-    ['div', 'cos', 'sin']);
+const ccot = new ComplexFunction('ccot', 'return reciprocal(ctan(z));',
+    ['reciprocal', 'tan']);
 
 // Inverse Trigonomeric Functions
 const carcsin_bottom = new ComplexFunction('carcsin_bottom',
@@ -120,17 +119,18 @@ const csinh = new ComplexFunction('csinh',
 const ccosh = new ComplexFunction('ccosh',
     'return 0.5 * (cexp(z) + cexp(-z));', ['exp']);
 const ctanh = new ComplexFunction('ctanh',
-`vec2 a = cexp(z);
-vec2 b = cexp(-z);
-return cdiv(a - b, a + b);`, ['exp', 'div']);
+`vec2 a = cexp(2.0*z);
+vec2 b = cexp(-2.0*z);
+if (z.x > 0.0) {
+return cdiv(ONE - b, ONE + b);
+} else {
+return cdiv(a - ONE, a + ONE);
+}`, ['exp', 'div']);
 const csech = new ComplexFunction('csech',
     'return reciprocal(ccosh(z));', ['reciprocal', 'cosh']);
 const ccsch = new ComplexFunction('ccsch',
     'return reciprocal(csinh(z));', ['reciprocal', 'sinh']);
-const ccoth = new ComplexFunction('ccoth',
-`vec2 a = cexp(z);
-vec2 b = cexp(-z);
-return cdiv(a + b, a - b);`, ['exp', 'div']);
+const ccoth = new ComplexFunction('ccoth', 'return reciprocal(ctanh(z));', ['reciprocal', 'tanh']);
 
 // Inverse hyperbolic trigonometric functions
 const carsinh = new ComplexFunction('carsinh',

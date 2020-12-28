@@ -227,8 +227,6 @@ const A = csqrt(csub(e1, e3));
 const B = csqrt(csub(e2, e3));
 const k = cdiv(B, A);
 
-console.log(A, k, invert_tau(k));
-
 function cm(z) {
     const u = cmul(z, A);
     const [zz, tau] = jacobi_reduce(u, k);
