@@ -20,19 +20,19 @@ const hiddenVariables = new Set([
 class SliderPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.sliders = props.variables;
     this.textField = React.createRef();
   }
 
   handleChange(name, value) {
-    this.sliders[name] = value;
-    this.props.onUpdate(this.sliders);
+    this.props.variables[name] = value;
+    this.props.onUpdate({[name]: value});
     this.forceUpdate();
   }
 
   renderSliderList() {
+    const {variables} = this.props;
     let sliderList = [];
-    for (const [name, value] of Object.entries(this.sliders)) {
+    for (const [name, value] of Object.entries(variables)) {
       // Skip variables in hidden blacklist
       if (hiddenVariables.has(name)) {continue;}
 

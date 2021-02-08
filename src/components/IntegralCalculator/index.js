@@ -137,7 +137,7 @@ class IntegralCalculator extends PureComponent {
         }
 
 
-        return <div className='container'
+        return <div className='integral container'
             onMouseDown={this.handleMouseDown.bind(this)}
             onMouseMove={this.handleMouseMove.bind(this)}
             onMouseUp={this.handleMouseUp.bind(this)}
@@ -154,8 +154,8 @@ class IntegralCalculator extends PureComponent {
             <p className='instructions'>
                 Click and drag to draw a contour
             </p>
-            <style jsx>{`
-                .container {
+            <style>{`
+                .integral.container {
                     position: absolute;
 
                     top: 0;
@@ -176,7 +176,7 @@ class IntegralCalculator extends PureComponent {
                     justify-content: center;
                 }
 
-                canvas.canvas {
+                .integral canvas.canvas {
                     position: absolute;
                     top: 0;
                     left: 0;
@@ -187,7 +187,7 @@ class IntegralCalculator extends PureComponent {
                     z-index: 1;
                 }
 
-                .instructions {
+                .integral .instructions {
                     color: hsl(213, 10%, 85%);
                     font-size: 20px;
                     text-align: center;

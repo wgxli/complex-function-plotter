@@ -94,9 +94,9 @@ class App extends React.Component {
     }
 
     // Variable Sliders
-    handleVariableUpdate(variables) {
-        this.state.variables = variables;
-        this.refs.plot.handleVariableUpdate(variables);
+    handleVariableUpdate(update) {
+        this.state.variables = {...this.state.variables, ...update};
+        this.refs.plot.handleVariableUpdate(update);
     }
 
     handleVariableAdd(name, value) {

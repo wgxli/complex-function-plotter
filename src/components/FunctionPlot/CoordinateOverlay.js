@@ -48,11 +48,11 @@ class CoordinateOverlay extends PureComponent {
 
         const [u, v] = mapping([x, y]);
 
-        return <div className='container'>
+        return <div className='coordinate-container'>
             <InlineMath>{'z = ' + formatComplex(x, y, 3)}</InlineMath>
             {isFinite(u) && isFinite(v) ? <InlineMath>{'f(z) = ' + formatComplex(u, v, 3)}</InlineMath> : null}
-            <style jsx>{`
-                .container {
+            <style>{`
+                .coordinate-container {
                     position: absolute;
                     bottom: 0;
                     right: 0;
@@ -83,7 +83,7 @@ class CoordinateOverlay extends PureComponent {
                 }
 
                 @media (max-width: 700px) {
-                    .container {
+                    .coordinate-container {
                         border-radius: 0;
                         left: 0;
                         font-size: 18px;
