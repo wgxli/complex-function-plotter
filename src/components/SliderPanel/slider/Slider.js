@@ -14,8 +14,16 @@ import EditableValue from '../editable-value/EditableValue.js';
 
 import './Slider.css';
 
+const SPEEDS = [
+    0.2,
+    0.5,
+    1,
+    2,
+    3,
+    4
+];
 
-function AnimationMode({mode, onChange}) {
+function AnimationMode({mode, speed, onChangeMode, onChangeSpeed}) {
     const nextMode = {
         '': 'bounce',
         'bounce': 'loop',
@@ -28,14 +36,34 @@ function AnimationMode({mode, onChange}) {
     }
     const Icon = icons[mode];
 
-    return <div onClick={() => {
-        const newMode = nextMode[mode];
-        onChange(newMode, 1) ;
-    }}>
+    return <div className={css`
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    `}>
         <Icon className={css`
             color: ${mode === '' ? 'hsl(200, 10%, 80%)' : 'hsl(200, 60%, 50%)'};
-            margin-right: 10px;
-        `}/>
+            cursor: pointer;
+        `}
+        onClick={() => {
+            const newMode = nextMode[mode];
+            onChangeMode(newMode) ;
+        }}/>
+        <span
+            onClick={() => {
+                onChangeSpeed((speed + 1) % SPEEDS.length);
+            }}
+            className={css`
+                font-size: 12px;
+                color: hsl(200, 20%, 40%);
+                cursor: pointer;
+                user-select: none;
+            `}
+        >
+            {SPEEDS[speed].toFixed(1)}×
+        </span>
     </div>;
 }
 
@@ -47,7 +75,8 @@ class Slider extends PureComponent {
             min: 0,
             max: 1,
             animationMode: '',
-            animationSpeed: 0,
+            animationSpeed: 2,
+            animationCurrentDirection: 1,
         };
     }
 
@@ -78,7 +107,10 @@ class Slider extends PureComponent {
 
     runAnimationTick(timestamp) {
         const {onChange, value} = this.props;
-        const {min, max, animationMode, animationSpeed} = this.state;
+        const {
+            min, max,
+            animationMode, animationCurrentDirection, animationSpeed
+        } = this.state;
 
         let dt = 0;
         if (timestamp !== undefined && this.lastAnimationTick !== undefined) {
@@ -86,17 +118,17 @@ class Slider extends PureComponent {
         }
         this.lastAnimationTick = timestamp;
 
-        const delta = (max - min) * animationSpeed * dt/4e3;
+        const delta = (max - min) * SPEEDS[animationSpeed] * animationCurrentDirection * dt/4e3;
         let newValue = value + delta;
 
         if (animationMode === 'bounce') {
             if (newValue > max) {
                 newValue = max;
-                this.setState({animationSpeed: -1});
+                this.setState({animationCurrentDirection: -1});
             }
             if (newValue < min) {
                 newValue = min;
-                this.setState({animationSpeed: 1});
+                this.setState({animationCurrentDirection: 1});
             }
         }
 
@@ -115,7 +147,7 @@ class Slider extends PureComponent {
     }
 
     render() {
-        const {min, max} = this.state;
+        const {min, max, animationMode, animationSpeed} = this.state;
         return (
             <div className='slider-base' className={css`
                 display: flex;
@@ -124,16 +156,22 @@ class Slider extends PureComponent {
                 margin: 10px 0;
                 margin-left: 10px;
             `}>
-                <AnimationMode mode={
-                    this.state.animationMode
-                } onChange={
-                    (mode, speed) => {
-                        this.state.animationMode = mode;
-                        this.state.animationSpeed = speed;
-                        this.setState({animationMode: mode, animationSpeed: speed});
-                        this.runAnimationTick();
+                <AnimationMode
+                    mode={animationMode}
+                    speed={animationSpeed}
+                    onChangeMode={
+                        (mode) => {
+                            this.state.animationMode = mode;
+                            this.setState({animationMode: mode, animationCurrentDirection: 1});
+                            this.runAnimationTick();
+                        }
                     }
-                }/>
+                    onChangeSpeed={
+                        (speed) => {
+                            this.setState({animationSpeed: speed});
+                        }
+                    }
+                />
                 <div className='slider'>
                     <div className='info-row'>
                         <EditableValue

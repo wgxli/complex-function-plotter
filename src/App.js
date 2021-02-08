@@ -32,6 +32,21 @@ const defaultShader = `vec2 mapping(vec2 z) {
   return z;
 }`;
 
+
+function extractVariables(expression) {
+    if (!Array.isArray(expression)) {return new Set();}
+    if (expression[0] === 'variable' && expression[1] !== 'z') {
+        return new Set([expression[1]]);
+    }
+
+    let output = new Set();
+    for (let entry of expression) {
+        output = new Set([...output, ...extractVariables(entry)]);
+    }
+    return output;
+}
+
+
 class App extends React.Component {
     state = {
         expressionText: 'z',
@@ -136,11 +151,11 @@ class App extends React.Component {
         if (hash === '') {
             return;
         } else {
-            this.setExpression(decodeURIComponent(hash.slice(1)));
+            this.setExpression(decodeURIComponent(hash.slice(1)), true);
         }
     }
 
-    setExpression(text) {
+    setExpression(text, fromHash) {
         text = text.toLowerCase();
 
         window.history.replaceState(
@@ -148,11 +163,24 @@ class App extends React.Component {
             '#' + encodeURIComponent(text)
         );
 
+        const expression = parseExpression(text.trim());
+
         this.setState({
             expressionText: text,
-            expression: parseExpression(text.trim()),
+            expression,
             integrationStrategy: null,
         });
+
+        if (fromHash) {
+            const variables = extractVariables(expression);
+            const newVariables = {...this.state.variables};
+            
+            for (let entry of variables) {
+                newVariables[entry] = 0.5;
+            }
+
+            this.setState({variables: newVariables});
+        }
     }
 
     setCustomShader(text) {

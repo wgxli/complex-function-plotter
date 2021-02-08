@@ -8,7 +8,7 @@ import CoordinateOverlay from './CoordinateOverlay';
 import './function-plot.css';
 
 
-const FPS_LIMIT = 120;
+const FPS_LIMIT = 70;
 
 let canvasSize = [];
 
