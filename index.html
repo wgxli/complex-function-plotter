@@ -1,87 +1,92 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><link rel="manifest" href="/complex-function-plotter/manifest.json"><link rel="shortcut icon" href="/complex-function-plotter/favicon.ico"><title>Complex Function Plotter</title><meta name="description" content="Smooth, responsive visualization tool for complex functions parameterized by an arbitrary number of variables."><meta name="keywords" content="webgl,complex,function,plot,visualization,interactive,conformal map,domain coloring,wgxli"><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-123422297-1"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","UA-123422297-1")</script><link href="/complex-function-plotter/static/css/2.140ae787.chunk.css" rel="stylesheet"><link href="/complex-function-plotter/static/css/main.a0309ec1.chunk.css" rel="stylesheet"><style data-jss="" data-meta="MuiPaper">
-.jss9 {
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><link rel="manifest" href="/complex-function-plotter/manifest.json"><link rel="shortcut icon" href="/complex-function-plotter/favicon.ico"><title>Complex Function Plotter</title><meta name="description" content="Smooth, responsive visualization tool for complex functions parameterized by an arbitrary number of variables."><meta name="keywords" content="webgl,complex,function,plot,visualization,interactive,conformal map,domain coloring,wgxli"><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-123422297-1"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","UA-123422297-1")</script><link href="/complex-function-plotter/static/css/2.d2999846.chunk.css" rel="stylesheet"><link href="/complex-function-plotter/static/css/main.a0309ec1.chunk.css" rel="stylesheet"><style data-jss="" data-meta="MuiPaper">
+.MuiPaper-root {
+  color: rgba(0, 0, 0, 0.87);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   background-color: #fff;
 }
-.jss10 {
+.MuiPaper-rounded {
   border-radius: 4px;
 }
-.jss11 {
+.MuiPaper-outlined {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.MuiPaper-elevation0 {
   box-shadow: none;
 }
-.jss12 {
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),0px 1px 1px 0px rgba(0, 0, 0, 0.14),0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation1 {
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
 }
-.jss13 {
-  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation2 {
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
 }
-.jss14 {
-  box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.2),0px 3px 4px 0px rgba(0, 0, 0, 0.14),0px 3px 3px -2px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation3 {
+  box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12);
 }
-.jss15 {
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),0px 4px 5px 0px rgba(0, 0, 0, 0.14),0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation4 {
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
 }
-.jss16 {
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 5px 8px 0px rgba(0, 0, 0, 0.14),0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation5 {
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 5px 8px 0px rgba(0,0,0,0.14),0px 1px 14px 0px rgba(0,0,0,0.12);
 }
-.jss17 {
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 6px 10px 0px rgba(0, 0, 0, 0.14),0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation6 {
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
 }
-.jss18 {
-  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2),0px 7px 10px 1px rgba(0, 0, 0, 0.14),0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation7 {
+  box-shadow: 0px 4px 5px -2px rgba(0,0,0,0.2),0px 7px 10px 1px rgba(0,0,0,0.14),0px 2px 16px 1px rgba(0,0,0,0.12);
 }
-.jss19 {
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),0px 8px 10px 1px rgba(0, 0, 0, 0.14),0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation8 {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
 }
-.jss20 {
-  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2),0px 9px 12px 1px rgba(0, 0, 0, 0.14),0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation9 {
+  box-shadow: 0px 5px 6px -3px rgba(0,0,0,0.2),0px 9px 12px 1px rgba(0,0,0,0.14),0px 3px 16px 2px rgba(0,0,0,0.12);
 }
-.jss21 {
-  box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2),0px 10px 14px 1px rgba(0, 0, 0, 0.14),0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation10 {
+  box-shadow: 0px 6px 6px -3px rgba(0,0,0,0.2),0px 10px 14px 1px rgba(0,0,0,0.14),0px 4px 18px 3px rgba(0,0,0,0.12);
 }
-.jss22 {
-  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2),0px 11px 15px 1px rgba(0, 0, 0, 0.14),0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation11 {
+  box-shadow: 0px 6px 7px -4px rgba(0,0,0,0.2),0px 11px 15px 1px rgba(0,0,0,0.14),0px 4px 20px 3px rgba(0,0,0,0.12);
 }
-.jss23 {
-  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),0px 12px 17px 2px rgba(0, 0, 0, 0.14),0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation12 {
+  box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2),0px 12px 17px 2px rgba(0,0,0,0.14),0px 5px 22px 4px rgba(0,0,0,0.12);
 }
-.jss24 {
-  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),0px 13px 19px 2px rgba(0, 0, 0, 0.14),0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation13 {
+  box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2),0px 13px 19px 2px rgba(0,0,0,0.14),0px 5px 24px 4px rgba(0,0,0,0.12);
 }
-.jss25 {
-  box-shadow: 0px 7px 9px -4px rgba(0, 0, 0, 0.2),0px 14px 21px 2px rgba(0, 0, 0, 0.14),0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation14 {
+  box-shadow: 0px 7px 9px -4px rgba(0,0,0,0.2),0px 14px 21px 2px rgba(0,0,0,0.14),0px 5px 26px 4px rgba(0,0,0,0.12);
 }
-.jss26 {
-  box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),0px 15px 22px 2px rgba(0, 0, 0, 0.14),0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation15 {
+  box-shadow: 0px 8px 9px -5px rgba(0,0,0,0.2),0px 15px 22px 2px rgba(0,0,0,0.14),0px 6px 28px 5px rgba(0,0,0,0.12);
 }
-.jss27 {
-  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),0px 16px 24px 2px rgba(0, 0, 0, 0.14),0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation16 {
+  box-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12);
 }
-.jss28 {
-  box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2),0px 17px 26px 2px rgba(0, 0, 0, 0.14),0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation17 {
+  box-shadow: 0px 8px 11px -5px rgba(0,0,0,0.2),0px 17px 26px 2px rgba(0,0,0,0.14),0px 6px 32px 5px rgba(0,0,0,0.12);
 }
-.jss29 {
-  box-shadow: 0px 9px 11px -5px rgba(0, 0, 0, 0.2),0px 18px 28px 2px rgba(0, 0, 0, 0.14),0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation18 {
+  box-shadow: 0px 9px 11px -5px rgba(0,0,0,0.2),0px 18px 28px 2px rgba(0,0,0,0.14),0px 7px 34px 6px rgba(0,0,0,0.12);
 }
-.jss30 {
-  box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2),0px 19px 29px 2px rgba(0, 0, 0, 0.14),0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation19 {
+  box-shadow: 0px 9px 12px -6px rgba(0,0,0,0.2),0px 19px 29px 2px rgba(0,0,0,0.14),0px 7px 36px 6px rgba(0,0,0,0.12);
 }
-.jss31 {
-  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2),0px 20px 31px 3px rgba(0, 0, 0, 0.14),0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation20 {
+  box-shadow: 0px 10px 13px -6px rgba(0,0,0,0.2),0px 20px 31px 3px rgba(0,0,0,0.14),0px 8px 38px 7px rgba(0,0,0,0.12);
 }
-.jss32 {
-  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2),0px 21px 33px 3px rgba(0, 0, 0, 0.14),0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation21 {
+  box-shadow: 0px 10px 13px -6px rgba(0,0,0,0.2),0px 21px 33px 3px rgba(0,0,0,0.14),0px 8px 40px 7px rgba(0,0,0,0.12);
 }
-.jss33 {
-  box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.2),0px 22px 35px 3px rgba(0, 0, 0, 0.14),0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation22 {
+  box-shadow: 0px 10px 14px -6px rgba(0,0,0,0.2),0px 22px 35px 3px rgba(0,0,0,0.14),0px 8px 42px 7px rgba(0,0,0,0.12);
 }
-.jss34 {
-  box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2),0px 23px 36px 3px rgba(0, 0, 0, 0.14),0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation23 {
+  box-shadow: 0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.14),0px 9px 44px 8px rgba(0,0,0,0.12);
 }
-.jss35 {
-  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),0px 24px 38px 3px rgba(0, 0, 0, 0.14),0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+.MuiPaper-elevation24 {
+  box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12);
 }
 </style><style data-jss="" data-meta="MuiAppBar">
-.jss1 {
+.MuiAppBar-root {
   width: 100%;
   display: flex;
   z-index: 1100;
@@ -89,87 +94,215 @@
   flex-shrink: 0;
   flex-direction: column;
 }
-.jss2 {
+.MuiAppBar-positionFixed {
   top: 0;
   left: auto;
   right: 0;
   position: fixed;
 }
-.jss3 {
+@media print {
+  .MuiAppBar-positionFixed {
+    position: absolute;
+  }
+}
+.MuiAppBar-positionAbsolute {
   top: 0;
   left: auto;
   right: 0;
   position: absolute;
 }
-.jss4 {
+.MuiAppBar-positionSticky {
   top: 0;
   left: auto;
   right: 0;
   position: sticky;
 }
-.jss5 {
+.MuiAppBar-positionStatic {
   position: static;
 }
-.jss6 {
+.MuiAppBar-positionRelative {
+  position: relative;
+}
+.MuiAppBar-colorDefault {
   color: rgba(0, 0, 0, 0.87);
   background-color: #f5f5f5;
 }
-.jss7 {
+.MuiAppBar-colorPrimary {
   color: #fff;
   background-color: #2196f3;
 }
-.jss8 {
+.MuiAppBar-colorSecondary {
   color: #fff;
   background-color: #f50057;
 }
+.MuiAppBar-colorInherit {
+  color: inherit;
+}
+.MuiAppBar-colorTransparent {
+  color: inherit;
+  background-color: transparent;
+}
 </style><style data-jss="" data-meta="MuiToolbar">
-.jss36 {
+.MuiToolbar-root {
   display: flex;
   position: relative;
   align-items: center;
 }
-.jss37 {
+.MuiToolbar-gutters {
   padding-left: 16px;
   padding-right: 16px;
 }
 @media (min-width:600px) {
-  .jss37 {
+  .MuiToolbar-gutters {
     padding-left: 24px;
     padding-right: 24px;
   }
 }
-.jss38 {
+.MuiToolbar-regular {
   min-height: 56px;
 }
 @media (min-width:0px) and (orientation: landscape) {
-  .jss38 {
+  .MuiToolbar-regular {
     min-height: 48px;
   }
 }
 @media (min-width:600px) {
-  .jss38 {
+  .MuiToolbar-regular {
     min-height: 64px;
   }
 }
-.jss39 {
+.MuiToolbar-dense {
   min-height: 48px;
 }
-</style><style data-jss="" data-meta="MuiInput">
-.jss67 {
+</style><style data-jss="" data-meta="MuiInputBase">
+@keyframes mui-auto-fill {}
+@keyframes mui-auto-fill-cancel {}
+.MuiInputBase-root {
   color: rgba(0, 0, 0, 0.87);
+  cursor: text;
   display: inline-flex;
   position: relative;
   font-size: 1rem;
+  box-sizing: border-box;
+  align-items: center;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  line-height: 1.1875em;
+  font-weight: 400;
+  line-height: 1.1876em;
+  letter-spacing: 0.00938em;
 }
-.jss67.jss70 {
+.MuiInputBase-root.Mui-disabled {
   color: rgba(0, 0, 0, 0.38);
+  cursor: default;
 }
-label + .jss68 {
+.MuiInputBase-multiline {
+  padding: 6px 0 7px;
+}
+.MuiInputBase-multiline.MuiInputBase-marginDense {
+  padding-top: 3px;
+}
+.MuiInputBase-fullWidth {
+  width: 100%;
+}
+.MuiInputBase-input {
+  font: inherit;
+  color: currentColor;
+  width: 100%;
+  border: 0;
+  height: 1.1876em;
+  margin: 0;
+  display: block;
+  padding: 6px 0 7px;
+  min-width: 0;
+  background: none;
+  box-sizing: content-box;
+  animation-name: mui-auto-fill-cancel;
+  letter-spacing: inherit;
+  animation-duration: 10ms;
+  -webkit-tap-highlight-color: transparent;
+}
+.MuiInputBase-input::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.MuiInputBase-input::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.MuiInputBase-input:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.MuiInputBase-input::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+.MuiInputBase-input:focus {
+  outline: 0;
+}
+.MuiInputBase-input:invalid {
+  box-shadow: none;
+}
+.MuiInputBase-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+.MuiInputBase-input.Mui-disabled {
+  opacity: 1;
+}
+.MuiInputBase-input:-webkit-autofill {
+  animation-name: mui-auto-fill;
+  animation-duration: 5000s;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input::-webkit-input-placeholder {
+  opacity: 0 !important;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input::-moz-placeholder {
+  opacity: 0 !important;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input:-ms-input-placeholder {
+  opacity: 0 !important;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input::-ms-input-placeholder {
+  opacity: 0 !important;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+.MuiInputBase-inputMarginDense {
+  padding-top: 3px;
+}
+.MuiInputBase-inputMultiline {
+  height: auto;
+  resize: none;
+  padding: 0;
+}
+.MuiInputBase-inputTypeSearch {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+}
+</style><style data-jss="" data-meta="MuiInput">
+.MuiInput-root {
+  position: relative;
+}
+label + .MuiInput-formControl {
   margin-top: 16px;
 }
-.jss71:after {
+.MuiInput-colorSecondary.MuiInput-underline:after {
+  border-bottom-color: #f50057;
+}
+.MuiInput-underline:after {
   left: 0;
   right: 0;
   bottom: 0;
@@ -177,17 +310,17 @@ label + .jss68 {
   position: absolute;
   transform: scaleX(0);
   transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-  border-bottom: 2px solid #1976d2;
+  border-bottom: 2px solid #2196f3;
   pointer-events: none;
 }
-.jss71.jss69:after {
+.MuiInput-underline.Mui-focused:after {
   transform: scaleX(1);
 }
-.jss71.jss72:after {
+.MuiInput-underline.Mui-error:after {
   transform: scaleX(1);
   border-bottom-color: #f44336;
 }
-.jss71:before {
+.MuiInput-underline:before {
   left: 0;
   right: 0;
   bottom: 0;
@@ -197,514 +330,425 @@ label + .jss68 {
   border-bottom: 1px solid rgba(0, 0, 0, 0.42);
   pointer-events: none;
 }
-.jss71:hover:not(.jss70):not(.jss69):not(.jss72):before {
+.MuiInput-underline:hover:not(.Mui-disabled):before {
   border-bottom: 2px solid rgba(0, 0, 0, 0.87);
 }
-.jss71.jss70:before {
-  border-bottom: 1px dotted rgba(0, 0, 0, 0.42);
+.MuiInput-underline.Mui-disabled:before {
+  border-bottom-style: dotted;
 }
-.jss73 {
-  padding: 6px 0 7px;
-}
-.jss74 {
-  width: 100%;
-}
-.jss75 {
-  font: inherit;
-  color: currentColor;
-  border: 0;
-  margin: 0;
-  padding: 6px 0 7px;
-  display: block;
-  min-width: 0;
-  flex-grow: 1;
-  box-sizing: content-box;
-  background: none;
-  vertical-align: middle;
-  -webkit-tap-highlight-color: transparent;
-}
-.jss75::-webkit-input-placeholder {
-  color: currentColor;
-  opacity: 0.42;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-}
-.jss75::-moz-placeholder {
-  color: currentColor;
-  opacity: 0.42;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-}
-.jss75:-ms-input-placeholder {
-  color: currentColor;
-  opacity: 0.42;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-}
-.jss75::-ms-input-placeholder {
-  color: currentColor;
-  opacity: 0.42;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-}
-.jss75:focus {
-  outline: 0;
-}
-.jss75:invalid {
-  box-shadow: none;
-}
-.jss75::-webkit-search-decoration {
-  -webkit-appearance: none;
-}
-.jss75.jss70 {
-  opacity: 1;
-}
-label[data-shrink=false] + .jss68 .jss75::-webkit-input-placeholder {
-  opacity: 0;
-}
-label[data-shrink=false] + .jss68 .jss75::-moz-placeholder {
-  opacity: 0;
-}
-label[data-shrink=false] + .jss68 .jss75:-ms-input-placeholder {
-  opacity: 0;
-}
-label[data-shrink=false] + .jss68 .jss75::-ms-input-placeholder {
-  opacity: 0;
-}
-label[data-shrink=false] + .jss68 .jss75:focus::-webkit-input-placeholder {
-  opacity: 0.42;
-}
-label[data-shrink=false] + .jss68 .jss75:focus::-moz-placeholder {
-  opacity: 0.42;
-}
-label[data-shrink=false] + .jss68 .jss75:focus:-ms-input-placeholder {
-  opacity: 0.42;
-}
-label[data-shrink=false] + .jss68 .jss75:focus::-ms-input-placeholder {
-  opacity: 0.42;
-}
-.jss76 {
-  padding-top: 3px;
-}
-.jss77 {
-  resize: none;
-  padding: 0;
-}
-.jss78 {
-  height: 1.1875em;
-}
-.jss79 {
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
+@media (hover: none) {
+  .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  }
 }
 </style><style data-jss="" data-meta="MuiFormControl">
-.jss63 {
-  margin: 0;
+.MuiFormControl-root {
   border: 0;
+  margin: 0;
   display: inline-flex;
   padding: 0;
   position: relative;
   min-width: 0;
   flex-direction: column;
+  vertical-align: top;
 }
-.jss64 {
+.MuiFormControl-marginNormal {
   margin-top: 16px;
   margin-bottom: 8px;
 }
-.jss65 {
+.MuiFormControl-marginDense {
   margin-top: 8px;
   margin-bottom: 4px;
 }
-.jss66 {
+.MuiFormControl-fullWidth {
   width: 100%;
 }
-</style><style data-jss="" data-meta="MuiModal">
-.jss118 {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1300;
-  position: fixed;
-}
-.jss119 {
-  visibility: hidden;
-}
 </style><style data-jss="" data-meta="MuiSvgIcon">
-.jss49 {
+.MuiSvgIcon-root {
   fill: currentColor;
   width: 1em;
   height: 1em;
   display: inline-block;
-  font-size: 24px;
+  font-size: 1.5rem;
   transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  user-select: none;
   flex-shrink: 0;
+  user-select: none;
 }
-.jss50 {
+.MuiSvgIcon-colorPrimary {
   color: #2196f3;
 }
-.jss51 {
+.MuiSvgIcon-colorSecondary {
   color: #f50057;
 }
-.jss52 {
+.MuiSvgIcon-colorAction {
   color: rgba(0, 0, 0, 0.54);
 }
-.jss53 {
+.MuiSvgIcon-colorError {
   color: #f44336;
 }
-.jss54 {
+.MuiSvgIcon-colorDisabled {
   color: rgba(0, 0, 0, 0.26);
 }
-.jss55 {
+.MuiSvgIcon-fontSizeInherit {
   font-size: inherit;
 }
-</style><style data-jss="" data-meta="MuiTouchRipple">
-.jss56 {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 0;
-  position: absolute;
-  overflow: hidden;
-  border-radius: inherit;
-  pointer-events: none;
+.MuiSvgIcon-fontSizeSmall {
+  font-size: 1.25rem;
 }
-.jss57 {
-  top: 0;
-  left: 0;
-  width: 50px;
-  height: 50px;
-  opacity: 0;
-  position: absolute;
+.MuiSvgIcon-fontSizeLarge {
+  font-size: 2.1875rem;
 }
-.jss58 {
-  opacity: 0.3;
-  transform: scale(1);
-  animation: mui-ripple-enter 550ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-.jss59 {
-  animation-duration: 200ms;
-}
-.jss60 {
-  width: 100%;
-  height: 100%;
-  opacity: 1;
-  display: block;
-  border-radius: 50%;
-  background-color: currentColor;
-}
-.jss61 {
-  opacity: 0;
-  animation: mui-ripple-exit 550ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-.jss62 {
-  top: 0;
-  left: 0;
-  position: absolute;
-  animation: mui-ripple-pulsate 2500ms cubic-bezier(0.4, 0, 0.2, 1) 200ms infinite;
-}
-@keyframes mui-ripple-enter {
-  0% {
-    opacity: 0.1;
-    transform: scale(0);
-  }
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-}
-@keyframes mui-ripple-exit {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes mui-ripple-pulsate {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.92);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+</style><style data-jss="" data-meta="MuiTextField">
+
 </style><style data-jss="" data-meta="MuiButtonBase">
-.jss46 {
+.MuiButtonBase-root {
   color: inherit;
+  border: 0;
   cursor: pointer;
   margin: 0;
-  border: 0;
   display: inline-flex;
+  outline: 0;
   padding: 0;
-  outline: none;
   position: relative;
-  user-select: none;
   align-items: center;
+  user-select: none;
   border-radius: 0;
   vertical-align: middle;
-  justify-content: center;
   -moz-appearance: none;
+  justify-content: center;
   text-decoration: none;
   background-color: transparent;
   -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
 }
-.jss46::-moz-focus-inner {
+.MuiButtonBase-root::-moz-focus-inner {
   border-style: none;
 }
-.jss46.jss47 {
+.MuiButtonBase-root.Mui-disabled {
   cursor: default;
   pointer-events: none;
 }
+@media print {
+  .MuiButtonBase-root {
+    color-adjust: exact;
+  }
+}
 </style><style data-jss="" data-meta="MuiButton">
-.jss80 {
+.MuiButton-root {
   color: rgba(0, 0, 0, 0.87);
-  padding: 8px 16px;
+  padding: 6px 16px;
   font-size: 0.875rem;
   min-width: 64px;
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  min-height: 36px;
   box-sizing: border-box;
-  line-height: 1.4em;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 500;
+  line-height: 1.75;
   border-radius: 4px;
+  letter-spacing: 0.02857em;
   text-transform: uppercase;
 }
-.jss80:hover {
+.MuiButton-root:hover {
   text-decoration: none;
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.04);
 }
-.jss80.jss100 {
+.MuiButton-root.Mui-disabled {
   color: rgba(0, 0, 0, 0.26);
 }
 @media (hover: none) {
-  .jss80:hover {
+  .MuiButton-root:hover {
     background-color: transparent;
   }
 }
-.jss80:hover.jss100 {
+.MuiButton-root:hover.Mui-disabled {
   background-color: transparent;
 }
-.jss81 {
+.MuiButton-label {
   width: 100%;
   display: inherit;
   align-items: inherit;
   justify-content: inherit;
 }
-.jss83 {
+.MuiButton-text {
+  padding: 6px 8px;
+}
+.MuiButton-textPrimary {
   color: #2196f3;
 }
-.jss83:hover {
-  background-color: rgba(33, 150, 243, 0.08);
+.MuiButton-textPrimary:hover {
+  background-color: rgba(33, 150, 243, 0.04);
 }
 @media (hover: none) {
-  .jss83:hover {
+  .MuiButton-textPrimary:hover {
     background-color: transparent;
   }
 }
-.jss84 {
+.MuiButton-textSecondary {
   color: #f50057;
 }
-.jss84:hover {
-  background-color: rgba(245, 0, 87, 0.08);
+.MuiButton-textSecondary:hover {
+  background-color: rgba(245, 0, 87, 0.04);
 }
 @media (hover: none) {
-  .jss84:hover {
+  .MuiButton-textSecondary:hover {
     background-color: transparent;
   }
 }
-.jss88 {
+.MuiButton-outlined {
   border: 1px solid rgba(0, 0, 0, 0.23);
+  padding: 5px 15px;
 }
-.jss89 {
+.MuiButton-outlined.Mui-disabled {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.MuiButton-outlinedPrimary {
+  color: #2196f3;
   border: 1px solid rgba(33, 150, 243, 0.5);
 }
-.jss89:hover {
+.MuiButton-outlinedPrimary:hover {
   border: 1px solid #2196f3;
+  background-color: rgba(33, 150, 243, 0.04);
 }
-.jss90 {
+@media (hover: none) {
+  .MuiButton-outlinedPrimary:hover {
+    background-color: transparent;
+  }
+}
+.MuiButton-outlinedSecondary {
+  color: #f50057;
   border: 1px solid rgba(245, 0, 87, 0.5);
 }
-.jss90:hover {
+.MuiButton-outlinedSecondary:hover {
   border: 1px solid #f50057;
+  background-color: rgba(245, 0, 87, 0.04);
 }
-.jss91 {
+.MuiButton-outlinedSecondary.Mui-disabled {
+  border: 1px solid rgba(0, 0, 0, 0.26);
+}
+@media (hover: none) {
+  .MuiButton-outlinedSecondary:hover {
+    background-color: transparent;
+  }
+}
+.MuiButton-contained {
   color: rgba(0, 0, 0, 0.87);
-  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
   background-color: #e0e0e0;
 }
-.jss91.jss99 {
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 6px 10px 0px rgba(0, 0, 0, 0.14),0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+.MuiButton-contained:hover {
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+  background-color: #d5d5d5;
 }
-.jss91:active {
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),0px 8px 10px 1px rgba(0, 0, 0, 0.14),0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+.MuiButton-contained.Mui-focusVisible {
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
 }
-.jss91.jss100 {
+.MuiButton-contained:active {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+.MuiButton-contained.Mui-disabled {
   color: rgba(0, 0, 0, 0.26);
   box-shadow: none;
   background-color: rgba(0, 0, 0, 0.12);
 }
-.jss91:hover {
-  background-color: #d5d5d5;
-}
 @media (hover: none) {
-  .jss91:hover {
+  .MuiButton-contained:hover {
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
     background-color: #e0e0e0;
   }
 }
-.jss91:hover.jss100 {
+.MuiButton-contained:hover.Mui-disabled {
   background-color: rgba(0, 0, 0, 0.12);
 }
-.jss92 {
+.MuiButton-containedPrimary {
   color: #fff;
   background-color: #2196f3;
 }
-.jss92:hover {
+.MuiButton-containedPrimary:hover {
   background-color: #1976d2;
 }
 @media (hover: none) {
-  .jss92:hover {
+  .MuiButton-containedPrimary:hover {
     background-color: #2196f3;
   }
 }
-.jss93 {
+.MuiButton-containedSecondary {
   color: #fff;
   background-color: #f50057;
 }
-.jss93:hover {
+.MuiButton-containedSecondary:hover {
   background-color: #c51162;
 }
 @media (hover: none) {
-  .jss93:hover {
+  .MuiButton-containedSecondary:hover {
     background-color: #f50057;
   }
 }
-.jss97 {
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  min-width: 0;
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 6px 10px 0px rgba(0, 0, 0, 0.14),0px 1px 18px 0px rgba(0, 0, 0, 0.12);
-  border-radius: 50%;
+.MuiButton-disableElevation {
+  box-shadow: none;
 }
-.jss97:active {
-  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),0px 12px 17px 2px rgba(0, 0, 0, 0.14),0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+.MuiButton-disableElevation:hover {
+  box-shadow: none;
 }
-.jss98 {
-  width: auto;
-  height: 48px;
-  padding: 0 16px;
-  min-width: 48px;
-  border-radius: 24px;
+.MuiButton-disableElevation.Mui-focusVisible {
+  box-shadow: none;
 }
-.jss101 {
+.MuiButton-disableElevation:active {
+  box-shadow: none;
+}
+.MuiButton-disableElevation.Mui-disabled {
+  box-shadow: none;
+}
+.MuiButton-colorInherit {
   color: inherit;
+  border-color: currentColor;
 }
-.jss102 {
-  width: 40px;
-  height: 40px;
-}
-.jss103 {
-  padding: 7px 8px;
-  min-width: 64px;
+.MuiButton-textSizeSmall {
+  padding: 4px 5px;
   font-size: 0.8125rem;
-  min-height: 32px;
 }
-.jss104 {
-  padding: 8px 24px;
-  min-width: 112px;
+.MuiButton-textSizeLarge {
+  padding: 8px 11px;
   font-size: 0.9375rem;
-  min-height: 40px;
 }
-.jss105 {
+.MuiButton-outlinedSizeSmall {
+  padding: 3px 9px;
+  font-size: 0.8125rem;
+}
+.MuiButton-outlinedSizeLarge {
+  padding: 7px 21px;
+  font-size: 0.9375rem;
+}
+.MuiButton-containedSizeSmall {
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+}
+.MuiButton-containedSizeLarge {
+  padding: 8px 22px;
+  font-size: 0.9375rem;
+}
+.MuiButton-fullWidth {
   width: 100%;
 }
+.MuiButton-startIcon {
+  display: inherit;
+  margin-left: -4px;
+  margin-right: 8px;
+}
+.MuiButton-startIcon.MuiButton-iconSizeSmall {
+  margin-left: -2px;
+}
+.MuiButton-endIcon {
+  display: inherit;
+  margin-left: 8px;
+  margin-right: -4px;
+}
+.MuiButton-endIcon.MuiButton-iconSizeSmall {
+  margin-right: -2px;
+}
+.MuiButton-iconSizeSmall > *:first-child {
+  font-size: 18px;
+}
+.MuiButton-iconSizeMedium > *:first-child {
+  font-size: 20px;
+}
+.MuiButton-iconSizeLarge > *:first-child {
+  font-size: 22px;
+}
 </style><style data-jss="" data-meta="MuiIconButton">
-.jss40 {
+.MuiIconButton-root {
   flex: 0 0 auto;
-  width: 48px;
   color: rgba(0, 0, 0, 0.54);
-  height: 48px;
-  padding: 0;
+  padding: 12px;
+  overflow: visible;
   font-size: 1.5rem;
   text-align: center;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   border-radius: 50%;
 }
-.jss40:hover {
-  background-color: rgba(0, 0, 0, 0.08);
+.MuiIconButton-root:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
-.jss40.jss44 {
+.MuiIconButton-root.Mui-disabled {
   color: rgba(0, 0, 0, 0.26);
-}
-@media (hover: none) {
-  .jss40:hover {
-    background-color: transparent;
-  }
-}
-.jss40:hover.jss44 {
   background-color: transparent;
 }
-.jss41 {
+@media (hover: none) {
+  .MuiIconButton-root:hover {
+    background-color: transparent;
+  }
+}
+.MuiIconButton-edgeStart {
+  margin-left: -12px;
+}
+.MuiIconButton-sizeSmall.MuiIconButton-edgeStart {
+  margin-left: -3px;
+}
+.MuiIconButton-edgeEnd {
+  margin-right: -12px;
+}
+.MuiIconButton-sizeSmall.MuiIconButton-edgeEnd {
+  margin-right: -3px;
+}
+.MuiIconButton-colorInherit {
   color: inherit;
 }
-.jss42 {
+.MuiIconButton-colorPrimary {
   color: #2196f3;
 }
-.jss42:hover {
-  background-color: rgba(33, 150, 243, 0.08);
+.MuiIconButton-colorPrimary:hover {
+  background-color: rgba(33, 150, 243, 0.04);
 }
 @media (hover: none) {
-  .jss42:hover {
+  .MuiIconButton-colorPrimary:hover {
     background-color: transparent;
   }
 }
-.jss43 {
+.MuiIconButton-colorSecondary {
   color: #f50057;
 }
-.jss43:hover {
-  background-color: rgba(245, 0, 87, 0.08);
+.MuiIconButton-colorSecondary:hover {
+  background-color: rgba(245, 0, 87, 0.04);
 }
 @media (hover: none) {
-  .jss43:hover {
+  .MuiIconButton-colorSecondary:hover {
     background-color: transparent;
   }
 }
-.jss45 {
+.MuiIconButton-sizeSmall {
+  padding: 3px;
+  font-size: 1.125rem;
+}
+.MuiIconButton-label {
   width: 100%;
   display: flex;
   align-items: inherit;
   justify-content: inherit;
 }
 </style><style data-jss="" data-meta="MuiDrawer">
-.jss107 {
+.MuiDrawer-docked {
   flex: 0 0 auto;
 }
-.jss108 {
+.MuiDrawer-paper {
   top: 0;
   flex: 1 0 auto;
   height: 100%;
   display: flex;
+  outline: 0;
   z-index: 1200;
-  outline: none;
   position: fixed;
   overflow-y: auto;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
 }
-.jss109 {
+.MuiDrawer-paperAnchorLeft {
   left: 0;
   right: auto;
 }
-.jss110 {
+.MuiDrawer-paperAnchorRight {
   left: auto;
   right: 0;
 }
-.jss111 {
+.MuiDrawer-paperAnchorTop {
   top: 0;
   left: 0;
   right: 0;
@@ -712,7 +756,7 @@ label[data-shrink=false] + .jss68 .jss75:focus::-ms-input-placeholder {
   height: auto;
   max-height: 100%;
 }
-.jss112 {
+.MuiDrawer-paperAnchorBottom {
   top: auto;
   left: 0;
   right: 0;
@@ -720,30 +764,34 @@ label[data-shrink=false] + .jss68 .jss75:focus::-ms-input-placeholder {
   height: auto;
   max-height: 100%;
 }
-.jss113 {
+.MuiDrawer-paperAnchorDockedLeft {
   border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
-.jss114 {
+.MuiDrawer-paperAnchorDockedTop {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
-.jss115 {
+.MuiDrawer-paperAnchorDockedRight {
   border-left: 1px solid rgba(0, 0, 0, 0.12);
 }
-.jss116 {
+.MuiDrawer-paperAnchorDockedBottom {
   border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
-</style><style data-jss="">
-.jss106 {
+</style><style data-jss="" data-meta="makeStyles">
+.jss1 {
   min-height: 56px;
 }
 @media (min-width:0px) and (orientation: landscape) {
-  .jss106 {
+  .jss1 {
     min-height: 48px;
   }
 }
 @media (min-width:600px) {
-  .jss106 {
+  .jss1 {
     min-height: 64px;
   }
 }
-</style><style type="text/css" data-styled-jsx=""></style></head><body><div id="root"><div id="app" data-reactroot=""><header class="jss9 jss15 jss1 jss2 jss7 mui-fixed" id="app-bar"><div class="jss36 jss38"><button tabindex="0" class="jss46 jss40" type="button"><span class="jss45"><svg class="jss49" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" d="M0 0h24v24H0z"></path><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg></span><span class="jss56"></span></button><div id="function-input"><div class="jss63 jss66"><div class="jss67 jss74 jss68 jss71"><input type="text" aria-invalid="false" autofocus="" class="jss75" id="function-input" placeholder="Enter a complex function of z" value="z"></div></div></div><div id="help-button"><button tabindex="0" class="jss46 jss80 jss82 jss85" type="button"><span class="jss81">Help</span><span class="jss56"></span></button></div></div></header><div id="function-plot" class="jsx-2288549074"><div id="fallback-text" class="jsx-2288549074">Loading...<div class="jsx-2288549074 small">If nothing happens, please check that Javascript and WebGL are enabled.</div></div><canvas class="jsx-2288549074 main-plot"></canvas></div></div></div><script>!function(i){function e(e){for(var r,t,n=e[0],o=e[1],u=e[2],l=0,f=[];l<n.length;l++)t=n[l],Object.prototype.hasOwnProperty.call(a,t)&&a[t]&&f.push(a[t][0]),a[t]=0;for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(i[r]=o[r]);for(s&&s(e);f.length;)f.shift()();return c.push.apply(c,u||[]),p()}function p(){for(var e,r=0;r<c.length;r++){for(var t=c[r],n=!0,o=1;o<t.length;o++){var u=t[o];0!==a[u]&&(n=!1)}n&&(c.splice(r--,1),e=l(l.s=t[0]))}return e}var t={},a={1:0},c=[];function l(e){if(t[e])return t[e].exports;var r=t[e]={i:e,l:!1,exports:{}};return i[e].call(r.exports,r,r.exports,l),r.l=!0,r.exports}l.m=i,l.c=t,l.d=function(e,r,t){l.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},l.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},l.t=function(r,e){if(1&e&&(r=l(r)),8&e)return r;if(4&e&&"object"==typeof r&&r&&r.__esModule)return r;var t=Object.create(null);if(l.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:r}),2&e&&"string"!=typeof r)for(var n in r)l.d(t,n,function(e){return r[e]}.bind(null,n));return t},l.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return l.d(r,"a",r),r},l.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},l.p="/complex-function-plotter/";var r=window.webpackJsonp=window.webpackJsonp||[],n=r.push.bind(r);r.push=e,r=r.slice();for(var o=0;o<r.length;o++)e(r[o]);var s=n;p()}([])</script><script src="/complex-function-plotter/static/js/2.21f0284a.chunk.js"></script><script src="/complex-function-plotter/static/js/main.23cdb62a.chunk.js"></script></body></html>
+</style></head><body><div id="root"><div id="app"><header class="MuiPaper-root MuiAppBar-root MuiAppBar-positionFixed MuiAppBar-colorPrimary mui-fixed MuiPaper-elevation4" id="app-bar"><div class="MuiToolbar-root MuiToolbar-regular"><button class="MuiButtonBase-root MuiIconButton-root" tabindex="0" type="button"><span class="MuiIconButton-label"><svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg></span></button><div id="function-input"><div class="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"><div class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl"><input type="text" aria-invalid="false" autofocus="" id="function-input" placeholder="Enter a complex function of z" value="z" class="MuiInputBase-input MuiInput-input"></div></div></div><div id="help-button"><button class="MuiButtonBase-root MuiButton-root MuiButton-text" tabindex="0" type="button"><span class="MuiButton-label">Help</span></button></div></div></header><div id="function-plot"><div id="fallback-text">Loading...<div class="small">If nothing happens, please check that Javascript and WebGL are enabled.</div></div><canvas class="main-plot"></canvas><style>
+            canvas.main-plot {
+                cursor: grab;
+            }
+        </style></div></div></div><script>!function(i){function e(e){for(var r,t,n=e[0],o=e[1],u=e[2],l=0,f=[];l<n.length;l++)t=n[l],Object.prototype.hasOwnProperty.call(a,t)&&a[t]&&f.push(a[t][0]),a[t]=0;for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(i[r]=o[r]);for(s&&s(e);f.length;)f.shift()();return c.push.apply(c,u||[]),p()}function p(){for(var e,r=0;r<c.length;r++){for(var t=c[r],n=!0,o=1;o<t.length;o++){var u=t[o];0!==a[u]&&(n=!1)}n&&(c.splice(r--,1),e=l(l.s=t[0]))}return e}var t={},a={1:0},c=[];function l(e){if(t[e])return t[e].exports;var r=t[e]={i:e,l:!1,exports:{}};return i[e].call(r.exports,r,r.exports,l),r.l=!0,r.exports}l.m=i,l.c=t,l.d=function(e,r,t){l.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},l.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},l.t=function(r,e){if(1&e&&(r=l(r)),8&e)return r;if(4&e&&"object"==typeof r&&r&&r.__esModule)return r;var t=Object.create(null);if(l.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:r}),2&e&&"string"!=typeof r)for(var n in r)l.d(t,n,function(e){return r[e]}.bind(null,n));return t},l.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return l.d(r,"a",r),r},l.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},l.p="/complex-function-plotter/";var r=window.webpackJsonp=window.webpackJsonp||[],n=r.push.bind(r);r.push=e,r=r.slice();for(var o=0;o<r.length;o++)e(r[o]);var s=n;p()}([])</script><script src="/complex-function-plotter/static/js/2.0db41df8.chunk.js"></script><script src="/complex-function-plotter/static/js/main.930249f8.chunk.js"></script></body></html>
