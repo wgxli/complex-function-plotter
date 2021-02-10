@@ -69,16 +69,15 @@ function AnimationMode({mode, speed, onChangeMode, onChangeSpeed}) {
 
 
 class Slider extends PureComponent {
-    constructor() {
-        super();
-        this.state = {
-            min: 0,
-            max: 1,
-            animationMode: '',
-            animationSpeed: 2,
-            animationCurrentDirection: 1,
-        };
-    }
+    state = {
+        min: 0,
+        max: 1,
+        animationMode: '',
+        animationSpeed: 2,
+        animationCurrentDirection: 1,
+    };
+    deleted = false;
+
 
     setMin(min) {
         const {value, onChange} = this.props;
@@ -111,6 +110,8 @@ class Slider extends PureComponent {
             min, max,
             animationMode, animationCurrentDirection, animationSpeed
         } = this.state;
+
+        if (this.deleted) {return;}
 
         let dt = 0;
         if (timestamp !== undefined && this.lastAnimationTick !== undefined) {
@@ -212,7 +213,10 @@ class Slider extends PureComponent {
                         />
                     </div>
                 </div>
-                <IconButton onClick={this.props.onDelete} className='delete-icon'>
+                <IconButton onClick={() => {
+                    this.deleted = true;
+                    this.props.onDelete();
+                }} className='delete-icon'>
                     <DeleteIcon/>
                 </IconButton>
             </div>

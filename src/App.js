@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import 'katex/dist/katex.min.css';
 
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 import theme from './theme.js';
 
 import ControlBar from './components/ControlBar/ControlBar.js';
@@ -110,7 +110,6 @@ class App extends React.Component {
 
     // Variable Sliders
     handleVariableUpdate(update) {
-        this.state.variables = {...this.state.variables, ...update};
         this.refs.plot.handleVariableUpdate(update);
     }
 
