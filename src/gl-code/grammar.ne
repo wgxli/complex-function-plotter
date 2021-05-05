@@ -86,7 +86,7 @@ baseTrigFunction ->
    "sin" | "cos" | "tan" | "sec" | "csc" | "cot"
 
 hyperbolicTrigFunction ->
-   trigFunction "h" {% (data) => data.join('') %}
+   baseTrigFunction "h" {% (data) => data.join('') %}
 
 trigFunction ->
    "arc":? baseTrigFunction {% (data) => data.join('') %}

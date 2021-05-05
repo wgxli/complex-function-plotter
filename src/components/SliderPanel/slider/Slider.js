@@ -150,7 +150,7 @@ class Slider extends PureComponent {
     render() {
         const {min, max, animationMode, animationSpeed} = this.state;
         return (
-            <div className='slider-base' className={css`
+            <div className={css`
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -162,7 +162,7 @@ class Slider extends PureComponent {
                     speed={animationSpeed}
                     onChangeMode={
                         (mode) => {
-                            this.state.animationMode = mode;
+                            this.state.animationMode = mode; // To avoid race conditions
                             this.setState({animationMode: mode, animationCurrentDirection: 1});
                             this.runAnimationTick();
                         }

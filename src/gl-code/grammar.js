@@ -194,7 +194,7 @@ var grammar = {
     {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$5"]},
     {"name": "baseTrigFunction$string$6", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$6"]},
-    {"name": "hyperbolicTrigFunction", "symbols": ["trigFunction", {"literal":"h"}], "postprocess": (data) => data.join('')},
+    {"name": "hyperbolicTrigFunction", "symbols": ["baseTrigFunction", {"literal":"h"}], "postprocess": (data) => data.join('')},
     {"name": "trigFunction$ebnf$1$string$1", "symbols": [{"literal":"a"}, {"literal":"r"}, {"literal":"c"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "trigFunction$ebnf$1", "symbols": ["trigFunction$ebnf$1$string$1"], "postprocess": id},
     {"name": "trigFunction$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
