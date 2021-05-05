@@ -39,10 +39,8 @@ class ComplexFunction {
 
 // Miscellaneous
 const mul_i = new ComplexFunction('mul_i', 'return vec2(-z.y, z.x);');
-const reciprocal = new ComplexFunction('reciprocal',
-`float magnitude = length(z);
-return cconj(z) / (magnitude * magnitude);`, ['conj']);
-const cconj = new ComplexFunction('cconj', 'return vec2(z.x, -z.y);');
+const reciprocal = new ComplexFunction('reciprocal', 'return cconj(z) / dot(z, z);', ['conj']);
+const cconj = new ComplexFunction('cconj', 'return z * vec2(1.0, -1.0);');
 const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);');
 const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);');
 const csgn = new ComplexFunction('csgn', 'return z/length(z);');
@@ -60,14 +58,14 @@ const ccis = new ComplexFunction('ccis',
 const cexp = new ComplexFunction('cexp',
 `float magnitude = exp(z.x);
 float phase = z.y;
-return vec2(magnitude*cos(phase), magnitude*sin(phase));`);
+return magnitude * vec2(cos(phase), sin(phase));`);
 const clog = new ComplexFunction('clog',
 `float magnitude = log(length(z));
 float phase = atan(z.y, z.x);
 return vec2(magnitude, phase);`);
 const csqrt = new ComplexFunction('csqrt',
 `float magnitude = length(z);
-float phase = atan(z.y, z.x) / 2.0;
+float phase = 0.5 * atan(z.y, z.x);
 return sqrt(magnitude) * vec2(cos(phase), sin(phase));`);
 const csquare = new ComplexFunction('csquare',
 `float magnitude = length(z);
@@ -157,10 +155,9 @@ const cneg = new ComplexFunction('cneg', 'return -z;');
 const cadd = new ComplexFunction('cadd', 'return z+w;', [], 2);
 const csub = new ComplexFunction('csub', 'return z-w;', [], 2);
 const cmul = new ComplexFunction('cmul',
-    'return vec2(z.x*w.x-z.y*w.y, z.x*w.y+z.y*w.x);', [], 2);
+    'return mat2(z, -z.y, z.x) * w;', [], 2);
 const cdiv = new ComplexFunction('cdiv',
-`float magnitude = length(w);
-return cmul(z, cconj(w)) / (magnitude*magnitude);`, ['mul', 'conj'], 2);
+'return cmul(z, reciprocal(w));', ['mul', 'reciprocal'], 2);
 const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));',
     ['exp', 'mul', 'log'], 2);
 
@@ -251,7 +248,7 @@ return cmul(
 
 // Riemann-Siegel Formula
 const ceta_strip = new ComplexFunction('ceta_strip',
-`const int N = 50;
+`const int N = 64;
 
 vec2 zetaA = vec2(0.0, 0.0); // Estimate zeta(z)
 vec2 zetaB = vec2(0.0, 0.0); // Estimate of zeta(1-z)
@@ -326,11 +323,18 @@ const float K = 1.1283791671;
 float sgn = -1.0;
 if (z.x > 0.0) {sgn = 1.0;}
 
+const vec4 coeff = vec4(
+    1.0/12.0,
+    7.0/480.0,
+    5.0/896.0,
+    787.0/276480.0
+);
+
 float series = 1.0;
-series -= k / 12.0;
-series -= k*k * 7.0/480.0;
-series -= k*k*k * 5.0/896.0;
-series -= (k*k)*(k*k) * 787.0/276480.0;
+series -= dot(
+    coeff,
+    vec4(k, k*k, k*k*k, k*k*k*k)
+);
 
 return vec2(K * sgn * sqrt(k) * series, 0.0);
 `
@@ -342,18 +346,20 @@ float q = 4.0*z.x*z.x;
 float a = cos(2.0*z.x*z.y);
 float b = sin(2.0*z.x*z.y);
 
-vec2 series = vec2(0.0, 0.0);
-for (int i = 1; i < 8; i++) {
-    float k = float(i);
-    float e1 = exp(k*z.y)/2.0;
-    float e2 = exp(-k*z.y)/2.0;
+mat2 M = mat2(-z.x*a, z.x*b, 0.5*b, 0.5*a);
 
-    series += 2.0*K*exp(-k*k/4.0)/(k*k + q) * vec2(
-        2.0*z.x * (1.0 - a * (e1 + e2)) + k * b * (e1-e2),
-        2.0*z.x * b * (e1 + e2) + k * a * (e1-e2)
+vec2 series = vec2(0.0, 0.0);
+for (int i = 1; i < 16; i++) {
+    float k = float(i);
+    float e1 = exp(k*z.y);
+    float e2 = exp(-k*z.y);
+
+    series += exp(-k*k/4.0)/(k*k + q) * (
+        vec2(2.0*z.x, 0.0)
+        + M * vec2(e1+e2, k * (e1-e2))
     );
 }
-return rerf(z) + (K/(2.0 * z.x)) * vec2(1.0-a, b) + series;
+return rerf(z) + (K/(2.0 * z.x)) * vec2(1.0-a, b) + 2.0*K*series;
 `,
 ['rerf']
 );
