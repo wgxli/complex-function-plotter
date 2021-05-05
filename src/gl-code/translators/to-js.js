@@ -17,6 +17,7 @@ const fns = {
     div: math.divide,
     real: math.re,
     imag: math.im,
+    step: z => (z.re >= 0) ? 1 : 0,
 
     arcsin: math.asin,
     arccos: math.acos,

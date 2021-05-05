@@ -45,8 +45,13 @@ return cconj(z) / (magnitude * magnitude);`, ['conj']);
 const cconj = new ComplexFunction('cconj', 'return vec2(z.x, -z.y);');
 const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);');
 const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);');
+const csgn = new ComplexFunction('csgn', 'return z/length(z);');
 const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);');
 const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);');
+const cfloor = new ComplexFunction('cfloor', 'return floor(z);');
+const cceil = new ComplexFunction('cceil', 'return ceil(z);');
+const cround = new ComplexFunction('cround', 'return floor(z + vec2(0.5, 0.5));');
+const cstep = new ComplexFunction('cstep', 'return vec2(step(0.0, z.x), 0.0);');
 
 // Exponentials
 const ccis = new ComplexFunction('ccis',
@@ -389,6 +394,7 @@ return raw_dn(zz, tau);`,
 ['invert_tau', 'jacobi_reduce', 'raw_dn'], 2);
 
 // Weierstrass p-function
+// Here e1, e2, e3 are roots of 4z^3 = 1/27.
 const cwp = new ComplexFunction('cwp',
 `float n = floor(z.y/w.y + 0.5);
 vec2 zz = z - n * w;
@@ -431,10 +437,8 @@ return raw_wpp(zz, A, tau);`, [
 ], 2);
 
 // Dixon ellptic functions
-// Here e1, e2, e3 are roots of 4z^3 = 1/27.
-const csm = new ComplexFunction('csm', 'return raw_cm(1.7666387502854499*ONE-z);', ['raw_cm']);
-const ccm = new ComplexFunction('ccm', 'return raw_cm(1e-10 * ONE + z);', ['raw_cm']); // For some reason it runs much faster if you add a tiny number (???)
-const raw_cm = new ComplexFunction('raw_cm', 
+const csm = new ComplexFunction('csm', 'return ccm(1.7666387502854499*ONE-z);', ['cm']);
+const ccm = new ComplexFunction('ccm', 
 `const vec2 A = vec2(0.42644336004913946, 0.42644336004913946);
 const vec2 tau = vec2(-0.5, 0.8660254037844386);
 vec2 u = cmul(z, A);
@@ -452,7 +456,12 @@ var complex_functions = {
     'conj': cconj,
     'abs': cabs,
     'arg': carg,
+    'sgn': csgn,
     'cis': ccis,
+    'floor': cfloor,
+    'ceil': cceil,
+    'round': cround,
+    'step': cstep,
 
     'exp': cexp,
     'log': clog,
@@ -501,7 +510,6 @@ var complex_functions = {
     'wp': cwp,
     'wpp': cwpp,
 
-    raw_cm,
     'sm': csm,
     'cm': ccm,
 };

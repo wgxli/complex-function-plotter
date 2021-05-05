@@ -16,8 +16,6 @@ import {Light as SyntaxHighlighter} from 'react-syntax-highlighter';
 import glslHighlighter from 'react-syntax-highlighter/dist/esm/languages/hljs/glsl';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-import {constants} from '../../gl-code/parse-expression.js';
-
 import './help-text.css';
 
 SyntaxHighlighter.registerLanguage('glsl', glslHighlighter);
@@ -52,7 +50,7 @@ const supportedFunctions = [
     },
     {
         name: 'Constants',
-        entries: Array.from(constants)
+        entries: ['e', 'pi', 'phi', 'tau'],
     },
     {
         name: 'Elliptic',
@@ -70,12 +68,19 @@ const supportedFunctions = [
         ]
     },
     {
-        name: 'Miscellaneous',
+        name: 'Special Functions',
         entries: [
             'sqrt',
             'gamma', 'eta', 'zeta',
-            'abs', 'arg', 'conj', 'cis',
+        ]
+    },
+    {
+        name: 'Miscellaneous',
+        entries: [
+            'abs', 'arg', 'sgn', 'cis',
+            'conj',
             'real', 'imag',
+            'floor', 'ceil', 'round', 'step',
         ]
     }
 ];

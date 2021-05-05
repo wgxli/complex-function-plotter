@@ -1,14 +1,10 @@
 import {complex_functions} from './complex-functions.js';
-import {functions, constants} from './parse-expression.js';
-
 
 const restrictedFunctions = [];
 
 restrictedFunctions.push(...Object.keys(complex_functions));
 restrictedFunctions.push(...Object.values(complex_functions).map(f => f.name));
-restrictedFunctions.push(...functions);
-restrictedFunctions.push(...constants);
-restrictedFunctions.push('z', 'i');
+restrictedFunctions.push('z', 'i', 'e', 'pi', 'tau', 'phi');
 
 /* GLSL Keywords */
 restrictedFunctions.push(

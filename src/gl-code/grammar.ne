@@ -73,9 +73,14 @@ unaryFunction ->
    | "zeta"
    | "abs"
    | "arg"
+   | "sgn"
    | "conj"
    | "real"
    | "imag"
+   | "floor"
+   | "ceil"
+   | "round"
+   | "step"
    | "re" {% () => ['real'] %}
    | "im" {% () => ['imag'] %}
    | "sm"
