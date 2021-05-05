@@ -4,6 +4,21 @@ import {isNil} from 'lodash';
 
 import {integrateReal} from './util';
 
+// Kahan summation algorithm
+function kahanSum(list) {
+    let sum = 0;
+    let c = 0;
+
+    for (let entry of list) {
+        const y = entry - c;
+        const t = sum + y;
+        c = (t - sum) - y;
+        sum = t;
+    }
+
+    return sum;
+}
+
 
 class Circle extends Strategy {
     center = null;
@@ -50,17 +65,16 @@ class Circle extends Strategy {
         // Divide circle into arcs and integrate along each
         const N = 32;
         const scaleFactor = 2 * Math.PI / N;
-        const result = [0, 0];
+        const summands = [[], []];
         for (let i=0; i < N; i++) {
             const [u, v] = integrateReal(
                 i * scaleFactor, (i + 1) * scaleFactor, integrand
             );
-
-            result[0] += u;
-            result[1] += v;
+            summands[0].push(u);
+            summands[1].push(v);
         }
 
-        return result;
+        return [kahanSum(summands[0]), kahanSum(summands[1])];
     }
 }
 

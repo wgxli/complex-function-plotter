@@ -72,6 +72,7 @@ const supportedFunctions = [
         entries: [
             'sqrt',
             'gamma', 'eta', 'zeta',
+            'erf',
         ]
     },
     {

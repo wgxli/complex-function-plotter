@@ -101,6 +101,26 @@ function eta_left(w) {
 const eta = z => z.re < 0 ? eta_left(z) : eta_right(z);
 const zeta = z => cdiv(eta(z), csub(1, cexp(cmul(Math.LN2, csub(1, z)))));
 
+// https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real-and-imaginary-part
+function erf(z) {
+    const K = math.exp(-z.re*z.re)/Math.PI;
+    const q = 4*z.re*z.re;
+    const a = math.cos(2*z.re*z.im);
+    const b = math.sin(2*z.re*z.im);
+
+    const series = [math.erf(z.re), cmul(K/(2*z.re), math.complex(1-a, b))];
+    for (let k = 1; k < 16; k++) {
+        const e1 = math.exp(k*z.im)/2;
+        const e2 = math.exp(-k*z.im)/2;
+        const multiplier = 2*K*math.exp(-k*k/4)/(k*k+q);
+        const re = multiplier * (2*z.re*(1-a*(e1+e2)) + k*b*(e1-e2));
+        const im = multiplier * (2*z.re*b*(e1+e2) + k*a*(e1-e2));
+        series.push(math.complex(re, im));
+    }
+
+    return math.sum(series);
+}
+
 /***** Elliptic Functions *****/
 function theta00(z, tau) {
     let result = 1;
@@ -240,9 +260,9 @@ function sm(z) {
 
 
 export {
-    zeta, eta, gamma,
+    zeta, eta, gamma, erf,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
     wp, wpp,
-    sm, cm
+    sm, cm,
 };

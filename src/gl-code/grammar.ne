@@ -71,6 +71,7 @@ unaryFunction ->
    | "gamma"
    | "eta"
    | "zeta"
+   | "erf"
    | "abs"
    | "arg"
    | "sgn"

@@ -318,6 +318,46 @@ const czeta = new ComplexFunction('czeta',
 'return cdiv(ceta(z), ONE - cexp(LN2 * (ONE - z)));', ['div', 'eta', 'exp']);
 
 
+/***** Special Functions *****/
+// Erf - https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real-and-imaginary-part
+const rerf = new ComplexFunction('rerf',
+`float k = 1.0 - exp(-z.x*z.x);
+const float K = 1.1283791671;
+float sgn = -1.0;
+if (z.x > 0.0) {sgn = 1.0;}
+
+float series = 1.0;
+series -= k / 12.0;
+series -= k*k * 7.0/480.0;
+series -= k*k*k * 5.0/896.0;
+series -= (k*k)*(k*k) * 787.0/276480.0;
+
+return vec2(K * sgn * sqrt(k) * series, 0.0);
+`
+);
+const cerf = new ComplexFunction('cerf',
+`
+float K = exp(-z.x*z.x)/PI;
+float q = 4.0*z.x*z.x;
+float a = cos(2.0*z.x*z.y);
+float b = sin(2.0*z.x*z.y);
+
+vec2 series = vec2(0.0, 0.0);
+for (int i = 1; i < 8; i++) {
+    float k = float(i);
+    float e1 = exp(k*z.y)/2.0;
+    float e2 = exp(-k*z.y)/2.0;
+
+    series += 2.0*K*exp(-k*k/4.0)/(k*k + q) * vec2(
+        2.0*z.x * (1.0 - a * (e1 + e2)) + k * b * (e1-e2),
+        2.0*z.x * b * (e1 + e2) + k * a * (e1-e2)
+    );
+}
+return rerf(z) + (K/(2.0 * z.x)) * vec2(1.0-a, b) + series;
+`,
+['rerf']
+);
+
 
 /***** Elliptic Functions *****/
 // Jacobi Theta functions
@@ -492,8 +532,10 @@ var complex_functions = {
 
     ceta_left, ceta_strip, ceta_right,
     zeta_character,
+    rerf,
     'eta': ceta,
     'zeta': czeta,
+    'erf': cerf,
 
     invert_tau, jacobi_reduce, theta000,
     'theta00': ctheta00,
