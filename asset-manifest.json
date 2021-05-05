@@ -1,16 +1,16 @@
 {
-  "main.css": "/complex-function-plotter/static/css/main.a0309ec1.chunk.css",
-  "main.js": "/complex-function-plotter/static/js/main.be9e21ca.chunk.js",
-  "main.js.map": "/complex-function-plotter/static/js/main.be9e21ca.chunk.js.map",
+  "main.css": "/complex-function-plotter/static/css/main.21d80dd8.chunk.css",
+  "main.js": "/complex-function-plotter/static/js/main.a922a618.chunk.js",
+  "main.js.map": "/complex-function-plotter/static/js/main.a922a618.chunk.js.map",
   "runtime~main.js": "/complex-function-plotter/static/js/runtime~main.9bdd35e2.js",
   "runtime~main.js.map": "/complex-function-plotter/static/js/runtime~main.9bdd35e2.js.map",
   "static/css/2.d2999846.chunk.css": "/complex-function-plotter/static/css/2.d2999846.chunk.css",
-  "static/js/2.48e14c3a.chunk.js": "/complex-function-plotter/static/js/2.48e14c3a.chunk.js",
-  "static/js/2.48e14c3a.chunk.js.map": "/complex-function-plotter/static/js/2.48e14c3a.chunk.js.map",
+  "static/js/2.eb6440ad.chunk.js": "/complex-function-plotter/static/js/2.eb6440ad.chunk.js",
+  "static/js/2.eb6440ad.chunk.js.map": "/complex-function-plotter/static/js/2.eb6440ad.chunk.js.map",
   "index.html": "/complex-function-plotter/index.html",
-  "precache-manifest.3408f6dd26973138bf722cbe9d5e891c.js": "/complex-function-plotter/precache-manifest.3408f6dd26973138bf722cbe9d5e891c.js",
+  "precache-manifest.b05a2d4a9c4607de93394f44c74ebc10.js": "/complex-function-plotter/precache-manifest.b05a2d4a9c4607de93394f44c74ebc10.js",
   "service-worker.js": "/complex-function-plotter/service-worker.js",
   "static/css/2.d2999846.chunk.css.map": "/complex-function-plotter/static/css/2.d2999846.chunk.css.map",
-  "static/css/main.a0309ec1.chunk.css.map": "/complex-function-plotter/static/css/main.a0309ec1.chunk.css.map",
+  "static/css/main.21d80dd8.chunk.css.map": "/complex-function-plotter/static/css/main.21d80dd8.chunk.css.map",
   "static/media/katex.min.css": "/complex-function-plotter/static/media/KaTeX_Typewriter-Regular.f43e8696.woff2"
 }
