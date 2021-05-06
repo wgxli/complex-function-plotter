@@ -353,7 +353,12 @@ vec2 CS = ONE - TWO_SQRTPI * (0.5/r) * cmul(W, cmul(
     vec2(0.5/(r*r), -1.0)
 ));
 
-vec2 I0 = vec2(2.0, 1.0/(r*r))/r;
+const vec4 re_coeff = vec4(2.0, -1.5, 13.125, -324.84375);
+const vec4 im_coeff = vec4(1.0, -3.75, 59.0625, -2111.484375);
+float r4 = r*r*r*r;
+vec4 r_power = vec4(1.0, 1.0/r4, 1.0/(r4*r4), 1.0/(r4*r4*r4))/r;
+
+vec2 I0 = vec2(dot(r_power, re_coeff), dot(r_power, im_coeff)/(r*r));
 vec2 I1 = s/(r*r) * vec2(-2.0*s/r - 3.0/(r*r), 2.0 - 2.0*s*s/(r*r));
 vec2 integral = cmul(
     cexp(s * vec2(2.0*r, s)),

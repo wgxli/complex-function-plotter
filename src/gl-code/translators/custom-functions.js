@@ -101,15 +101,45 @@ function eta_left(w) {
 const eta = z => z.re < 0 ? eta_left(z) : eta_right(z);
 const zeta = z => cdiv(eta(z), csub(1, cexp(cmul(Math.LN2, csub(1, z)))));
 
-// https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real-and-imaginary-part
+// Small z: https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real    -and-imaginary-part
+// Large z: Custom expansion with Fresnel integral (centered around y=x).
+// See https://samuelj.li/blog/2021-05-05-erf-expansion
+function erf_large(z) {
+    if (z.re < 0) {return erf_large(z.neg()).neg();}
+    if (z.im < 0) {return math.conj(erf_large(math.conj(z)));}
+    const TWO_SQRTPI = 1.1283791671;
+    const W = math.complex(0.70710678118, 0.70710678118);
+    const W_BAR = math.complex(0.70710678118, -0.70710678118);
+    const rs = cmul(z, W_BAR);
+    const r = rs.re;
+    const s = rs.im;
+
+    const CS = csub(1, cmul(TWO_SQRTPI * (0.5/r), cmul(W, cmul(
+        math.complex(Math.cos(r*r), -Math.sin(r*r)),
+        math.complex(1/(2*r*r), -1)
+    ))));
+
+    const I0 = math.complex(2/r, 1/(r*r*r));
+    const I1 = cmul(s/(r*r), math.complex(-2*s/r - 3/(r*r), 2 - 2*s*s/(r*r)));
+    const integral = csub(cmul(
+        cexp(math.complex(2*r*s, s*s)),
+        math.add(I1, I0)
+    ), I0);
+    return cadd(CS, cmul(TWO_SQRTPI/4.0, cmul(W, cmul(math.complex(Math.sin(r*r), Math.cos(r*r)), integral))));
+}
+
 function erf(z) {
+    if (Math.abs(z.im) > 8) {
+        return erf_large(z);
+    }
+
     const K = math.exp(-z.re*z.re)/Math.PI;
     const q = 4*z.re*z.re;
     const a = math.cos(2*z.re*z.im);
     const b = math.sin(2*z.re*z.im);
 
     const series = [math.erf(z.re), cmul(K/(2*z.re), math.complex(1-a, b))];
-    for (let k = 1; k < 16; k++) {
+    for (let k = 1; k < 32; k++) {
         const kk = k*k/4 + z.re*z.re;
         const e1 = math.exp(k*z.im - kk)/2;
         const e2 = math.exp(-k*z.im - kk)/2;
