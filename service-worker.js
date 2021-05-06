@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/complex-function-plotter/precache-manifest.c14d58754281fd7b03116c28365ded21.js"
+  "/complex-function-plotter/precache-manifest.a805c42437578706af5a858c62cc36b2.js"
 );
 
 workbox.clientsClaim();
