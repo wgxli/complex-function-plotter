@@ -316,12 +316,13 @@ const czeta = new ComplexFunction('czeta',
 
 
 /***** Special Functions *****/
-// Erf - https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real-and-imaginary-part
+// Erf
+// Small z: https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real-and-imaginary-part
+// Large z: Custom expansion with Fresnel integral (centered around y=x).
+// See https://samuelj.li/blog/2021-05-05-erf-expansion
 const rerf = new ComplexFunction('rerf',
 `float k = 1.0 - exp(-z.x*z.x);
 const float K = 1.1283791671;
-float sgn = -1.0;
-if (z.x > 0.0) {sgn = 1.0;}
 
 const vec4 coeff = vec4(
     1.0/12.0,
@@ -336,10 +337,31 @@ series -= dot(
     vec4(k, k*k, k*k*k, k*k*k*k)
 );
 
-return vec2(K * sgn * sqrt(k) * series, 0.0);
+return vec2(K * sqrt(k) * series, 0.0);
 `
 );
-const cerf = new ComplexFunction('cerf',
+const cerf_large = new ComplexFunction('cerf_large',
+`const float TWO_SQRTPI = 1.1283791671;
+const vec2 W = 0.70710678118 * vec2(1.0, 1.0);
+const vec2 W_BAR = W * vec2(1.0, -1.0);
+vec2 rs = cmul(z, W_BAR);
+float r = rs.x;
+float s = rs.y;
+
+vec2 CS = ONE - TWO_SQRTPI * (0.5/r) * cmul(W, cmul(
+    vec2(cos(r*r), -sin(r*r)),
+    vec2(0.5/(r*r), -1.0)
+));
+
+vec2 I0 = vec2(2.0, 1.0/(r*r))/r;
+vec2 I1 = s/(r*r) * vec2(-2.0*s/r - 3.0/(r*r), 2.0 - 2.0*s*s/(r*r));
+vec2 integral = cmul(
+    cexp(s * vec2(2.0*r, s)),
+    I1 + I0 
+) - I0;
+return CS + (TWO_SQRTPI/4.0) * cmul(W, cmul(vec2(sin(r*r), cos(r*r)), integral));
+`, ['mul', 'exp'])
+const cerf_small = new ComplexFunction('cerf_small',
 `
 float K = exp(-z.x*z.x)/PI;
 float q = 4.0*z.x*z.x;
@@ -349,20 +371,36 @@ float b = sin(2.0*z.x*z.y);
 mat2 M = mat2(-z.x*a, z.x*b, 0.5*b, 0.5*a);
 
 vec2 series = vec2(0.0, 0.0);
-for (int i = 1; i < 16; i++) {
+for (int i = 1; i < 32; i++) {
     float k = float(i);
-    float e1 = exp(k*z.y);
-    float e2 = exp(-k*z.y);
+    float kk = k*k/4.0 + z.x*z.x;
+    float e1 = exp(k*z.y - kk);
+    float e2 = exp(-k*z.y - kk);
 
-    series += exp(-k*k/4.0)/(k*k + q) * (
-        vec2(2.0*z.x, 0.0)
+    series += 1.0/(k*k + q) * (
+        vec2(2.0*z.x * exp(-kk), 0.0)
         + M * vec2(e1+e2, k * (e1-e2))
     );
 }
-return rerf(z) + (K/(2.0 * z.x)) * vec2(1.0-a, b) + 2.0*K*series;
+return rerf(z) + (K/(2.0 * z.x)) * vec2(1.0-a, b) + 2.0/PI*series;
 `,
 ['rerf']
 );
+const cerf = new ComplexFunction('cerf',
+`
+vec2 result;
+
+if (abs(z.y) > 8.0) {
+    result = cerf_large(abs(z));
+} else {
+    result = cerf_small(abs(z));
+}
+
+if (z.y < 0.0) {result.y *= -1.0;}
+if (z.x < 0.0) {result.x *= -1.0;}
+
+return result;
+`, ['cerf_small', 'cerf_large'])
 
 
 /***** Elliptic Functions *****/
@@ -538,7 +576,7 @@ var complex_functions = {
 
     ceta_left, ceta_strip, ceta_right,
     zeta_character,
-    rerf,
+    rerf, cerf_small, cerf_large,
     'eta': ceta,
     'zeta': czeta,
     'erf': cerf,

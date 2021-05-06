@@ -110,10 +110,11 @@ function erf(z) {
 
     const series = [math.erf(z.re), cmul(K/(2*z.re), math.complex(1-a, b))];
     for (let k = 1; k < 16; k++) {
-        const e1 = math.exp(k*z.im)/2;
-        const e2 = math.exp(-k*z.im)/2;
-        const multiplier = 2*K*math.exp(-k*k/4)/(k*k+q);
-        const re = multiplier * (2*z.re*(1-a*(e1+e2)) + k*b*(e1-e2));
+        const kk = k*k/4 + z.re*z.re;
+        const e1 = math.exp(k*z.im - kk)/2;
+        const e2 = math.exp(-k*z.im - kk)/2;
+        const multiplier = 1/(k*k+q);
+        const re = multiplier * (2*z.re*(math.exp(-kk)-a*(e1+e2)) + k*b*(e1-e2));
         const im = multiplier * (2*z.re*b*(e1+e2) + k*a*(e1-e2));
         series.push(math.complex(re, im));
     }
