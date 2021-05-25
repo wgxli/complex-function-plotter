@@ -302,7 +302,7 @@ class HelpText extends React.Component {
                     <li>Thanks to Tim N. for helping improve the custom function documentation for variable-length loops.</li>
                     <li>Thanks to Liu Yi (Ireis, CAS) for requesting the implementation of elliptic functions.</li>
                     <li>Thanks to Jason Poulin for requesting variable animation support and other improvements.</li>
-                    <li>Thanks to [Anonymous] for requesting the coordinate axis overlay.</li>
+                    <li>Thanks to Marius Sarbach for requesting the coordinate axis overlay.</li>
                 </ul>
 
                 <Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography><br/>
