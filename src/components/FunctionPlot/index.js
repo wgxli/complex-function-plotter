@@ -66,15 +66,12 @@ class FunctionPlot extends PureComponent {
     }
 
     componentDidUpdate() {
-        const {position, mouseDown} = this.state;
-
-        // Only do a full update if something other than mouse position/state has changed
-        if (this.lastPosition === position && this.lastMouseDown === mouseDown) {
+        const {expression} = this.props;
+        if (this.lastExpression !== expression) {
             this.compilePlot();
         }
-
-        this.lastPosition = position;
-        this.lastMouseDown = mouseDown;
+        this.lastExpression = expression;
+            
     }
 
     getPosition(mouseEvent) {
@@ -186,7 +183,9 @@ class FunctionPlot extends PureComponent {
 
     initializeWebGL() {
         const canvas = this.refs.canvas;
+        const axes = this.refs.axes;
         this.gl = canvas.getContext('webgl');
+        this.axes = axes.getContext('2d');
 
         if (this.gl === null) {
             console.error('Unable to initialize WebGL.');
@@ -198,12 +197,17 @@ class FunctionPlot extends PureComponent {
         const {expression, variables} = this.props;
 
         const canvas = this.refs.canvas;
+        const axes = this.refs.axes;
         let dpr = window.devicePixelRatio;
 
         // Resize canvas and WebGL viewport
         canvas.width = canvas.offsetWidth * dpr;
         canvas.height = canvas.offsetHeight * dpr;
 
+        axes.width = axes.offsetWidth * dpr;
+        axes.height = axes.offsetHeight * dpr;
+
+        // Record canvas size and update GL viewport
         canvasSize = [canvas.offsetWidth, canvas.offsetHeight];
         this.gl.viewport(0, 0, canvas.width, canvas.height);
 
@@ -232,7 +236,7 @@ class FunctionPlot extends PureComponent {
         // Debounce
         const now = +new Date();
         if (this.lastUpdate === null || now - this.lastUpdate > 1e3 / FPS_LIMIT) {
-            drawScene(this.gl, variableAssignments);
+            drawScene(this.gl, variableAssignments, this.axes);
             this.lastUpdate = now;
         }
     }
@@ -266,8 +270,13 @@ class FunctionPlot extends PureComponent {
 
                     onWheel={(event) => this.handleZoom(event)}
 
-                    className='main-plot'
+                    className='full-canvas main-plot'
                 />
+                <canvas
+                    ref='axes'
+                    className='full-canvas axes'
+                />
+
                 {isFinite(x) && isFinite(y) ?
                     <CoordinateOverlay x={x} y={y} mapping={mapping}/>
                     : null}

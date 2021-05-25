@@ -17,35 +17,33 @@ class ControlPanel extends React.PureComponent {
   }
 
   render() {
-    return (
-      <AppBar id='app-bar'>
-	<Toolbar disableGutters>
-	  <IconButton
-	    onClick={this.props.onMenuButton}
-	  >
-	    <MenuIcon/>
-	  </IconButton>
-	  <div id='function-input'>
-	    <TextField
-	      id='function-input'
-	      placeholder='Enter a complex function of z'
-	      value={this.props.value}
-	      onChange={(event) => this.handleTextChange(event)}
-	      error={this.props.error}
-	      autoFocus
-	      fullWidth
-	    />
-	  </div>
-	  <div id='help-button'>
-	    <Button
-	      onClick={this.props.onHelpButton}
-	    >
-	      Help
-	    </Button>
-	  </div>
-	</Toolbar>
-      </AppBar>
-    );
+      const {disabled, onMenuButton, onHelpButton, error, value} = this.props;
+      return (
+        <AppBar id='app-bar'>
+          <Toolbar disableGutters>
+            <IconButton
+              onClick={onMenuButton}
+            >
+              <MenuIcon/>
+            </IconButton>
+            <div id='function-input'>
+              <TextField
+                  id='function-input'
+                  placeholder='Enter a complex function of z'
+                  value={value}
+                  onChange={(event) => this.handleTextChange(event)}
+                  error={error}
+                  autoFocus
+                  fullWidth
+                  disabled={disabled}
+              />
+            </div>
+            <div id='help-button'>
+                <Button onClick={onHelpButton}>Help</Button>
+            </div>
+          </Toolbar>
+        </AppBar>
+      );
   }
 }
 

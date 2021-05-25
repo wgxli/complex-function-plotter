@@ -52,6 +52,7 @@ class App extends React.Component {
         expressionText: 'z',
         expression: ['variable', 'z'],
         expressionError: false,
+        typingTimer: null,
 
         customShader: defaultShader,
         shaderError: false,
@@ -65,10 +66,14 @@ class App extends React.Component {
             log_scale: 5,
             center_x: 0,
             center_y: 0,
+
             t: 0.3,
+
             enable_checkerboard: 1,
             invert_gradient: 0,
             continuous_gradient: 0,
+            enable_axes: 0,
+
             custom_function: 0,
         }
     }
@@ -128,7 +133,8 @@ class App extends React.Component {
     handleOptionToggle(name) {
         const variables = this.state.variables;
         variables[name] = (variables[name] < 0.5) ? 1 : 0;
-        this.setState({variables: variables});
+        this.handleVariableUpdate({[name]: variables[name]});
+        this.setState({variables});
     }
 
     setErrorMessage(message) {
@@ -162,15 +168,13 @@ class App extends React.Component {
             '#' + encodeURIComponent(text)
         );
 
-        const expression = parseExpression(text.trim());
-
         this.setState({
             expressionText: text,
-            expression,
             integrationStrategy: null,
         });
 
         if (fromHash) {
+            const expression = parseExpression(text.trim());
             const variables = extractVariables(expression);
             const newVariables = {...this.state.variables};
             
@@ -178,8 +182,17 @@ class App extends React.Component {
                 newVariables[entry] = 0.5;
             }
 
-            this.setState({variables: newVariables});
+            this.setState({expression, variables: newVariables});
+        } else {
+            clearTimeout(this.typingTimer);
+            this.typingTimer = setTimeout(this.finalizeExpression.bind(this), 100);
         }
+    }
+
+    finalizeExpression() {
+        const {expressionText} = this.state;
+        const expression = parseExpression(expressionText.trim());
+        this.setState({expression});
     }
 
     setCustomShader(text) {
@@ -227,6 +240,7 @@ class App extends React.Component {
                         onChange={this.setExpression.bind(this)}
                         value={expressionText}
                         error={expressionError}
+                        disabled={useCustomShader}
                     />
                     <SidePanel
                         className='control-panel'
@@ -252,6 +266,7 @@ class App extends React.Component {
                                 enable_checkerboard: 'Enable Checkerboard',
                                 invert_gradient: 'Invert Gradient',
                                 continuous_gradient: 'Continuous Gradient',
+                                enable_axes: 'Enable Axes',
                             }}
                             onToggle={this.handleOptionToggle.bind(this)}
                             variables={variables}

@@ -12,8 +12,12 @@ import './slider-panel.css';
 
 const hiddenVariables = new Set([
   'log_scale', 'center_x', 'center_y',
+
   'enable_checkerboard',
-  'invert_gradient', 'continuous_gradient',
+  'invert_gradient',
+  'continuous_gradient',
+  'enable_axes',
+
   'custom_function'
 ]);
 

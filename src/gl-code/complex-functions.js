@@ -248,7 +248,7 @@ return cmul(
 
 // Riemann-Siegel Formula
 const ceta_strip = new ComplexFunction('ceta_strip',
-`const int N = 64;
+`const int N = ${window.innerWidth < 700 ? 32 : 64};
 
 vec2 zetaA = vec2(0.0, 0.0); // Estimate zeta(z)
 vec2 zetaB = vec2(0.0, 0.0); // Estimate of zeta(1-z)

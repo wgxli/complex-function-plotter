@@ -55,10 +55,7 @@ function initializeScene(gl, expression, customShader, variableNames) {
   return variableLocations;
 }
 
-function drawScene(gl, variables) {
-//  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-//  gl.clear(gl.COLOR_BUFFER_BIT);
-
+function drawScene(gl, variables, axis_ctx) {
   // Set variable values
   for (const [location, value] of Object.values(variables)) {
     gl.uniform2f(location, value, 0);
@@ -66,6 +63,132 @@ function drawScene(gl, variables) {
 
   // Draw scene
   gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+  // Draw coordinate axes
+  drawAxes(axis_ctx, variables);
+}
+
+function drawAxes(ctx, variables) {
+    // Clear canvas
+    const dpr = window.devicePixelRatio;
+    const [width, height] = [window.innerWidth * dpr, window.innerHeight * dpr];
+    ctx.clearRect(0, 0, width, height);
+    if (variables.enable_axes[1] < 0.5) {return;}
+
+    // Compute display scales
+    const scale = Math.exp(variables.log_scale[1]) * dpr;
+    
+    const rawLogLabelScale = 2.2 - variables.log_scale[1] / Math.log(10);
+    let logLabelScale = Math.round(rawLogLabelScale);
+    let labelScale = Math.pow(10, logLabelScale);
+
+    if (logLabelScale - rawLogLabelScale > 0.2) {
+        labelScale /= 5;
+        logLabelScale--;
+    } else if (logLabelScale - rawLogLabelScale > 0) {
+        labelScale /= 2;
+        logLabelScale--;
+    }
+
+    // Compute origin location in screen space
+    const [x0, y0] = [
+        width/2 - scale*variables.center_x[1],
+        height/2 + scale*variables.center_y[1],
+    ];
+
+    // Compute window bounds
+    const [x_min, x_max] = [-x0/scale, (width - x0)/scale];
+    const [y_min, y_max] = [(y0-height)/scale, y0/scale];
+
+
+    // Utility functions
+    function horizontalLine(y) {
+        const yy = Math.round(y0 - scale*y);
+        ctx.moveTo(0, yy);
+        ctx.lineTo(width, yy);
+    }
+
+    function verticalLine(x, lineWidth) {
+        const xx = Math.round(x0 + scale*x);
+        ctx.moveTo(xx, 0);
+        ctx.lineTo(xx, height);
+    }
+
+    function xLabel(x) {
+        const xx = x0 + scale * x;
+        if (xx > width - 30*dpr || xx < 30*dpr) {return;}
+
+        const dy = (y0 < height/3) ? 22 : -10;
+        const y = Math.min(Math.max(y0 + dy*dpr, 90 * dpr), height-20*dpr);
+
+        let label = x.toFixed(Math.max(0, -logLabelScale)).replace('-', '−');
+        const textWidth = ctx.measureText(label).width + 6 * dpr;
+
+        ctx.textAlign = 'center'
+        ctx.clearRect(xx - textWidth/2, y - 18*dpr, textWidth, 24*dpr);
+        ctx.strokeText(label, xx, y);
+        ctx.fillText(label, xx, y);
+    }
+
+    function yLabel(y) {
+        const yy = y0 - scale * y + 6 * dpr;
+        if (yy > height - 50*dpr || yy < 100*dpr) {return;}
+
+        const alignLeft = (x0 < 2*width/3);
+        const dx = alignLeft ? 10: -10;
+        ctx.textAlign = alignLeft ? 'left' : 'right';
+
+        const x = Math.min(Math.max(x0 + dx*dpr, 20 * dpr), width -20*dpr);
+
+        let label = y.toFixed(Math.max(0, -logLabelScale)).replace('-', '−');
+        if (label === '1') {label = '';}
+        if (label === '−1') {label = '−';}
+        label += ' i';
+
+        const textWidth = ctx.measureText(label).width + 6 * dpr;
+        ctx.clearRect(x - (alignLeft ? 3*dpr : textWidth - 3*dpr), yy - 18*dpr, textWidth, 24*dpr);
+        ctx.strokeText(label, x, yy);
+        ctx.fillText(label, x, yy);
+    }
+
+
+    // Draw gridlines
+    ctx.globalAlpha = 0.8;
+    ctx.strokeStyle= '#ffffff';
+
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = Math.ceil(x_min/labelScale); i < x_max/labelScale; i++) {
+        if (i === 0) {continue;}
+        verticalLine(i * labelScale);
+    }
+    for (let i = Math.ceil(y_min/labelScale); i < y_max/labelScale; i++) {
+        if (i === 0) {continue;}
+        horizontalLine(i * labelScale);
+    }
+    ctx.stroke();
+
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    verticalLine(0);
+    horizontalLine(0);
+    ctx.stroke();
+
+    // Draw labels
+    ctx.font = `${20 * dpr}px Computer Modern Serif`;
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#444444';
+    for (let i = Math.ceil(x_min/labelScale); i < x_max/labelScale; i++) {
+        if (i === 0) {continue;}
+        xLabel(i * labelScale);
+    }
+    for (let i = Math.ceil(y_min/labelScale); i < y_max/labelScale; i++) {
+        if (i === 0) {continue;}
+        yLabel(i * labelScale);
+    }
 }
 
 export {initializeScene, drawScene};

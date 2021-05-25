@@ -4,9 +4,9 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -112,10 +112,14 @@ const EXAMPLES = {
 };
 
 
-class HelpText extends React.PureComponent {
+class HelpText extends React.Component {
     constructor(props) {
         super(props);
         this.classes = props.classes;
+    }
+
+    shouldComponentUpdate() {
+        return false;
     }
 
     renderChips(entries) {
@@ -226,19 +230,21 @@ class HelpText extends React.PureComponent {
 
                     <h3>Continuous Gradient</h3>
                     <p>Use a continuous magnitude gradient rather than the “stepped” default. Reduces the range of visually discernible magnitudes, but removes shading artifacts in certain situations.</p>
+                    <h3>Enable Axes</h3>
+                    <p>Overlay coordinate axes and gridlines on the plot. May decrease performance on some devices.</p>
                 </div>
 
                 <h2>Tips</h2>
                 <p>To share a graph, just copy and paste the URL! The address automatically changes to reflect the plotted expression.</p>
 
                 <h2>Advanced Features</h2>
-                <ExpansionPanel style={{margin: '0 -5px'}}>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                <Accordion style={{margin: '0 -5px'}}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                         <Typography variant='caption'>
                             Please read thoroughly iff you are using advanced options.
                         </Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                         <div>
                             <h3>Custom Functions</h3>
                             <p>This option can be found under the “Advanced Options” heading in the left pane. Overrides the main expression bar, allowing you to code your own function.</p>
@@ -282,8 +288,8 @@ class HelpText extends React.PureComponent {
                             <h3>Obligatory Warning</h3>
                             <p>This is an advanced feature — you may break things! If anything freezes or crashes, a quick reload should resolve the issue (save your code first)!</p>
                         </div>
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
+                    </AccordionDetails>
+                </Accordion>
 
                 <h2>Citations</h2>
                 <p>If you use this tool to produce images for a publication, I would greatly appreciate a citation! Something along the lines of:</p>
@@ -296,6 +302,7 @@ class HelpText extends React.PureComponent {
                     <li>Thanks to Tim N. for helping improve the custom function documentation for variable-length loops.</li>
                     <li>Thanks to Liu Yi (Ireis, CAS) for requesting the implementation of elliptic functions.</li>
                     <li>Thanks to Jason Poulin for requesting variable animation support and other improvements.</li>
+                    <li>Thanks to [Anonymous] for requesting the coordinate axis overlay.</li>
                 </ul>
 
                 <Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography><br/>
