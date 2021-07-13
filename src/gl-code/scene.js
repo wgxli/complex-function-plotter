@@ -148,8 +148,13 @@ function drawAxes(ctx, variables) {
         ctx.font = `${20 * dpr}px Computer Modern Serif`;
         const textWidth = ctx.measureText(label).width;
 
-        const clearWidth = textWidth + clearWidth + 2;
-        ctx.clearRect(x - (alignLeft ? 3*dpr : clearWidth - 3*dpr), yy - 18*dpr, clearWidth, 24*dpr);
+        const clearWidth = textWidth + iWidth + 8*dpr;
+        ctx.clearRect(
+            x - (alignLeft ? 3*dpr : clearWidth - 4*dpr),
+            yy - 18*dpr,
+            clearWidth,
+            24*dpr
+        );
 
         const textOffset = alignLeft ? 0 : -iWidth - dpr;
         ctx.strokeText(label, x + textOffset, yy);
