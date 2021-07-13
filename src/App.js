@@ -72,7 +72,7 @@ class App extends React.Component {
             enable_checkerboard: 1,
             invert_gradient: 0,
             continuous_gradient: 0,
-            enable_axes: 0,
+            enable_axes: 1,
 
             custom_function: 0,
         }
@@ -154,7 +154,7 @@ class App extends React.Component {
     handleHashChange() {
         const hash = window.location.hash;
         if (hash === '') {
-            return;
+            this.setExpression('z', true);
         } else {
             this.setExpression(decodeURIComponent(hash.slice(1)), true);
         }

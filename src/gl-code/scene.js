@@ -78,7 +78,8 @@ function drawAxes(ctx, variables) {
     // Compute display scales
     const scale = Math.exp(variables.log_scale[1]) * dpr;
     
-    const rawLogLabelScale = 2.2 - variables.log_scale[1] / Math.log(10);
+    let rawLogLabelScale = 2.3 - variables.log_scale[1] / Math.log(10);
+    rawLogLabelScale += 3e-2 * Math.abs(rawLogLabelScale); // Make room for long labels
     let logLabelScale = Math.round(rawLogLabelScale);
     let labelScale = Math.pow(10, logLabelScale);
 
@@ -130,7 +131,7 @@ function drawAxes(ctx, variables) {
         ctx.fillText(label, xx, y);
     }
 
-    function yLabel(y) {
+    function yLabel(y, iWidth) {
         const yy = y0 - scale * y + 6 * dpr;
         if (yy > height - 50*dpr || yy < 100*dpr) {return;}
 
@@ -143,12 +144,21 @@ function drawAxes(ctx, variables) {
         let label = y.toFixed(Math.max(0, -logLabelScale)).replace('-', '−');
         if (label === '1') {label = '';}
         if (label === '−1') {label = '−';}
-        label += ' i';
 
-        const textWidth = ctx.measureText(label).width + 6 * dpr;
-        ctx.clearRect(x - (alignLeft ? 3*dpr : textWidth - 3*dpr), yy - 18*dpr, textWidth, 24*dpr);
-        ctx.strokeText(label, x, yy);
-        ctx.fillText(label, x, yy);
+        ctx.font = `${20 * dpr}px Computer Modern Serif`;
+        const textWidth = ctx.measureText(label).width;
+
+        const clearWidth = textWidth + clearWidth + 2;
+        ctx.clearRect(x - (alignLeft ? 3*dpr : clearWidth - 3*dpr), yy - 18*dpr, clearWidth, 24*dpr);
+
+        const textOffset = alignLeft ? 0 : -iWidth - dpr;
+        ctx.strokeText(label, x + textOffset, yy);
+        ctx.fillText(label, x + textOffset, yy);
+
+        ctx.font = `italic ${20 * dpr}px Computer Modern Serif`;
+        const iOffset = alignLeft ? textWidth + dpr : 0;
+        ctx.strokeText('i', x + iOffset, yy);
+        ctx.fillText('i', x + iOffset, yy);
     }
 
 
@@ -168,7 +178,7 @@ function drawAxes(ctx, variables) {
     }
     ctx.stroke();
 
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     verticalLine(0);
     horizontalLine(0);
@@ -185,9 +195,13 @@ function drawAxes(ctx, variables) {
         if (i === 0) {continue;}
         xLabel(i * labelScale);
     }
+
+
+    ctx.font = `italic ${20 * dpr}px Computer Modern Serif`;
+    const iWidth = ctx.measureText('i').width;
     for (let i = Math.ceil(y_min/labelScale); i < y_max/labelScale; i++) {
         if (i === 0) {continue;}
-        yLabel(i * labelScale);
+        yLabel(i * labelScale, iWidth);
     }
 }
 
