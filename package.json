@@ -79,7 +79,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.6.3",
-    "gh-pages": "^1.2.0",
+    "gh-pages": "^5.0.0",
     "webpack": "^4.43.0"
   },
   "browserslist": [
