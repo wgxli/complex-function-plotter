@@ -27,13 +27,16 @@ function ->
     | unaryFunction "[" sum "]" {% data => [data[0][0], data[2]] %}
     | binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
     | binaryFunction "[" sum "," _ sum "]" {% data => [data[0][0], data[2], data[5]] %}
-    | parenthesis {% id %}
+    | parenthesis2 {% id %}
 
 parenthesis ->
     "(" sum ")" {% (data) => data[1] %}
     | "[" sum "]" {% (data) => data[1] %}
     | literal {% id %}
-    | literal "!" {% (data) => ['factorial', data[0]] %}
+
+parenthesis2 ->
+    parenthesis {% id %}
+    | parenthesis "!" {% (data) => ['factorial', data[0]] %}
 
 
 ##### Operators #####

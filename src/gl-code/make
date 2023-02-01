@@ -1,3 +1,3 @@
 #! /bin/bash
-nearleyc grammar.ne -o grammar.js
-nearley-railroad grammar.ne -o grammar.html
+npx nearleyc grammar.ne -o grammar.js
+npx nearley-railroad grammar.ne -o grammar.html
