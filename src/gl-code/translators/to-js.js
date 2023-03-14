@@ -8,6 +8,12 @@ import {
 } from './custom-functions.js'
 const math = require('mathjs');
 
+const constants = {
+    'e': Math.E,
+    'pi': Math.PI,
+    'tau': 2 * Math.PI,
+    'phi': (1 + Math.sqrt(5))/2,
+}
 
 const I = math.complex(0, 1);
 const fns = {
@@ -15,6 +21,8 @@ const fns = {
     neg: math.unaryMinus,
     mul: math.multiply,
     div: math.divide,
+    reciprocal: z => math.divide(1, z),
+    component_mul: (z, alpha) => math.complex(alpha*z.re, alpha*z.im),
     real: math.re,
     imag: math.im,
     step: z => (z.re >= 0) ? 1 : 0,
@@ -62,13 +70,7 @@ const fns = {
 function toJS(ast, variables) {
     const errorValue = [NaN, NaN];
     if (ast === null) {return z => errorValue;}
-
-    const constants = {
-        'e': Math.E,
-        'pi': Math.PI,
-        'tau': 2 * Math.PI,
-        'phi': (1 + Math.sqrt(5))/2,
-    }
+    if (!isNaN(ast)) {return z => [ast, 0];}
 
     // Destructure this level of the AST
     const [operator, ...args] = ast;
@@ -102,4 +104,5 @@ function toJS(ast, variables) {
     return z => errorValue;
 }
 
+export {constants, fns};
 export default toJS;

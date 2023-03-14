@@ -45,8 +45,8 @@ class DummyFunction {
 /***** BEGIN FUNCTION DEFINITIONS *****/
 
 // Miscellaneous
-const mul_i = new ComplexFunction('mul_i', 'return vec2(-z.y, z.x);');
-const reciprocal = new ComplexFunction('reciprocal', 'return cconj(z) / dot(z, z);', ['conj']);
+const mul_i = new ComplexFunction('cmul_i', 'return vec2(-z.y, z.x);');
+const reciprocal = new ComplexFunction('creciprocal', 'return cconj(z) / dot(z, z);', ['conj']);
 const cconj = new ComplexFunction('cconj', 'return z * vec2(1.0, -1.0);');
 const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);');
 const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);');
@@ -60,7 +60,7 @@ const cstep = new ComplexFunction('cstep', 'return vec2(step(0.0, z.x), 0.0);');
 
 // Exponentials
 const ccis = new ComplexFunction('ccis',
-    'return cexp(mul_i(z));',
+    'return cexp(cmul_i(z));',
     ['exp', 'mul_i']);
 const cexp = new ComplexFunction('cexp',
 `float magnitude = exp(z.x);
@@ -82,25 +82,25 @@ return (magnitude * magnitude) * vec2(cos(phase), sin(phase));`);
 // Trigonometry //
 // Basic Trigonometric Functions
 const csin = new ComplexFunction('csin',
-`vec2 iz = mul_i(z);
-return -0.5 * mul_i(cexp(iz) - cexp(-iz));`, ['mul_i', 'exp']);
+`vec2 iz = cmul_i(z);
+return -0.5 * cmul_i(cexp(iz) - cexp(-iz));`, ['mul_i', 'exp']);
 const ccos = new ComplexFunction('ccos',
-`vec2 iz = mul_i(z);
+`vec2 iz = cmul_i(z);
 return 0.5 * (cexp(iz) + cexp(-iz));`, ['mul_i', 'exp']);
-const ctan = new ComplexFunction('ctan', 'return mul_i(ctanh(-mul_i(z)));', ['mul_i', 'tanh']);
-const csec = new ComplexFunction('csec', 'return reciprocal(ccos(z));',
+const ctan = new ComplexFunction('ctan', 'return cmul_i(ctanh(-cmul_i(z)));', ['mul_i', 'tanh']);
+const csec = new ComplexFunction('csec', 'return creciprocal(ccos(z));',
     ['reciprocal', 'cos']);
-const ccsc = new ComplexFunction('ccsc', 'return reciprocal(csin(z));',
+const ccsc = new ComplexFunction('ccsc', 'return creciprocal(csin(z));',
     ['reciprocal', 'sin']);
-const ccot = new ComplexFunction('ccot', 'return reciprocal(ctan(z));',
+const ccot = new ComplexFunction('ccot', 'return creciprocal(ctan(z));',
     ['reciprocal', 'tan']);
 
 // Inverse Trigonomeric Functions
 const carcsin_bottom = new ComplexFunction('carcsin_bottom',
-    'return -mul_i(clog(mul_i(z) + csqrt(ONE - csquare(z))));',
+    'return -cmul_i(clog(cmul_i(z) + csqrt(ONE - csquare(z))));',
      ['mul_i', 'log', 'sqrt', 'square']);
 const carcsin_top = new ComplexFunction('carcsin_top',
-    'return -mul_i(clog(reciprocal(csqrt(ONE - csquare(z)) - mul_i(z))));',
+    'return -cmul_i(clog(creciprocal(csqrt(ONE - csquare(z)) - cmul_i(z))));',
     ['mul_i', 'log', 'reciprocal', 'square']);
 const carcsin = new ComplexFunction('carcsin',
     'if (z.y < 0.0) {return carcsin_bottom(z);} else {return carcsin_top(z);}',
@@ -111,16 +111,16 @@ const carccos = new ComplexFunction('carccos',
 `vec2 b = csqrt(csquare(z) - ONE);
 vec2 a = z + b;
 if (z.x < 0.0) {a = z - b;}
-return -mul_i(clog(a));`,
+return -cmul_i(clog(a));`,
 ['mul_i', 'log', 'sqrt', 'square']);
 const carctan = new ComplexFunction('carctan',
-`vec2 iz = mul_i(z);
-return 0.5 * mul_i(clog(ONE - iz) - clog(ONE + iz));`,
+`vec2 iz = cmul_i(z);
+return 0.5 * cmul_i(clog(ONE - iz) - clog(ONE + iz));`,
 ['mul_i', 'log']);
 
-const carccot = new ComplexFunction('carccot', 'return carctan(reciprocal(z));', ['arctan', 'reciprocal']);
-const carcsec = new ComplexFunction('carcsec', 'return carccos(reciprocal(z));', ['arccos', 'reciprocal']);
-const carccsc = new ComplexFunction('carccsc', 'return carcsin(reciprocal(z));', ['arcsin', 'reciprocal']);
+const carccot = new ComplexFunction('carccot', 'return carctan(creciprocal(z));', ['arctan', 'reciprocal']);
+const carcsec = new ComplexFunction('carcsec', 'return carccos(creciprocal(z));', ['arccos', 'reciprocal']);
+const carccsc = new ComplexFunction('carccsc', 'return carcsin(creciprocal(z));', ['arcsin', 'reciprocal']);
 
 
 // Hyperbolic Trigonometric Functions
@@ -137,24 +137,24 @@ return cdiv(ONE - b, ONE + b);
 return cdiv(a - ONE, a + ONE);
 }`, ['exp', 'div']);
 const csech = new ComplexFunction('csech',
-    'return reciprocal(ccosh(z));', ['reciprocal', 'cosh']);
+    'return creciprocal(ccosh(z));', ['reciprocal', 'cosh']);
 const ccsch = new ComplexFunction('ccsch',
-    'return reciprocal(csinh(z));', ['reciprocal', 'sinh']);
-const ccoth = new ComplexFunction('ccoth', 'return reciprocal(ctanh(z));', ['reciprocal', 'tanh']);
+    'return creciprocal(csinh(z));', ['reciprocal', 'sinh']);
+const ccoth = new ComplexFunction('ccoth', 'return creciprocal(ctanh(z));', ['reciprocal', 'tanh']);
 
 // Inverse hyperbolic trigonometric functions
 const carsinh = new ComplexFunction('carsinh',
-'return -mul_i(carcsin(mul_i(z)));', ['mul_i', 'arcsin']);
+'return -cmul_i(carcsin(cmul_i(z)));', ['mul_i', 'arcsin']);
 const carcosh = new ComplexFunction('carcosh',
-    'return -mul_i(carccos(z));', ['mul_i', 'arccos']);
+    'return -cmul_i(carccos(z));', ['mul_i', 'arccos']);
 const cartanh = new ComplexFunction('cartanh',
-    'return -mul_i(carctan(mul_i(z)));', ['mul_i', 'arctan']);
+    'return -cmul_i(carctan(cmul_i(z)));', ['mul_i', 'arctan']);
 const carsech = new ComplexFunction('carsech',
-    'return -mul_i(carcsec(z));', ['mul_i', 'arcsec']);
+    'return -cmul_i(carcsec(z));', ['mul_i', 'arcsec']);
 const carcsch = new ComplexFunction('carcsch',
-    'return -mul_i(carccsc(-mul_i(z)));', ['mul_i', 'arccsc']);
+    'return -cmul_i(carccsc(-cmul_i(z)));', ['mul_i', 'arccsc']);
 const carcoth = new ComplexFunction('carcoth',
-    'return -mul_i(carccot(-mul_i(z)));', ['mul_i', 'arccot']);
+    'return -cmul_i(carccot(-cmul_i(z)));', ['mul_i', 'arccot']);
 
 
 // Infix Operators //
@@ -164,7 +164,7 @@ const csub = new ComplexFunction('csub', 'return z-w;', [], 2);
 const cmul = new ComplexFunction('cmul',
     'return mat2(z, -z.y, z.x) * w;', [], 2);
 const cdiv = new ComplexFunction('cdiv',
-'return cmul(z, reciprocal(w));', ['mul', 'reciprocal'], 2);
+'return cmul(z, creciprocal(w));', ['mul', 'reciprocal'], 2);
 const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));',
     ['exp', 'mul', 'log'], 2);
 
@@ -173,20 +173,20 @@ const cgamma = new ComplexFunction('cgamma',
     'if (z.x < 0.5) {return cgamma_left(z);} else {return cgamma_right(z);}',
     ['cgamma_left', 'cgamma_right']);
 const cgamma_left = new ComplexFunction('cgamma_left',
-    'return PI * reciprocal(cmul(csin(PI*z), cgamma_right(ONE-z)));',
+    'return PI * creciprocal(cmul(csin(PI*z), cgamma_right(ONE-z)));',
     ['mul', 'sin', 'cgamma_right']);
 const cgamma_right = new ComplexFunction('cgamma_right',
 `vec2 w = z - ONE;
 vec2 t = w + vec2(7.5, 0);
 vec2 x = vec2(0.99999999999980993, 0);
-x += 676.5203681218851 * reciprocal(w + vec2(1, 0));
-x -= 1259.1392167224028 * reciprocal(w + vec2(2, 0));
-x += 771.32342877765313 * reciprocal(w + vec2(3, 0));
-x -= 176.61502916214059 * reciprocal(w + vec2(4, 0));
-x += 12.507343278686905 * reciprocal(w + vec2(5, 0));
-x -= .13857109526572012 * reciprocal(w + vec2(6, 0));
-x += 9.9843695780195716e-6 * reciprocal(w + vec2(7, 0));
-x += 1.5056327351493116e-7 * reciprocal(w + vec2(8, 0));
+x += 676.5203681218851 * creciprocal(w + vec2(1, 0));
+x -= 1259.1392167224028 * creciprocal(w + vec2(2, 0));
+x += 771.32342877765313 * creciprocal(w + vec2(3, 0));
+x -= 176.61502916214059 * creciprocal(w + vec2(4, 0));
+x += 12.507343278686905 * creciprocal(w + vec2(5, 0));
+x -= .13857109526572012 * creciprocal(w + vec2(6, 0));
+x += 9.9843695780195716e-6 * creciprocal(w + vec2(7, 0));
+x += 1.5056327351493116e-7 * creciprocal(w + vec2(8, 0));
 return sqrt(TAU) * cmul(cpow(t, w + vec2(0.5, 0)), cmul(cexp(-t), x));`,
 ['reciprocal', 'mul', 'pow', 'exp']);
 const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', ['gamma']);
@@ -211,15 +211,15 @@ vec2 component_a;
 const float SQ2PI2 = 1.2533141373155001;
 float log_r = log(length(z));
 if (z.y > 200.0) {
-    component_a = SQ2PI2 * mul_i(cexp(
+    component_a = SQ2PI2 * cmul_i(cexp(
         vec2(z.x, 0)
         + (log_r - 1.0) * z
         - vec2(log_r/2.0, PI/4.0)
     ));
 } else if (z.y > 20.0) {
     float theta = atan(z.y, z.x);
-    component_a = SQ2PI2 * mul_i(cexp(
-        (theta - PI/2.0) * mul_i(z)
+    component_a = SQ2PI2 * cmul_i(cexp(
+        (theta - PI/2.0) * cmul_i(z)
         + (log_r - 1.0) * z
         - 0.5 * vec2(log_r, theta)
     ));
@@ -265,7 +265,7 @@ for (int i=1; i <= N; i++) {
     float base = log(n);
     vec2 term = cexp(-base * z);
     zetaA += term;
-    zetaB += reciprocal(n * term);
+    zetaB += creciprocal(n * term);
 }
 
 // Convert to an estimate of zeta(z) via the functional equation
@@ -449,7 +449,7 @@ vec2 rt_k = csqrt(csqrt(ONE - csquare(z)));
 vec2 ell = 0.5 * cdiv(ONE - rt_k, ONE + rt_k);
 vec2 log_l = clog(ell);
 vec2 q = ell + 2.0 * cexp(5.0 * log_l) + 15.0 * cexp(9.0 * log_l);
-return -mul_i(clog(q))/PI;`, ['sqrt', 'div', 'exp', 'mul_i', 'log']); // Computes tau from elliptic modulus k
+return -cmul_i(clog(q))/PI;`, ['sqrt', 'div', 'exp', 'mul_i', 'log']); // Computes tau from elliptic modulus k
 const jacobi_reduce = new ComplexFunction('jacobi_reduce',
 `vec2 t00 = theta000(w);
 vec2 zz = cdiv(z, PI * csquare(t00));
@@ -539,13 +539,14 @@ const ccm = new ComplexFunction('ccm',
 const vec2 tau = vec2(-0.5, 0.8660254037844386);
 vec2 u = cmul(z, A);
 vec2 zz = jacobi_reduce(u, tau);
-return ONE + 2.0 * reciprocal(3.0 * raw_wpp(zz, A, tau) - ONE);`,
+return ONE + 2.0 * creciprocal(3.0 * raw_wpp(zz, A, tau) - ONE);`,
 ['reciprocal', 'jacobi_reduce', 'raw_wpp']);
 
 /**** Higher-Order Functions ****/
 var complex_functions = {
     mul_i, reciprocal,
     'square': csquare,
+    'component_mul': new DummyFunction(),
 
     'real': creal,
     'imag': cimag,
@@ -611,9 +612,6 @@ var complex_functions = {
 
     'sm': csm,
     'cm': ccm,
-    
-    'sum': new DummyFunction(),
-    'prod': new DummyFunction(['mul', 'log', 'exp'])
 };
 
 function parseExpression(expression) {
@@ -621,6 +619,9 @@ function parseExpression(expression) {
         const parser = new nearley.Parser(compiledGrammar);
         parser.feed(expression)
         const result = parser.results[0];
+        if (result !== null) {
+            console.log('Raw AST:', result);
+        }
         return compile(result || null);
     } catch (error) {
         console.error(error);
@@ -629,6 +630,7 @@ function parseExpression(expression) {
 }
 
 function getRequirements(ast) {
+    if (!Array.isArray(ast)) {return new Set();}
     if (['number', 'variable', 'constant'].includes(ast[0])) {return new Set();}
     const requirements = new Set([ast[0]]);
     for (let subast of ast.slice(1)) {

@@ -90,7 +90,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   }
   if (glsl_expression === null) {return null;}
 
-  console.log('AST:', expression);
+  console.log('Compiled AST:', expression);
   console.log('Shader Code:', glsl_expression);
 
   return `

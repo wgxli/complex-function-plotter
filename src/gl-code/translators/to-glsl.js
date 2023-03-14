@@ -1,11 +1,13 @@
 import {get} from 'lodash';
 
 function toGLSL(ast) {
-    if (ast === null) {return null;}
+    if (!isNaN(ast)) {return ast.toFixed(16);}
+    if (!Array.isArray(ast)) {return ast;}
 
     const infixOperators = {
         'add': '+',
         'sub': '-',
+        'component_mul': '*',
     };
 
     const [operator, ...args] = ast;
@@ -20,7 +22,12 @@ function toGLSL(ast) {
     if (operator === 'variable') {return args[0];}
     if (operator === 'constant') {return 'C_' + args[0].toUpperCase();}
     if (operator in infixOperators) {
-        return toGLSL(args[0]) + infixOperators[operator] + '(' + toGLSL(args[1]) + ')';
+        let operands = args.map(toGLSL);
+        if (operator !== 'add') {
+            // Add parentheses if possibly necessary
+            operands = operands.map(x => '(' + x + ')');
+        }
+        return operands[0] + infixOperators[operator] + operands[1];
     }
 
     // Unary function

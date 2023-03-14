@@ -23,12 +23,12 @@ power ->
     | function {% id %}
 
 function ->
-    unaryFunction "(" sum ")" {% data => [data[0][0], data[2]] %}
-    | unaryFunction "[" sum "]" {% data => [data[0][0], data[2]] %}
-    | binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
-    | binaryFunction "[" sum "," _ sum "]" {% data => [data[0][0], data[2], data[5]] %}
-    | fourFunction "(" sum "," _ sum "," _ sum "," _ sum ")" {% data => [data[0][0], data[2], data[5], data[8], data[11]] %}
-    | fourFunction "[" sum "," _ sum "," _ sum "," _ sum "]" {% data => [data[0][0], data[2], data[5], data[8], data[11]] %}
+    unaryFunction "(" _ sum _ ")" {% data => [data[0][0], data[3]] %}
+    | unaryFunction "[" _ sum _ "]" {% data => [data[0][0], data[3]] %}
+    | binaryFunction "(" _ sum "," _ sum ")" {% data => [data[0][0], data[3], data[6]] %}
+    | binaryFunction "[" _ sum "," _ sum "]" {% data => [data[0][0], data[3], data[6]] %}
+    | fourFunction "(" _ sum "," _ sum "," _ sum "," _ sum ")" {% data => [data[0][0], data[3], data[6], data[9], data[12]] %}
+    | fourFunction "[" _ sum "," _ sum "," _ sum "," _ sum "]" {% data => [data[0][0], data[3], data[6], data[9], data[12]] %}
     | parenthesis2 {% id %}
 
 parenthesis ->
@@ -70,6 +70,8 @@ binaryFunction ->
    | "theta01"
    | "theta10"
    | "theta11"
+   | "derivative" {% () => ['diff'] %}
+   | "diff"
 
 unaryFunction ->
    trigFunction
