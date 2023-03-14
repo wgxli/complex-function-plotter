@@ -3,7 +3,7 @@ import React, {PureComponent} from 'react';
 import {isNil} from 'lodash';
 
 import {pixelToPlot} from '../FunctionPlot';
-import {toJS} from '../../gl-code/translators';
+import toJS from '../../gl-code/translators/to-js';
 
 import ResultTooltip from './ResultTooltip';
 

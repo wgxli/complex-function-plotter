@@ -1,6 +1,8 @@
 import nearley from 'nearley';
 import grammar from './grammar.js';
 
+import compile from './translators/compiler.js';
+
 const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
 
 const argument_names = ['z', 'w', 'w1', 'w2'];
@@ -34,8 +36,13 @@ class ComplexFunction {
     }
 }
 
+class DummyFunction {
+    constructor(dependencies) {this.dependencies = dependencies || [];}
+    get declaration() {return '';}
+    get code() {return '';}
+}
 
-// DEFINITIONS //
+/***** BEGIN FUNCTION DEFINITIONS *****/
 
 // Miscellaneous
 const mul_i = new ComplexFunction('mul_i', 'return vec2(-z.y, z.x);');
@@ -535,6 +542,7 @@ vec2 zz = jacobi_reduce(u, tau);
 return ONE + 2.0 * reciprocal(3.0 * raw_wpp(zz, A, tau) - ONE);`,
 ['reciprocal', 'jacobi_reduce', 'raw_wpp']);
 
+/**** Higher-Order Functions ****/
 var complex_functions = {
     mul_i, reciprocal,
     'square': csquare,
@@ -603,6 +611,9 @@ var complex_functions = {
 
     'sm': csm,
     'cm': ccm,
+    
+    'sum': new DummyFunction(),
+    'prod': new DummyFunction(['mul', 'log', 'exp'])
 };
 
 function parseExpression(expression) {
@@ -610,7 +621,7 @@ function parseExpression(expression) {
         const parser = new nearley.Parser(compiledGrammar);
         parser.feed(expression)
         const result = parser.results[0];
-        return result || null;
+        return compile(result || null);
     } catch (error) {
         console.error(error);
         return null;

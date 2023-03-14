@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 
 import {initializeScene, drawScene} from '../../gl-code/scene.js';
-import {toJS} from '../../gl-code/translators';
+import toJS from '../../gl-code/translators/to-js';
 
 import CoordinateOverlay from './CoordinateOverlay';
 

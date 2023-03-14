@@ -1,9 +1,7 @@
 import {
   functionDefinitions,
 } from './complex-functions.js';
-import {
-    toGLSL
-} from './translators';
+import toGLSL from './translators/to-glsl';
 
 function loadShader(gl, type, source) {
   // Create and compile shader

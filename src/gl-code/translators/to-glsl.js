@@ -1,7 +1,5 @@
 import {get} from 'lodash';
 
-import toJS from './to-js';
-
 function toGLSL(ast) {
     if (ast === null) {return null;}
 
@@ -14,6 +12,8 @@ function toGLSL(ast) {
 
     if (operator === 'number') {
         const [real, imag] = args;
+        if (real === 1 && imag === 0) {return 'ONE';}
+        if (real === 0 && imag === 1) {return 'I';}
         return `vec2(${real}, ${imag})`;
     }
 
@@ -32,4 +32,4 @@ function toGLSL(ast) {
     return internalName + '(' + args.map(toGLSL).join(', ') + ')';
 }
 
-export {toGLSL, toJS};
+export default toGLSL;

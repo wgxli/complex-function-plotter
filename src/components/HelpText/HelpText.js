@@ -83,6 +83,12 @@ const supportedFunctions = [
             'real', 'imag',
             'floor', 'ceil', 'round', 'step',
         ]
+    },
+    {
+        name: 'Higher-Order Functions',
+        entries: [
+            'sum', 'product',
+        ]
     }
 ];
 
@@ -109,6 +115,9 @@ const EXAMPLES = {
     'theta01(z, τ)': 'theta01(z, t + i)',
     'theta10(z, τ)': 'theta10(z, t + i)',
     'theta11(z, τ)': 'theta11(z, t + i)',
+
+    'sum': 'sum(cos(n*z), n, 0, 5)',
+    'product': 'product(1-z/n, n, 1, 5)',
 };
 
 

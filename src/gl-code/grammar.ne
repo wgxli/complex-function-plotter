@@ -27,6 +27,8 @@ function ->
     | unaryFunction "[" sum "]" {% data => [data[0][0], data[2]] %}
     | binaryFunction "(" sum "," _ sum ")" {% data => [data[0][0], data[2], data[5]] %}
     | binaryFunction "[" sum "," _ sum "]" {% data => [data[0][0], data[2], data[5]] %}
+    | fourFunction "(" sum "," _ sum "," _ sum "," _ sum ")" {% data => [data[0][0], data[2], data[5], data[8], data[11]] %}
+    | fourFunction "[" sum "," _ sum "," _ sum "," _ sum "]" {% data => [data[0][0], data[2], data[5], data[8], data[11]] %}
     | parenthesis2 {% id %}
 
 parenthesis ->
@@ -53,6 +55,11 @@ productOperator ->
 powerOperator -> "**" | "^"
 
 ##### Functions #####
+fourFunction ->
+   "sum"
+   | "product" {% () => ['prod'] %}
+   | "prod"
+
 binaryFunction ->
    "sn"
    | "cn"
