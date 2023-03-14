@@ -87,7 +87,7 @@ const supportedFunctions = [
     {
         name: 'Higher-Order Functions',
         entries: [
-            'sum', 'product',
+            'sum', 'product', 'derivative'
         ]
     }
 ];
@@ -116,8 +116,9 @@ const EXAMPLES = {
     'theta10(z, τ)': 'theta10(z, t + i)',
     'theta11(z, τ)': 'theta11(z, t + i)',
 
-    'sum': 'sum(cos(n*z), n, 0, 5)',
-    'product': 'product(1-z/n, n, 1, 5)',
+    'sum': 'sum(z^n/n!, n, 0, 5)',
+    'product': 'prod(1-z/n, n, 1, 5)',
+    'derivative': 'diff(cos(z*t), t)',
 };
 
 
@@ -194,6 +195,8 @@ class HelpText extends React.Component {
                 <p>Click on any function to see an example.</p>
                 <div className='help-indent'>
                     {this.renderSupportedFunctions()}
+                    <p style={{marginTop: 16}}></p>
+                    <Typography variant='caption'>Warning: Large sums or products may cause the plotter to freeze!</Typography>
                 </div>
 
                 <h2>Variables</h2>

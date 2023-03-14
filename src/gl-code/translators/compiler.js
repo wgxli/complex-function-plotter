@@ -3,29 +3,34 @@
  * and perform some AST optimizations.
  */
 import {constants, fns} from './to-js.js';
+import diff, {substitute} from './derivative.js';
 
 const math = require('mathjs');
 
 
-// Substitute bound variable with value in AST
-function substitute(ast, name, value) {
-    if (!Array.isArray(ast)) {return ast;}
-    if (ast[0] === 'variable' && ast[1] === name) {return value;}
-    return ast.map(x => substitute(x, name, value));
-}
-
 // Return AST where binary operation `op` is applied
 // between all given terms (AST).
 function compose(terms, op) {
+    // Empty sum/product
+    if (terms.length === 0) {return (op === 'sum') ? ['number', 0, 0] : ['number', 1, 0];}
+
+    // Trivial sum/product
     if (terms.length === 1) {return terms[0]};
-    const N = Math.floor(terms.length/2);
+
     // Distribute evenly for faster computation
-    return [op, compose(terms.slice(0, N), op), compose(terms.slice(N), op)];
+    const N = Math.floor(terms.length/2);
+    return compile([op, compose(terms.slice(0, N), op), compose(terms.slice(N), op)]);
 }
 
 // Apply sum or product operator.
 function sumProd(operator, args) {
+    // Evaluate lower/upper bounds
+    args[2] = compile(args[2]);
+    args[3] = compile(args[3]);
+    
     if (args[1][0] !== 'variable') {return null;}
+    if (args[2][0] !== 'number') {return null;}
+    if (args[3][0] !== 'number') {return null;}
 
     const idxVar = args[1][1];
     const low = args[2][1];
@@ -41,47 +46,36 @@ function sumProd(operator, args) {
     if (operator === 'prod') {return compose(terms, 'mul');}
 }
 
-// Apply derivative operator.
-function diff(ast, arg) {
-    const dz = 1e-2; // Finite difference step
-    if (arg[0] !== 'variable') {return null;}
-
-    const high = compile(substitute(ast, arg[1], ['add', arg, ['number', dz, 0]]));
-    const low = compile(substitute(ast, arg[1], ['sub', arg, ['number', dz, 0]]));
-
-    return ['component_mul', ['sub', high, low], 1/(2*dz)];
-}
-
 function getConst(val) {
     let re = null;
     let im = null;
 
-    if (val[0] === 'number') {
-        re = val[1];
-        im = val[2];
-    }
-    if (val[0] === 'constant') {
-        re = constants[val[1]];
-        im = 0;
-    }
+    if (!isNaN(val)) {re = val; im = 0;}
+    if (val[0] === 'number') {re = val[1]; im = val[2];}
+    if (val[0] === 'constant') {re = constants[val[1]]; im = 0;}
+
     return math.complex(re, im);
 }
 
-function destructure(val) {return ['number', val.re, val.im];}
-
-function mul(a, b) {return destructure(math.multiply(getConst(a), getConst(b)));}
+function destructure(val) {
+    if (val.re === undefined) {return ['number', val, 0];}
+    return ['number', val.re, val.im];
+}
 
 function isConst(ast) {
-    return ast[0] === 'number' || ast[0] === 'constant';
+    return !isNaN(ast) || ast[0] === 'number' || ast[0] === 'constant';
+}
+
+function isZero(ast) {
+    return ast[0] === 'number' && ast[1] === 0 && ast[2] === 0;
 }
 
 
 // Optimize AST, and expand any higher-order constructs.
 function compile(ast) {
-    if (ast === null) {return null;}
+    if (!Array.isArray(ast)) {return ast;}
 
-    const [operator, ...args] = ast;
-
+    let [operator, ...args] = ast;
     if (operator === 'number' || operator === 'variable' || operator === 'constant') {
         return ast;
     }
@@ -91,17 +85,32 @@ function compile(ast) {
         return sumProd(operator, args);
     }
 
+    args = args.map(compile);
     if (operator === 'diff') {
-        return diff(args[0], args[1]);
+        return diff(args[0], args[1], compile);
     }
 
-    // Static functions
+    // Aliases
+    if (operator === 'factorial') {return compile(['gamma', ['add', args[0], ['number', 1, 0]]]);}
+
+
+    // Evaluate if all arguments are constant
     if (args.every(isConst)) {
         const fn = fns[operator] || math[operator];
         return destructure(fn(...args.map(getConst)));
     }
 
     // Optimizations
+    if (operator === 'add') {
+        if (isZero(args[0])) {return args[1];}
+        if (isZero(args[1])) {return args[0];}
+    }
+
+    if (operator === 'sub') {
+        if (isZero(args[0])) {return compile(['neg', args[1]]);}
+        if (isZero(args[1])) {return args[0];}
+    }
+
     if (operator === 'div') {
         if (isConst(args[1])) {
             return compile(['mul', compile(['reciprocal', args[1]]), args[0]]);
@@ -113,26 +122,26 @@ function compile(ast) {
     }
 
     if (operator === 'mul') {
+        // Place constant in front
+        if (isConst(args[1])) {args = [args[1], args[0]];}
+
+        // Deal with constant case
         if (isConst(args[0])) {
             const val = getConst(args[0]);
 
-            // Both constants
-            if (isConst(args[1])) {
-                return ['number', ...mul(val, args[1])];
-            }
+            if (val.re === 0 && val.im === 0) {return ['number', 0, 0];}
 
             // Real scale factor
             if (val.im === 0) {
-                if (val.re === 1) {return compile(args[1]);}
-                if (val.re === -1) {return ['neg', compile(args[1])];}
-                return ['component_mul', compile(args[1]), val.re];
-            }
-        } else {
-            // Swap arguments
-            if (isConst(args[1])) {
-                return compile(['mul', args[1], args[0]]);
+                if (val.re === 1) {return args[1];}
+                if (val.re === -1) {return ['neg', args[1]];}
+                return compile(['component_mul', args[1], val.re]);
             }
         }
+    }
+
+    if (operator === 'component_mul') {
+        if (args[1] === 0 || isZero(args[0])) {return ['number', 0, 0];}
     }
 
     if (operator === 'pow') {
@@ -149,11 +158,14 @@ function compile(ast) {
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
+                return ['exp', ['component_mul', ['log', subAST], val.re]];
             }
         }
+
+        return ['exp', ['mul', ['log', args[0]], args[1]]];
     }
 
-    return [operator, ...args.map(compile)];
+    return [operator, ...args];
 }
 
 export default compile;

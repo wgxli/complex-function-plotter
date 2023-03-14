@@ -108,11 +108,8 @@ const carcsin = new ComplexFunction('carcsin',
 
 
 const carccos = new ComplexFunction('carccos',
-`vec2 b = csqrt(csquare(z) - ONE);
-vec2 a = z + b;
-if (z.x < 0.0) {a = z - b;}
-return -cmul_i(clog(a));`,
-['mul_i', 'log', 'sqrt', 'square']);
+`return 0.5*C_PI - carcsin(z);`,
+['arcsin']);
 const carctan = new ComplexFunction('carctan',
 `vec2 iz = cmul_i(z);
 return 0.5 * cmul_i(clog(ONE - iz) - clog(ONE + iz));`,
@@ -165,8 +162,7 @@ const cmul = new ComplexFunction('cmul',
     'return mat2(z, -z.y, z.x) * w;', [], 2);
 const cdiv = new ComplexFunction('cdiv',
 'return cmul(z, creciprocal(w));', ['mul', 'reciprocal'], 2);
-const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));',
-    ['exp', 'mul', 'log'], 2);
+//const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', ['exp', 'mul', 'log'], 2);
 
 // Lanczos approximation
 const cgamma = new ComplexFunction('cgamma',
@@ -187,9 +183,9 @@ x += 12.507343278686905 * creciprocal(w + vec2(5, 0));
 x -= .13857109526572012 * creciprocal(w + vec2(6, 0));
 x += 9.9843695780195716e-6 * creciprocal(w + vec2(7, 0));
 x += 1.5056327351493116e-7 * creciprocal(w + vec2(8, 0));
-return sqrt(TAU) * cmul(cpow(t, w + vec2(0.5, 0)), cmul(cexp(-t), x));`,
-['reciprocal', 'mul', 'pow', 'exp']);
-const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', ['gamma']);
+return sqrt(TAU) * cmul(x, cexp(cmul(clog(t), w + vec2(0.5, 0)) - t));`,
+['reciprocal', 'mul', 'exp', 'log']);
+//const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', ['gamma']);
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
@@ -501,7 +497,7 @@ return PI*PI*cmul(cmul(t002, t102), csquare(cdiv(ctheta01(zz, w), ctheta11(zz, w
 ['square', 'div', 'mul', 'theta000', 'theta10', 'theta01', 'theta11'], 2);
 const raw_wpp = new ComplexFunction('raw_wpp',
 `return -2.0 * cmul(
-    cpow(cdiv(w, raw_sn(z, w1)), 3.0*ONE),
+    cexp(3. * clog(cdiv(w, raw_sn(z, w1)))),
     cmul(raw_cn(z, w1), raw_dn(z, w1))
 );`, [
     'mul', 'pow', 'div',
@@ -565,7 +561,7 @@ var complex_functions = {
     'log': clog,
 
     'sqrt': csqrt,
-    'pow': cpow,
+//    'pow': cpow,
     'sin': csin,  'cos': ccos,  'tan': ctan,
     'sec': csec,  'csc': ccsc,  'cot': ccot,
 
@@ -583,7 +579,7 @@ var complex_functions = {
     'sub': csub,
     'mul': cmul,
     'div': cdiv,
-    'factorial': cfact,
+//    'factorial': cfact,
 
     cgamma_left, cgamma_right,
     'gamma': cgamma,

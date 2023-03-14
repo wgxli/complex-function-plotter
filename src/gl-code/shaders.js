@@ -86,7 +86,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     custom_code = expression;
     glsl_expression = 'mapping(z)';
   } else {
-    glsl_expression = toGLSL(expression);
+    glsl_expression = toGLSL(expression)[0];
   }
   if (glsl_expression === null) {return null;}
 
