@@ -54,7 +54,8 @@ const csgn = new ComplexFunction('csgn', 'return z/length(z);');
 const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);');
 const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);');
 const cfloor = new ComplexFunction('cfloor', 'return floor(z);');
-const cceil = new ComplexFunction('cceil', 'return ceil(z);');
+//const cceil = new ComplexFunction('cceil', 'return ceil(z);');
+const cceil = new ComplexFunction('cceil', 'return floor(z + vec2(0.9999999, 0.9999999));'); // Fix for iOS
 const cround = new ComplexFunction('cround', 'return floor(z + vec2(0.5, 0.5));');
 const cstep = new ComplexFunction('cstep', 'return vec2(step(0.0, z.x), 0.0);');
 
@@ -162,7 +163,7 @@ const cmul = new ComplexFunction('cmul',
     'return mat2(z, -z.y, z.x) * w;', [], 2);
 const cdiv = new ComplexFunction('cdiv',
 'return cmul(z, creciprocal(w));', ['mul', 'reciprocal'], 2);
-//const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', ['exp', 'mul', 'log'], 2);
+const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', ['exp', 'mul', 'log'], 2);
 
 // Lanczos approximation
 const cgamma = new ComplexFunction('cgamma',
@@ -185,7 +186,7 @@ x += 9.9843695780195716e-6 * creciprocal(w + vec2(7, 0));
 x += 1.5056327351493116e-7 * creciprocal(w + vec2(8, 0));
 return sqrt(TAU) * cmul(x, cexp(cmul(clog(t), w + vec2(0.5, 0)) - t));`,
 ['reciprocal', 'mul', 'exp', 'log']);
-//const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', ['gamma']);
+const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', ['gamma']);
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
@@ -500,7 +501,7 @@ const raw_wpp = new ComplexFunction('raw_wpp',
     cexp(3. * clog(cdiv(w, raw_sn(z, w1)))),
     cmul(raw_cn(z, w1), raw_dn(z, w1))
 );`, [
-    'mul', 'pow', 'div',
+    'mul', 'exp', 'log', 'div',
     'raw_sn', 'raw_cn', 'raw_dn',
 ], 3); // wp'(zz, A, tau), post-reduction
 const cwpp = new ComplexFunction('cwpp',
@@ -561,7 +562,7 @@ var complex_functions = {
     'log': clog,
 
     'sqrt': csqrt,
-//    'pow': cpow,
+    'pow': cpow,
     'sin': csin,  'cos': ccos,  'tan': ctan,
     'sec': csec,  'csc': ccsc,  'cot': ccot,
 
@@ -579,7 +580,7 @@ var complex_functions = {
     'sub': csub,
     'mul': cmul,
     'div': cdiv,
-//    'factorial': cfact,
+    'factorial': cfact,
 
     cgamma_left, cgamma_right,
     'gamma': cgamma,
