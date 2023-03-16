@@ -35,8 +35,6 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
 
   if (fragmentShaderSource === null) {return null;}
 
-    console.log(fragmentShaderSource);
-
   // Load vertex and fragment shaders
   const vertexShader = loadShader(gl,
     gl.VERTEX_SHADER, vertexShaderSource);
@@ -119,8 +117,11 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   const float checkerboard_scale = 0.25;
 
+
+  const vec2 LOG_ONE = vec2(0, 0);
   const vec2 ONE = vec2(1, 0);
   const vec2 I = vec2(0, 1);
+  const vec2 LOG_I = vec2(0, PI/2.);
   const vec2 C_PI = vec2(PI, 0);
   const vec2 C_TAU = vec2(TAU, 0);
   const vec2 C_E = vec2(E, 0);
@@ -129,6 +130,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   vec2 cexpcart(vec2 z) {float phase = z.y; return exp(z.x) * vec2(cos(phase), sin(phase));}
   vec2 clogcart(vec2 z) {return vec2(log(length(z)), atan(z.y, z.x));}
   vec2 encodereal(float a) {return vec2(log(abs(a)), 0.5*PI*(1. - sign(a)));}
+  vec2 fix_phase(vec2 z) {return vec2(z.x, mod(z.y + PI, TAU) - PI);}
 
   ${variableDeclarations}
 
