@@ -11,8 +11,6 @@ function terminateFloat(x) {
 // Returns pair [ast_in_glsl, requires_parenthesis]
 function toGLSL(ast, LOG_MODE) {
     if (!isNaN(ast)) {
-        if (LOG_MODE) {return toGLSL(['number', ast, 0], LOG_MODE);}
-
         // GLSL floats must end in decimal point
         return [terminateFloat(ast), false];
     }
@@ -24,12 +22,7 @@ function toGLSL(ast, LOG_MODE) {
         'component_mul': '*',
     };
     if (LOG_MODE) {
-        infixOperators = {
-            'mul': '+',
-            'div': '-',
-            'component_mul': '+',
-            'rawpow': '*',
-        };
+        infixOperators = {};
     }
 
     const [operator, ...args] = ast;
@@ -37,8 +30,7 @@ function toGLSL(ast, LOG_MODE) {
     if (operator === 'number') {
         const [real, imag] = args;
         if (LOG_MODE) {
-            const z = math.log2(math.complex(real, imag));
-            return [`vec2(${z.re}, ${z.im})`, false];
+            return [`vec3(${real}, ${imag}, 0)`, false];
         } else {
             if (real === 1 && imag === 0) {return ['ONE', false];}
             if (real === 0 && imag === 1) {return ['I', false];}
@@ -51,9 +43,6 @@ function toGLSL(ast, LOG_MODE) {
     if (operator in infixOperators) {
         const op = infixOperators[operator]
         let operands = args.map(x => toGLSL(x, LOG_MODE));
-        if (operator === 'rawpow') {
-            operands[1] = [terminateFloat(args[1]), false];
-        }
 
         // Add parentheses where possibly necessary
         if (op === '-') {

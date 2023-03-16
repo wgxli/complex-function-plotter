@@ -180,7 +180,7 @@ function compile(ast) {
             }
         }
 
-        return ['exp', ['mul', ['log', args[0]], args[1]]]; // Cartesian only
+//        return ['exp', ['mul', ['log', args[0]], args[1]]]; // Cartesian only
     }
 
     return [operator, ...args];

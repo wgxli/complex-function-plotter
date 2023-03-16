@@ -24,7 +24,7 @@ function loadShader(gl, type, source) {
 function createShaderProgram(gl, expression, customShader, variableNames) {
   if (expression === null) {return null;}
 
-  gl.LOG_MODE = false;//!customShader; // Whether to use (log-magnitude, phase) representation
+  gl.LOG_MODE = false; //!customShader; // Whether to use (log-magnitude, phase) representation
   const fragmentShaderSource = getFragmentShaderSource(
     expression,
     customShader, 
@@ -35,7 +35,7 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
 
   if (fragmentShaderSource === null) {return null;}
 
-//  console.log(fragmentShaderSource);
+  console.log(fragmentShaderSource);
 
   // Load vertex and fragment shaders
   const vertexShader = loadShader(gl,
@@ -48,8 +48,8 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
   }
 
   // TODO Debug
-  const ext = gl.getExtension('WEBGL_debug_shaders');
-  console.log(ext.getTranslatedShaderSource(fragmentShader));
+//  const ext = gl.getExtension('WEBGL_debug_shaders');
+//  console.log(ext.getTranslatedShaderSource(fragmentShader));
 
   // Create shader program
   const shaderProgram = gl.createProgram();
@@ -84,8 +84,10 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   const y_offset = (height/2).toFixed(2);
   const dpr = window.devicePixelRatio.toFixed(4);
 
+  const vectype = LOG_MODE ? 'vec3' : 'vec2';
+
   const variableDeclarations = variableNames.map(
-    (name) => `uniform vec2 ${name};`
+    (name) => `uniform ${vectype} ${name};`
   ).join('\n');
 
   let custom_code = '';
@@ -95,11 +97,14 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     glsl_expression = 'mapping(z)';
   } else {
     glsl_expression = toGLSL(expression, LOG_MODE)[0];
+    if (LOG_MODE) {
+        glsl_expression = `upconvert(${glsl_expression})`
+    }
   }
   if (glsl_expression === null) {return null;}
 
   console.log('Compiled AST:', expression);
-    console.log(`Shader Code (${LOG_MODE ? 'log-polar' : 'cartesian'}):`, glsl_expression);
+  console.log(`Shader Code (${LOG_MODE ? 'log-cart' : 'cartesian'}):`, glsl_expression);
 
   return `
   #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -119,20 +124,17 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   const float checkerboard_scale = 0.25;
 
-
-  const vec2 LOG_ONE = vec2(0, 0);
-  const vec2 ONE = vec2(1, 0);
+  const ${vectype} ONE = ${LOG_MODE ? 'vec3(1., 0, 0)' : 'vec2(1., 0)'};
   const vec2 I = vec2(0, 1);
-  const vec2 LOG_I = vec2(0, PI/2.);
-  const vec2 C_PI = vec2(PI, 0);
+  const ${vectype} C_PI = ${LOG_MODE ? 'vec3(PI, 0, 0)' : 'vec2(PI, 0)'};
   const vec2 C_TAU = vec2(TAU, 0);
   const vec2 C_E = vec2(E, 0);
   const vec2 C_PHI = vec2(PHI, 0);
 
-  vec2 cexpcart(vec2 z) {float phase = z.y; return exp(z.x) * vec2(cos(phase), sin(phase));}
-  vec2 clogcart(vec2 z) {return vec2(log(length(z)), atan(z.y, z.x));}
+  vec2 clogcart(${vectype} z) {return vec2(${LOG_MODE ? 'log(length(z.xy)) + z.z' : 'log(length(z))'}, atan(z.y, z.x));}
   vec2 encodereal(float a) {return vec2(log(abs(a)), 0.5*PI*(1. - sign(a)));}
-  vec2 fix_phase(vec2 z) {return vec2(z.x, mod(z.y + PI, TAU) - PI);}
+  vec3 downconvert(vec3 z) {return vec3(vec2(z.xy) * exp(z.z), 0);}
+  vec3 upconvert(vec3 z) {float l = length(z.xy); return vec3(z.xy/l, z.z + log(l));}
 
   ${variableDeclarations}
 
@@ -144,11 +146,11 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
   }
 
-  vec3 get_color(vec2 z, float derivative, float phase_derivative) {
-    vec2 magphase = ${LOG_MODE ? 'z' : 'clogcart(z)'};
+  vec3 get_color(${vectype} z_int, float derivative, float phase_derivative) {
+    vec2 magphase = clogcart(z_int);
     magphase.x *= LN2_INV;
     magphase.y = mod(magphase.y, TAU);
-    ${LOG_MODE ? 'z = cexpcart(z);' : ''}
+    vec2 z = ${LOG_MODE ? 'downconvert(z_int).xy' : 'z_int'};
 
     float color_value;
     float color_saturation = 1.0;
@@ -201,15 +203,13 @@ ${LOG_MODE ? 'color_value += (0.75 - color_value) * (1. - phase_decay_factor);' 
   const vec2 screen_offset = vec2(${x_offset}, ${y_offset});
   vec2 from_pixel(vec2 xy) {
     vec2 plot_center = vec2(center_x.x, center_y.x);
-
     float scale = exp(-log_scale.x) / ${dpr};
-
     return scale * (xy - screen_offset) + plot_center;
   }
 
-  vec2 internal_mapping(vec2 xy) {
-      vec2 z = from_pixel(xy);
-      ${LOG_MODE ? 'z = clogcart(z);' : ''}
+  ${vectype} internal_mapping(vec2 xy) {
+      vec2 z_int = from_pixel(xy);
+      ${LOG_MODE ? 'vec3 z = vec3(z_int, 0);' : 'vec2 z = z_int;'}
       return ${glsl_expression};
   }
 
@@ -220,14 +220,14 @@ ${LOG_MODE ? 'color_value += (0.75 - color_value) * (1. - phase_decay_factor);' 
     vec2 xy = gl_FragCoord.xy;
 
     // 4-Rook supersampling
-    vec2 w1 = internal_mapping(xy + A);
-    vec2 w2 = internal_mapping(xy - A);
-    vec2 w3 = internal_mapping(xy + B);
-    vec2 w4 = internal_mapping(xy - B);
+    ${vectype} w1 = internal_mapping(xy + A);
+    ${vectype} w2 = internal_mapping(xy - A);
+    ${vectype} w3 = internal_mapping(xy + B);
+    ${vectype} w4 = internal_mapping(xy - B);
 
     // Anti-Moire
-    float phase_derivative = ${LOG_MODE ? '0.5*(abs(w1.x - w2.x) + abs(w3.x - w4.x))' : '0.'};
-    float derivative = ${LOG_MODE ? 'exp(min(w1.x, 20.)) * phase_derivative' : '0.5 * (length(w1 - w2) + length(w3 - w4))'};
+    float phase_derivative = ${LOG_MODE ? '0.5*(length(w1-w2) + length(w3-w4))' : '0.'};
+    float derivative = ${LOG_MODE ? 'phase_derivative * exp(min(w1.z, 20.))' : '0.5 * (length(w1 - w2) + length(w3 - w4))'};
 
     vec3 color1 = get_color(w1, derivative, phase_derivative);
     vec3 color2 = get_color(w2, derivative, phase_derivative);

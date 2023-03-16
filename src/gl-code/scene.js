@@ -62,9 +62,8 @@ function drawScene(gl, variables, axis_ctx) {
   // Set variable values
   for (const key of Object.keys(variables)) {
     const [location, value] = variables[key];
-    if (gl.LOG_MODE && !hiddenVariables.has(key)) {
-        const z = math.log(math.complex(value, 0));
-        gl.uniform2f(location, Math.max(z.re, -999999), z.im);
+    if (gl.LOG_MODE) {
+        gl.uniform3f(location, value, 0, 0);
     } else {
         gl.uniform2f(location, value, 0);
     }
