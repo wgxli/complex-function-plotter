@@ -24,14 +24,18 @@ function loadShader(gl, type, source) {
 function createShaderProgram(gl, expression, customShader, variableNames) {
   if (expression === null) {return null;}
 
+  gl.LOG_MODE = !customShader; // Whether to use (log-magnitude, phase) representation
   const fragmentShaderSource = getFragmentShaderSource(
     expression,
     customShader, 
     gl.drawingBufferWidth, gl.drawingBufferHeight,
-    variableNames
+    variableNames,
+    gl.LOG_MODE
   );
 
   if (fragmentShaderSource === null) {return null;}
+
+    console.log(fragmentShaderSource);
 
   // Load vertex and fragment shaders
   const vertexShader = loadShader(gl,
@@ -42,6 +46,10 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
   if (vertexShader === null | fragmentShader === null) {
     return null;
   }
+
+  // TODO Debug
+//  const ext = gl.getExtension('WEBGL_debug_shaders');
+//  console.log(ext.getTranslatedShaderSource(fragmentShader));
 
   // Create shader program
   const shaderProgram = gl.createProgram();
@@ -71,7 +79,7 @@ const vertexShaderSource = `
 `;
 
 
-function getFragmentShaderSource(expression, customShader, width, height, variableNames) {
+function getFragmentShaderSource(expression, customShader, width, height, variableNames, LOG_MODE) {
   const x_offset = (width/2).toFixed(2);
   const y_offset = (height/2).toFixed(2);
   const dpr = window.devicePixelRatio.toFixed(4);
@@ -86,12 +94,12 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     custom_code = expression;
     glsl_expression = 'mapping(z)';
   } else {
-    glsl_expression = toGLSL(expression)[0];
+    glsl_expression = toGLSL(expression, LOG_MODE)[0];
   }
   if (glsl_expression === null) {return null;}
 
   console.log('Compiled AST:', expression);
-  console.log('Shader Code:', glsl_expression);
+    console.log(`Shader Code (${LOG_MODE ? 'log-polar' : 'cartesian'}):`, glsl_expression);
 
   return `
   #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -104,6 +112,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   const float TAU = 2.0 * PI;
   const float E = 2.718281845904523;
   const float LN2 = 0.69314718055994531;
+  const float LN2_INV = 1.442695040889634;
   const float LNPI = 1.1447298858494001741434;
   const float PHI = 1.61803398874989484820459;
   const float SQ2 = 1.41421356237309504880169;
@@ -117,9 +126,13 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   const vec2 C_E = vec2(E, 0);
   const vec2 C_PHI = vec2(PHI, 0);
 
+  vec2 cexpcart(vec2 z) {float phase = z.y; return exp(z.x) * vec2(cos(phase), sin(phase));}
+  vec2 clogcart(vec2 z) {return vec2(log(length(z)), atan(z.y, z.x));}
+  vec2 encodereal(float a) {return vec2(log(abs(a)), 0.5*PI*(1. - sign(a)));}
+
   ${variableDeclarations}
 
-  ${functionDefinitions(expression)}
+  ${functionDefinitions(expression, LOG_MODE)}
 
   vec3 hsv2rgb(vec3 c) {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -127,14 +140,20 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
   }
 
-  vec3 get_color(vec2 z, float derivative) {
-    float magnitude = length(z);
-    float phase = atan(z.y, z.x);
+  vec3 get_color(vec2 z, float derivative, float phase_derivative) {
+    vec2 magphase = ${LOG_MODE ? 'z' : 'clogcart(z)'};
+    magphase.x *= LN2_INV;
+    magphase.y = mod(magphase.y, TAU);
+    ${LOG_MODE ? 'z = cexpcart(z);' : ''}
 
     float color_value;
     float color_saturation = 1.0;
+
+    float phase_decay_factor = 1./clamp(8. * phase_derivative, 1., 10000.0);
+    color_saturation *= phase_decay_factor;
+
     if (continuous_gradient.x > 0.5) {
-      float color_lightness = 0.5 + atan(0.5 * log(magnitude))/PI;
+      float color_lightness = 0.5 + atan(0.35 * magphase.x)/PI;
       color_saturation = 1.0;
 
       if (invert_gradient.x > 0.5) {
@@ -147,11 +166,13 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
       color_value = (color_lightness + color_saturation) / 2.0;
       color_saturation /= color_value;
     } else {
-      color_value = 0.5 * exp2(fract(log2(magnitude)));
+      color_value = 0.5 * exp2(fract(magphase.x));
 
       if (invert_gradient.x > 0.5) {
 	color_value = 1.5 - color_value;
       }
+
+      color_value += (0.75 - color_value) * (1. - phase_decay_factor);
     }
 
     if (enable_checkerboard.x > 0.5) {
@@ -159,13 +180,15 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
       float checkerboard = floor(2.0 * fract((checkerboard_components.x + checkerboard_components.y)/2.0));
 
       // Anti-Moire
-      float decay_factor = clamp(40.0 * derivative, 1.0, 10000.0) - 1.0;
-      checkerboard = 0.5 + (checkerboard - 0.5) / (1.0 + 3.0 * decay_factor);
+      float decay_factor = clamp(40. * derivative, 1., 10000.0) - 1.;
+      checkerboard = 0.5 + (checkerboard - 0.5) / (1. + 3. * decay_factor);
+
+      if (magphase.x > 15.) {checkerboard = 0.5;}
 
       color_value *= 0.8 + 0.2 * checkerboard;
     }
 
-    vec3 hsv_color = vec3(phase/TAU, color_saturation, color_value);
+    vec3 hsv_color = vec3(magphase.y/TAU, color_saturation, color_value);
     return hsv2rgb(hsv_color);
   }
 
@@ -182,6 +205,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   vec2 internal_mapping(vec2 xy) {
       vec2 z = from_pixel(xy);
+      ${LOG_MODE ? 'z = clogcart(z);' : ''}
       return ${glsl_expression};
   }
 
@@ -198,12 +222,13 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     vec2 w4 = internal_mapping(xy - B);
 
     // Anti-Moire
-    float derivative = 0.5 * (length(w1 - w2) + length(w3 - w4));
+    float phase_derivative = ${LOG_MODE ? '0.5*(abs(w1.x - w2.x) + abs(w3.x - w4.x))' : '0.'};
+    float derivative = ${LOG_MODE ? 'exp(min(w1.x, 20.)) * phase_derivative' : '0.5 * (length(w1 - w2) + length(w3 - w4))'};
 
-    vec3 color1 = get_color(w1, derivative);
-    vec3 color2 = get_color(w2, derivative);
-    vec3 color3 = get_color(w3, derivative);
-    vec3 color4 = get_color(w4, derivative);
+    vec3 color1 = get_color(w1, derivative, phase_derivative);
+    vec3 color2 = get_color(w2, derivative, phase_derivative);
+    vec3 color3 = get_color(w3, derivative, phase_derivative);
+    vec3 color4 = get_color(w4, derivative, phase_derivative);
 
     vec3 color =  0.25 * (color1 + color2 + color3 + color4);
     gl_FragColor = vec4(color, 1.0);

@@ -1,45 +1,64 @@
+import {constants, fns} from './to-js.js';
 import {get} from 'lodash';
 
+const math = require('mathjs');
+
+
 // Returns pair [ast_in_glsl, requires_parenthesis]
-function toGLSL(ast) {
+function toGLSL(ast, LOG_MODE) {
     if (!isNaN(ast)) {
+        if (LOG_MODE) {return toGLSL(['number', ast, 0], LOG_MODE);}
+
         // GLSL floats must end in decimal point
         const terminator = Number.isInteger(ast) ? '.' : '';
         return [ast.toString() + terminator, false];
     }
     if (!Array.isArray(ast)) {return [ast, false];}
 
-    const infixOperators = {
+    let infixOperators = {
         'add': '+',
         'sub': '-',
         'component_mul': '*',
     };
+    if (LOG_MODE) {
+        infixOperators = {
+            'mul': '+',
+            'div': '-',
+            'component_mul': '+',
+        };
+    }
 
     const [operator, ...args] = ast;
 
     if (operator === 'number') {
         const [real, imag] = args;
-        if (real === 1 && imag === 0) {return ['ONE', false];}
-        if (real === 0 && imag === 1) {return ['I', false];}
-        return [`vec2(${real}, ${imag})`, false];
+        if (LOG_MODE) {
+            const z = math.log(math.complex(real, imag));
+            return [`vec2(${z.re}, ${z.im})`, false];
+        } else {
+            if (real === 1 && imag === 0) {return ['ONE', false];}
+            if (real === 0 && imag === 1) {return ['I', false];}
+            return [`vec2(${real}, ${imag})`, false];
+        }
     }
 
     if (operator === 'variable') {return [args[0], false];}
-    if (operator === 'constant') {return ['C_' + args[0].toUpperCase(), false];}
+    if (operator === 'constant') {return ['C_' + args[0].toUpperCase(), false];} // TODO FIX
     if (operator in infixOperators) {
-        let operands = args.map(toGLSL);
+        const op = infixOperators[operator]
+        let operands = args.map(x => toGLSL(x, LOG_MODE));
 
         // Add parentheses where possibly necessary
-        if (operator === 'sub') {
+        if (op === '-') {
             if (operands[1][1]) {
                 operands[1][0] = '(' + operands[1][0] + ')';
             };
         } else {
-            if (operator !== 'add') {
+            if (op !== '+') {
                 operands = operands.map(x => [x[1] ? '(' + x[0] + ')' : x[0], false]);
             }
         }
-        return [operands[0][0] + infixOperators[operator] + operands[1][0], operator !== 'mul'];
+        return [operands[0][0] + op + operands[1][0], operator !== 'mul'];
     }
 
     // Unary function
@@ -48,7 +67,7 @@ function toGLSL(ast) {
     };
     const internalName = get(unaryFunctions, operator, 'c' + operator);
 
-    return [internalName + '(' + args.map(x => toGLSL(x)[0]).join(', ') + ')', false];
+    return [internalName + '(' + args.map(x => toGLSL(x, LOG_MODE)[0]).join(', ') + ')', false];
 }
 
 export default toGLSL;

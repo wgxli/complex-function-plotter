@@ -68,4 +68,5 @@ class SliderPanel extends React.Component {
   }
 }
 
+export {hiddenVariables};
 export default SliderPanel;

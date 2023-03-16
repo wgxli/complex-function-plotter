@@ -8,12 +8,21 @@ const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
 const argument_names = ['z', 'w', 'w1', 'w2'];
 
 class ComplexFunction {
-    constructor(name, body, dependencies, num_args) {
+    constructor(name, body, log_body, dependencies, log_dep, num_args) {
+        // TODO TEMP until everything has log body
+        if (Array.isArray(log_body)) {
+            num_args = dependencies;
+            dependencies = log_body;
+            log_body = null;
+        }
+
         if (num_args === undefined) {num_args = 1;}
 
         this.name = name;
         this.body = body;
+        this.log_body = log_body;
         this.dependencies = dependencies || [];
+        this.log_dependencies = log_dep || this.dependencies;
         this.num_args = num_args;
     }
 
@@ -27,31 +36,44 @@ class ComplexFunction {
         return `vec2 ${this.name}(${types.join(', ')});`
     }
 
-    get code() {
+    get params() {
         let parameters = [];
         for (let i = 0; i < this.num_args; i++) {
             parameters.push(`vec2 ${argument_names[i]}`);
         }
-        return `vec2 ${this.name}(${parameters.join(', ')}) {${this.body}}`;
+        return parameters.join(', ');
+    }
+
+    get code() {
+        return `vec2 ${this.name}(${this.params}) {${this.body}}`;
+    }
+
+    get log_code() {
+        if (this.log_body === null) {return null;}
+        return `vec2 ${this.name}(${this.params}) {${this.log_body}}`;
     }
 }
 
 class DummyFunction {
-    constructor(dependencies) {this.dependencies = dependencies || [];}
+    constructor(dependencies, log_dependencies) {
+        this.dependencies = dependencies || [];
+        this.log_dependencies = log_dependencies || [];
+    }
     get declaration() {return '';}
     get code() {return '';}
+    get log_code() {return '';}
 }
 
 /***** BEGIN FUNCTION DEFINITIONS *****/
 
 // Miscellaneous
-const mul_i = new ComplexFunction('cmul_i', 'return vec2(-z.y, z.x);');
-const reciprocal = new ComplexFunction('creciprocal', 'return cconj(z) / dot(z, z);', ['conj']);
-const cconj = new ComplexFunction('cconj', 'return z * vec2(1.0, -1.0);');
-const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);');
-const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);');
-const csgn = new ComplexFunction('csgn', 'return z/length(z);');
-const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);');
+const mul_i = new ComplexFunction('cmul_i', 'return vec2(-z.y, z.x);', 'return z + vec2(0, PI/2.);');
+const reciprocal = new ComplexFunction('creciprocal', 'return cconj(z) / dot(z, z);', 'return -z;', ['conj'], []);
+const cconj = new ComplexFunction('cconj', 'return vec2(z.x, -z.y);', 'return vec2(z.x, -z.y);');
+const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);', 'return vec2(z.x, 0);');
+const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);', 'return encodereal(mod(z.y + PI, TAU) - PI);');
+const csgn = new ComplexFunction('csgn', 'return z/length(z);', 'return vec2(0., z.y);');
+const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);', 'return encodereal(cos(z.y)) + vec2(z.x, 0.);');
 const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);');
 const cfloor = new ComplexFunction('cfloor', 'return floor(z);');
 //const cceil = new ComplexFunction('cceil', 'return ceil(z);');
@@ -64,9 +86,10 @@ const ccis = new ComplexFunction('ccis',
     'return cexp(cmul_i(z));',
     ['exp', 'mul_i']);
 const cexp = new ComplexFunction('cexp',
-`float magnitude = exp(z.x);
-float phase = z.y;
-return magnitude * vec2(cos(phase), sin(phase));`);
+`float phase = z.y;
+return exp(z.x) * vec2(cos(phase), sin(phase));`,
+`float phase = z.y;
+return exp(z.x) * vec2(cos(phase), sin(phase));`); // Weirdly enough, same code in cartesian and log-polar...
 const clog = new ComplexFunction('clog',
 `float magnitude = log(length(z));
 float phase = atan(z.y, z.x);
@@ -78,7 +101,7 @@ return sqrt(magnitude) * vec2(cos(phase), sin(phase));`);
 const csquare = new ComplexFunction('csquare',
 `float magnitude = length(z);
 float phase = atan(z.y, z.x) * 2.0;
-return (magnitude * magnitude) * vec2(cos(phase), sin(phase));`);
+return (magnitude * magnitude) * vec2(cos(phase), sin(phase));`, 'return 2.*z;');
 
 // Trigonometry //
 // Basic Trigonometric Functions
@@ -156,14 +179,28 @@ const carcoth = new ComplexFunction('carcoth',
 
 
 // Infix Operators //
-const cneg = new ComplexFunction('cneg', 'return -z;');
-const cadd = new ComplexFunction('cadd', 'return z+w;', [], 2);
-const csub = new ComplexFunction('csub', 'return z-w;', [], 2);
+const cneg = new ComplexFunction('cneg', 'return -z;', 'return z + vec2(0., PI);');
+const cadd = new ComplexFunction('cadd', 'return z+w;',
+    `vec2 k = w-z;
+    float p = sign(k.x);
+    k *= -p;
+    z = 0.5 * ((1.-p) * z + (1.+p) * w);
+    float cos_t = cos(k.y);
+    float cos_t2 = cos(0.5*k.y);
+    float b = exp(k.x);
+    float mag = 0.5 * log((b-1.)*(b-1.) + 4.*b*cos_t2*cos_t2);
+    float phase = atan(sin(k.y) , cos_t + 1./b);
+    return vec2(mag, phase) + z;`,
+[], [], 2);
+const csub = new ComplexFunction('csub', 'return z+w;',
+    'return cadd(z, cneg(w));', [], ['add', 'neg'], 2);
 const cmul = new ComplexFunction('cmul',
-    'return mat2(z, -z.y, z.x) * w;', [], 2);
+    'return mat2(z, -z.y, z.x) * w;',
+    'return z+w;',
+    [], [], 2);
 const cdiv = new ComplexFunction('cdiv',
-'return cmul(z, creciprocal(w));', ['mul', 'reciprocal'], 2);
-const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', ['exp', 'mul', 'log'], 2);
+'return cmul(z, creciprocal(w));', 'return z-w;', ['mul', 'reciprocal'], [], 2);
+const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', 'return mat2(z, -z.y, z.x) * cexpcart(w);', ['exp', 'mul', 'log'], [], 2);
 
 // Lanczos approximation
 const cgamma = new ComplexFunction('cgamma',
@@ -640,7 +677,7 @@ function getRequirements(ast) {
 
 // Get function declarations and definitions.
 // Only loads used functions and their dependencies.
-function functionDefinitions(ast) {
+function functionDefinitions(ast, LOG_MODE) {
     let required = null;
 
     if (Array.isArray(ast)) {
@@ -651,7 +688,9 @@ function functionDefinitions(ast) {
         const stack = Array.from(required);
         while (stack.length > 0) {
             const f = stack.pop();
-            for (let dep of complex_functions[f].dependencies) {
+            const fObj = complex_functions[f];
+            const dependencies = LOG_MODE ? fObj.log_dependencies : fObj.dependencies;
+            for (let dep of dependencies) {
                 if (!required.has(dep)) {
                     required.add(dep);
                     stack.push(dep);
@@ -669,7 +708,7 @@ function functionDefinitions(ast) {
 
     const functions = Array.from(required).map(name => complex_functions[name]);
     const declarations = functions.map(f => f.declaration);
-    const definitions = functions.map(f => f.code);
+    const definitions = functions.map(f => LOG_MODE ? f.log_code : f.code);
 
     const declarationString = declarations.join('\n');
     const definitionString = definitions.join('\n');

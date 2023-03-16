@@ -1,4 +1,7 @@
 import createShaderProgram from './shaders.js';
+import {hiddenVariables} from '../components/SliderPanel/SliderPanel.js';
+
+const math = require('mathjs');
 
 
 function initBuffers(gl) {
@@ -57,8 +60,14 @@ function initializeScene(gl, expression, customShader, variableNames) {
 
 function drawScene(gl, variables, axis_ctx) {
   // Set variable values
-  for (const [location, value] of Object.values(variables)) {
-    gl.uniform2f(location, value, 0);
+  for (const key of Object.keys(variables)) {
+    const [location, value] = variables[key];
+    if (gl.LOG_MODE && !hiddenVariables.has(key)) {
+        const z = math.log(math.complex(value, 0));
+        gl.uniform2f(location, Math.max(z.re, -999999), z.im);
+    } else {
+        gl.uniform2f(location, value, 0);
+    }
   }
 
   // Draw scene

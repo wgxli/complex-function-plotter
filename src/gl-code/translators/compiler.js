@@ -158,11 +158,11 @@ function compile(ast) {
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
-                return ['exp', ['component_mul', ['log', subAST], val.re]];
+//                return ['exp', ['component_mul', ['log', subAST], val.re]];
             }
         }
 
-        return ['exp', ['mul', ['log', args[0]], args[1]]];
+//        return ['exp', ['mul', ['log', args[0]], args[1]]];
     }
 
     return [operator, ...args];
