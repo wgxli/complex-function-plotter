@@ -35,6 +35,8 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
 
   if (fragmentShaderSource === null) {return null;}
 
+//  console.log(fragmentShaderSource);
+
   // Load vertex and fragment shaders
   const vertexShader = loadShader(gl,
     gl.VERTEX_SHADER, vertexShaderSource);
@@ -46,8 +48,8 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
   }
 
   // TODO Debug
-//  const ext = gl.getExtension('WEBGL_debug_shaders');
-//  console.log(ext.getTranslatedShaderSource(fragmentShader));
+  const ext = gl.getExtension('WEBGL_debug_shaders');
+  console.log(ext.getTranslatedShaderSource(fragmentShader));
 
   // Create shader program
   const shaderProgram = gl.createProgram();
@@ -151,8 +153,8 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
     float color_value;
     float color_saturation = 1.0;
 
-    float phase_decay_factor = 1./clamp(8. * phase_derivative, 1., 10000.0);
-    color_saturation *= phase_decay_factor;
+    ${LOG_MODE ? `float phase_decay_factor = 1./clamp(8. * phase_derivative, 1., 10000.0);
+    color_saturation *= phase_decay_factor;` : ''}
 
     if (continuous_gradient.x > 0.5) {
       float color_lightness = 0.5 + atan(0.35 * magphase.x)/PI;
@@ -174,7 +176,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 	color_value = 1.5 - color_value;
       }
 
-      color_value += (0.75 - color_value) * (1. - phase_decay_factor);
+${LOG_MODE ? 'color_value += (0.75 - color_value) * (1. - phase_decay_factor);' : ''}
     }
 
     if (enable_checkerboard.x > 0.5) {

@@ -1,11 +1,7 @@
 """Borwein series for Dirichlet eta."""
 import math
+import numpy as np
 
-N = 8
-
-for n in range(1, N+1):
-    print(f'{-math.log(n):.12f} * exp_z,')
-print()
-
-for n in range(1, N+1):
-    print(f'{math.log(n):.12f} * exp_z - vec2({math.log(n):.12f}, 0),')
+ns = 2 + 16*1 + np.arange(16)
+print('mat4(' + ','.join(f'{x:.0f}.' for x in ns) + '),')
+print('mat4(' + ','.join(f'-{x:.12f}' for x in np.log(ns)) + ')')

@@ -65,11 +65,20 @@ class DummyFunction {
     get log_code() {return '';}
 }
 
+class ZetaHelper extends ComplexFunction {
+    get declaration() {return `vec4 ${this.name}(vec2, mat4, mat4);`}
+    get code() {return `vec4 ${this.name}(vec2 z, mat4 ns, mat4 bases) {${this.body}}`;}
+}
+class ZetaHelper2 extends ComplexFunction {
+    get declaration() {return `vec2 ${this.name}(vec2, mat4, mat4);`}
+    get code() {return `vec2 ${this.name}(vec2 z, mat4 bases, mat4 coeffs) {${this.body}}`;}
+}
+
 /***** BEGIN FUNCTION DEFINITIONS *****/
 
 // Miscellaneous
 const mul_i = new ComplexFunction('cmul_i', 'return vec2(-z.y, z.x);', 'return z + LOG_I;');
-const reciprocal = new ComplexFunction('creciprocal', 'return cconj(z) / dot(z, z);', 'return -z;', ['conj'], []);
+const creciprocal = new ComplexFunction('creciprocal', 'return cconj(z) / dot(z, z);', 'return -z;', ['conj'], []);
 const cconj = new ComplexFunction('cconj', 'return vec2(z.x, -z.y);', 'return vec2(z.x, -z.y);');
 const cabs = new ComplexFunction('cabs', 'return vec2(length(z), 0);', 'return vec2(z.x, 0);');
 const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);', 'return encodereal(mod(z.y + PI, TAU) - PI);');
@@ -338,14 +347,11 @@ const vec2 B = vec2(1.0 + LN2, 0);
 // Asymptotic approximation to
 // gamma(0.5 * z) / gamma((1-z)/2)
 // Good for Im(z) > 10
-vec2 multiplier = cexp(
-    cmul(z, A + clog(ONE - 2.0 * z))
+vec2 zconj = ONE - 2.*z;
+return cexp(
+    cmul(z, A + clog(zconj))
     + 0.5 * (B - clog(z))
-);
-
-return cmul(
-    cexp((0.5 * LNPI) * (ONE - 2.0 * z)),
-    multiplier
+    + (0.5 * LNPI) * zconj
 );`,
 `const vec2 A = vec2(-1.0 - 2.0*LN2, PI/2.0); // -1 + ln(i/4)
 const vec2 B = vec2(1.0 + LN2, 0);
@@ -353,34 +359,56 @@ const vec2 B = vec2(1.0 + LN2, 0);
 vec2 zcomp = csub(LOG_ONE, z + vec2(LN2, 0));
 return 0.5*LNPI * cexp(zcomp) + 0.5 * (B - z) + cpow(A + zcomp, z);`,
 ['exp', 'mul', 'log'], ['exp', 'gamma', 'add', 'sub', 'pow']);
-
-// Riemann-Siegel Formula
 const ceta_strip = new ComplexFunction('ceta_strip',
-`const int N = ${window.innerWidth < 700 ? 32 : 64};
-
-vec2 zetaA = vec2(0.0, 0.0); // Estimate zeta(z)
-vec2 zetaB = vec2(0.0, 0.0); // Estimate of zeta(1-z)
-
-for (int i=1; i <= N; i++) {
-    float n = float(i);
-    float base = log(n);
-    vec2 term = cexp(-base * z);
-    zetaA += term;
-    zetaB += creciprocal(n * term);
+'return cmul(ONE - cexp(LN2 * (ONE - z)), czeta_strip(z));',
+['mul', 'exp', 'czeta_strip']);
+const czeta_helper = new ZetaHelper('czeta_helper',
+`mat4 phases = z.y*bases;
+float cutoff = sqrt(z.y/TAU) + 100. * step(z.y, 120.);
+vec4 res = vec4(0);
+for (int row = 0; row < 4; row++) {
+  vec4 mags = exp(z.x*bases[row]);
+  vec4 cutoff = clamp(0.884*(cutoff-ns[row] + 0.5), 0., 1.);
+  vec4 mags2 = cutoff/(ns[row] * mags);
+  mags *= cutoff;
+  vec4 re = cos(phases[row]);
+  vec4 im = sin(phases[row]);
+  res += vec4(dot(mags, re), dot(mags, im), dot(mags2, re), -dot(mags2, im));
 }
+return res;`);
+const czeta_helper_2 = new ZetaHelper2('czeta_helper_2',
+`mat4 phases = z.y*bases;
+vec2 res = vec2(0);
+for (int row = 0; row < 4; row++) {
+  vec4 mags = exp(z.x*bases[row]) * coeffs[row];
+  vec4 re = cos(phases[row]);
+  vec4 im = sin(phases[row]);
+  res += vec2(dot(mags, re), dot(mags, im));
+}
+return res;`);
+// Riemann-Siegel Formula
+const czeta_strip = new ComplexFunction('czeta_strip',
+`vec4 zeta_est = vec4(1., 0, 1., 0); // Estimate of zeta(z), zeta(1-z)
 
-// Convert to an estimate of zeta(z) via the functional equation
+zeta_est += czeta_helper(z,
+mat4(2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,17.),
+mat4(-0.693147180560,-1.098612288668,-1.386294361120,-1.609437912434,-1.791759469228,-1.945910149055,-2.079441541680,-2.197224577336,-2.302585092994,-2.397895272798,-2.484906649788,-2.564949357462,-2.639057329615,-2.708050201102,-2.772588722240,-2.833213344056));
+zeta_est += czeta_helper(z,
+mat4(18.,19.,20.,21.,22.,23.,24.,25.,26.,27.,28.,29.,30.,31.,32.,33.),
+mat4(-2.890371757896,-2.944438979166,-2.995732273554,-3.044522437723,-3.091042453358,-3.135494215929,-3.178053830348,-3.218875824868,-3.258096538021,-3.295836866004,-3.332204510175,-3.367295829986,-3.401197381662,-3.433987204485,-3.465735902800,-3.496507561466));
+
+vec2 zetaA = zeta_est.xy;
+vec2 zetaB = zeta_est.zw;
 zetaB = cmul(zetaB, cconj(zeta_character(ONE - cconj(z))));
 
-// Interpolate between the two estimates of zeta(z)
-float t = 1.0 - min(z.x, 1.0);
-float alpha = t*t * (3.0 - 2.0*t); // Hermite interpolation (smoothstep)
-vec2 zeta_val = mix(zetaA, zetaB, alpha);
-
-// Convert to eta(z) via functional equation
-return cmul(ONE - cexp(LN2 * (ONE - z)), zeta_val);`,
-['exp', 'reciprocal', 'mul', 'conj', 'zeta_character']);
-const czeta_strip = new ComplexFunction('czeta_strip', '',
+if (z.y < 120.) {
+    // Interpolate between the two estimates of zeta(z)
+    float t = 1.0 - min(z.x, 1.0);
+    float alpha = t*t * (3.0 - 2.0*t); // Hermite interpolation (smoothstep)
+    return mix(zetaA, zetaB, alpha);
+} else {
+    return zetaA + zetaB;
+}`,
 `vec2 exp_z = cexp(z);
 vec2 zetaA = cadd8(
 vec2(0, 0),
@@ -404,42 +432,20 @@ vec2(0, 0),
 // Convert to an estimate of zeta(z) via the functional equation
 zetaB += zeta_character(csub(ONE, z));
 return cadd(zetaA, zetaB);`,
-[], ['exp', 'add', 'sub', 'add8', 'zeta_character']);
+['conj', 'zeta_character', 'czeta_helper'],
+['exp', 'add', 'sub', 'add8', 'zeta_character']);
 
 const ceta_right = new ComplexFunction('ceta_right',
 `if (z.x < 3.0 && z.y > 50.0) {return ceta_strip(z);}
-vec2 result = vec2(1.000000000000000, 0.0);
-result -= 1.00000000000000000000 * cexp(-0.69314718055994528623 * z);
-result += 1.00000000000000000000 * cexp(-1.09861228866810978211 * z);
-result -= 1.00000000000000000000 * cexp(-1.38629436111989057245 * z);
-result += 0.99999999999999555911 * cexp(-1.60943791243410028180 * z);
-result -= 0.99999999999979938270 * cexp(-1.79175946922805495731 * z);
-result += 0.99999999999386091076 * cexp(-1.94591014905531323187 * z);
-result -= 0.99999999986491050485 * cexp(-2.07944154167983574766 * z);
-result += 0.99999999776946757457 * cexp(-2.19722457733621956422 * z);
-result -= 0.99999997147371189055 * cexp(-2.30258509299404590109 * z);
-result += 0.99999971045373836631 * cexp(-2.39789527279837066942 * z);
-result -= 0.99999762229395061652 * cexp(-2.48490664978800035456 * z);
-result += 0.99998395846577381452 * cexp(-2.56494935746153673861 * z);
-result -= 0.99990996358087780305 * cexp(-2.63905732961525840707 * z);
-result += 0.99957522481587246510 * cexp(-2.70805020110221006391 * z);
-result -= 0.99830090896564482872 * cexp(-2.77258872223978114491 * z);
-result += 0.99419535104495204703 * cexp(-2.83321334405621616526 * z);
-result -= 0.98295446518722640050 * cexp(-2.89037175789616451738 * z);
-result += 0.95672573151919981793 * cexp(-2.94443897916644026225 * z);
-result -= 0.90449212250748245445 * cexp(-2.99573227355399085425 * z);
-result += 0.81569498718756294764 * cexp(-3.04452243772342301398 * z);
-result -= 0.68698555062628596790 * cexp(-3.09104245335831606667 * z);
-result += 0.52834368695773525904 * cexp(-3.13549421592914967505 * z);
-result -= 0.36280435095576935023 * cexp(-3.17805383034794575181 * z);
-result += 0.21751716776255453079 * cexp(-3.21887582486820056360 * z);
-result -= 0.11124997091266028426 * cexp(-3.25809653802148213586 * z);
-result += 0.04729731398489586680 * cexp(-3.29583686600432912428 * z);
-result -= 0.01619245778522847637 * cexp(-3.33220451017520380432 * z);
-result += 0.00427566222821304867 * cexp(-3.36729582998647414271 * z);
-result -= 0.00081524972526846008 * cexp(-3.40119738166215546116 * z);
-result += 0.00009970680093076545 * cexp(-3.43398720448514627179 * z);
-result -= 0.00000586510593565794 * cexp(-3.46573590279972654216 * z);
+vec2 result = vec2(1., 0);
+result += czeta_helper_2(z,
+mat4(-0.69314718055995,-1.09861228866811,-1.38629436111989,-1.60943791243410,-1.79175946922805,-1.94591014905531,-2.07944154167984,-2.19722457733622,-2.30258509299405,-2.39789527279837,-2.48490664978800,-2.56494935746154,-2.63905732961526,-2.70805020110221,-2.77258872223978,-2.83321334405622),
+mat4(-1.00000000000000,1.00000000000000,-1.00000000000000,1.00000000000000,-0.99999999999995,0.99999999999847,-0.99999999996425,0.99999999937104,-0.99999999142280,0.99999990708781,-0.99999918494666,0.99999411949279,-0.99996466193028,0.99982127062071,-0.99923254216349,0.99718148818347));
+result += czeta_helper_2(z,
+mat4(-2.89037175789616,-2.94443897916644,-2.99573227355399,-3.04452243772342,-3.09104245335832,-3.13549421592915,-3.17805383034795,-3.21887582486820,-3.25809653802148,-3.29583686600433,-3.33220451017520,-3.36729582998647,-3.40119738166216,-3.43398720448515,-3.46573590279973,-3.49650756146648),
+mat4(-0.99109047939434,0.97562125072353,-0.94195422388664,0.87910910712444,-0.77852772396727,0.64073335549827,-0.47964042231228,0.31968999219853,-0.18572334624203,0.09196690020310,-0.03784892366350,0.01254701255408,-0.00320994916827,0.00059346134942,-0.00007044051625,0.00000402517236));
+
+
 return result;`,
 `vec2 exp_z = cexp(z);
 return csub(cadd8(
@@ -461,7 +467,7 @@ vec2(-0.000000000001, 0.),
 -2.639057329615 * exp_z + vec2(-2.385658846981, 0.),
 -2.772588722240 * exp_z + vec2(-6.023245006707, 0.)
 ));`,
-['ceta_strip', 'exp'], ['exp', 'sub', 'add8']);
+['ceta_strip', 'czeta_helper_2'], ['exp', 'sub', 'add8']);
 
 // Riemann zeta function
 const czeta = new ComplexFunction('czeta',
@@ -693,7 +699,8 @@ return ONE + 2.0 * creciprocal(3.0 * raw_wpp(zz, A, tau) - ONE);`,
 
 /**** Higher-Order Functions ****/
 var complex_functions = {
-    mul_i, reciprocal,
+    mul_i,
+    'reciprocal': creciprocal,
     'square': csquare,
     'component_mul': new DummyFunction(),
 
@@ -738,7 +745,7 @@ var complex_functions = {
     'gamma': cgamma,
 
     ceta_left, ceta_strip, ceta_right,
-    zeta_character, czeta_strip,
+    zeta_character, czeta_strip, czeta_helper, czeta_helper_2,
     rerf, cerf_small, cerf_large,
     'eta': ceta,
     'zeta': czeta,
