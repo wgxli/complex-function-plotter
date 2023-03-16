@@ -24,7 +24,7 @@ function loadShader(gl, type, source) {
 function createShaderProgram(gl, expression, customShader, variableNames) {
   if (expression === null) {return null;}
 
-  gl.LOG_MODE = !customShader; // Whether to use (log-magnitude, phase) representation
+  gl.LOG_MODE = false;//!customShader; // Whether to use (log-magnitude, phase) representation
   const fragmentShaderSource = getFragmentShaderSource(
     expression,
     customShader, 

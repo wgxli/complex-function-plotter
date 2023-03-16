@@ -37,7 +37,7 @@ function toGLSL(ast, LOG_MODE) {
     if (operator === 'number') {
         const [real, imag] = args;
         if (LOG_MODE) {
-            const z = math.log(math.complex(real, imag));
+            const z = math.log2(math.complex(real, imag));
             return [`vec2(${z.re}, ${z.im})`, false];
         } else {
             if (real === 1 && imag === 0) {return ['ONE', false];}

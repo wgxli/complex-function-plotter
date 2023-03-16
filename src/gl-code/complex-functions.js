@@ -76,10 +76,9 @@ const carg = new ComplexFunction('carg', 'return vec2(atan(z.y, z.x), 0);', 'ret
 const csgn = new ComplexFunction('csgn', 'return normalize(z);', 'return vec2(0., z.y);');
 const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);', 'return encodereal(cos(z.y)) + vec2(z.x, 0.);');
 const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);', 'return encodereal(sin(z.y)) + vec2(z.x, 0.);');
-const cfloor = new ComplexFunction('cfloor', 'return floor(z);');
-//const cceil = new ComplexFunction('cceil', 'return ceil(z);');
-const cceil = new ComplexFunction('cceil', 'return floor(z + vec2(0.9999999, 0.9999999));'); // Fix for iOS
-const cround = new ComplexFunction('cround', 'return floor(z + vec2(0.5, 0.5));');
+const cfloor = new ComplexFunction('cfloor', 'return floor(z);', 'if (z.x > 20.) {return z;} else {return clogcart(floor(cexpcart(z)));}');
+const cceil = new ComplexFunction('cceil', 'return floor(z + vec2(0.9999999, 0.9999999));', 'if (z.x > 20.) {return z;} else {return clogcart(floor(cexpcart(z) + vec2(0.9999999, 0.9999999)));}'); // Built-in ceil fails on iOS
+const cround = new ComplexFunction('cround', 'return floor(z + vec2(0.5, 0.5));', 'if (z.x > 20.) {return z;} else {return clogcart(floor(cexpcart(z) + vec2(0.5, 0.5)));}');
 const cstep = new ComplexFunction('cstep', 'return vec2(step(0.0, z.x), 0.0);', 'return vec2((-1./0.)*step(0.0, mod(z.y+0.5*PI, TAU)-PI), 0.);');
 
 // Exponentials
@@ -211,28 +210,20 @@ const carcoth = new ComplexFunction('carcoth',
 
 // Infix Operators //
 const cneg = new ComplexFunction('cneg', 'return -z;', 'return z + vec2(0., PI);');
-const cadd = new ComplexFunction('cadd', 'return z+w;',
-    `vec2 k = w-z;
-    float p = 2.*step(0., k.x)-1.;
-    k *= -p;
-    z = 0.5 * ((1.-p) * z + (1.+p) * w);
-    float cos_t = cos(k.y);
-    float cos_t2 = cos(0.5*k.y);
-    float b = exp(k.x);
-    float mag = 0.5 * log((b-1.)*(b-1.) + 4.*b*cos_t2*cos_t2);
-    float phase = atan(sin(k.y) , cos_t + 1./b);
-    return vec2(mag, phase) + z;`,
-[], [], 2);
+const cadd = new ComplexFunction('cadd', 'return z+w;', 'return csub(z, cneg(w));', [], ['sub', 'neg'], 2);
 const csub = new ComplexFunction('csub', 'return z+w;',
     `vec2 k = w-z;
     float p = 2.*step(0., k.x)-1.;
     k *= -p;
     z = 0.5 * ((1.-p) * z + (1.+p) * cneg(w));
-    float cos_t = -cos(k.y);
     float cos_t2 = sin(0.5*k.y);
+
     float b = exp(k.x);
-    float mag = 0.5 * log((b-1.)*(b-1.) + 4.*b*cos_t2*cos_t2);
-    float phase = atan(-sin(k.y) , cos_t + 1./b);
+    float b2c2 = 2.*b*cos_t2*cos_t2;
+    float bm1 = 1.-b;
+
+    float mag = 0.5 * log(bm1*bm1 + 2.*b2c2);
+    float phase = atan(-b*sin(k.y), b2c2 + bm1);
     return vec2(mag, phase) + z;`,
     [], ['neg'], 2); // Rewritten to get better cancellation of z-z
 const cmul = new ComplexFunction('cmul',
@@ -292,7 +283,7 @@ return sqrt(TAU) * cmul(x, cexp(cmul(clog(t), w + vec2(0.5, 0)) - t));`, // Lanc
 `vec2 base = cadd(z, -csub(z + vec2(log(12.), 0), -z - vec2(log(10.), 0)));
 return csqrt(vec2(LN2+LNPI, 0)-z) + cpow(base - ONE, z);`, // Stirling approximation
 ['reciprocal', 'mul', 'exp', 'log'], ['sqrt', 'pow', 'add', 'sub']);
-const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', 'return cgamma(cadd(z, LOG_ONE));', ['gamma'], ['gamma']);
+const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', 'return cgamma(cadd(z, LOG_ONE));', ['gamma'], ['gamma', 'add']);
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
@@ -307,7 +298,9 @@ if (z.x < 0.0) {
 } else {
     result = ceta_right(z);
 }
-return result * conjugate_mask;`, ['conj', 'ceta_left', 'ceta_right']);
+return result * conjugate_mask;`,
+'return ceta_right(z);',
+['conj', 'ceta_left', 'ceta_right'], ['ceta_right']);
 const ceta_left = new ComplexFunction('ceta_left',
 `z.x *= -1.0;
 vec2 component_a;
@@ -354,7 +347,12 @@ return cmul(
     cexp((0.5 * LNPI) * (ONE - 2.0 * z)),
     multiplier
 );`,
-['exp', 'mul', 'log']);
+`const vec2 A = vec2(-1.0 - 2.0*LN2, PI/2.0); // -1 + ln(i/4)
+const vec2 B = vec2(1.0 + LN2, 0);
+
+vec2 zcomp = csub(LOG_ONE, z + vec2(LN2, 0));
+return 0.5*LNPI * cexp(zcomp) + 0.5 * (B - z) + cpow(A + zcomp, z);`,
+['exp', 'mul', 'log'], ['exp', 'gamma', 'add', 'sub', 'pow']);
 
 // Riemann-Siegel Formula
 const ceta_strip = new ComplexFunction('ceta_strip',
@@ -382,6 +380,31 @@ vec2 zeta_val = mix(zetaA, zetaB, alpha);
 // Convert to eta(z) via functional equation
 return cmul(ONE - cexp(LN2 * (ONE - z)), zeta_val);`,
 ['exp', 'reciprocal', 'mul', 'conj', 'zeta_character']);
+const czeta_strip = new ComplexFunction('czeta_strip', '',
+`vec2 exp_z = cexp(z);
+vec2 zetaA = cadd8(
+vec2(0, 0),
+-0.693147180560 * exp_z,
+-1.098612288668 * exp_z,
+-1.386294361120 * exp_z,
+-1.609437912434 * exp_z,
+-1.791759469228 * exp_z,
+-1.945910149055 * exp_z,
+-2.079441541680 * exp_z);
+vec2 zetaB = cadd8(
+vec2(0, 0),
+0.693147180560 * exp_z - vec2(0.693147180560, 0),
+1.098612288668 * exp_z - vec2(1.098612288668, 0),
+1.386294361120 * exp_z - vec2(1.386294361120, 0),
+1.609437912434 * exp_z - vec2(1.609437912434, 0),
+1.791759469228 * exp_z - vec2(1.791759469228, 0),
+1.945910149055 * exp_z - vec2(1.945910149055, 0),
+2.079441541680 * exp_z - vec2(2.079441541680, 0));
+
+// Convert to an estimate of zeta(z) via the functional equation
+zetaB += zeta_character(csub(ONE, z));
+return cadd(zetaA, zetaB);`,
+[], ['exp', 'add', 'sub', 'add8', 'zeta_character']);
 
 const ceta_right = new ComplexFunction('ceta_right',
 `if (z.x < 3.0 && z.y > 50.0) {return ceta_strip(z);}
@@ -418,11 +441,34 @@ result -= 0.00081524972526846008 * cexp(-3.40119738166215546116 * z);
 result += 0.00009970680093076545 * cexp(-3.43398720448514627179 * z);
 result -= 0.00000586510593565794 * cexp(-3.46573590279972654216 * z);
 return result;`,
-['ceta_strip', 'exp']);
+`vec2 exp_z = cexp(z);
+return csub(cadd8(
+vec2(-0.000000000001, 0.),
+-1.098612288668 * exp_z + vec2(-0.000000049658, 0.),
+-1.609437912434 * exp_z + vec2(-0.000030793306, 0.),
+-1.945910149055 * exp_z + vec2(-0.002516654739, 0.),
+-2.197224577336 * exp_z + vec2(-0.050509444705, 0.),
+-2.397895272798 * exp_z + vec2(-0.367799673850, 0.),
+-2.564949357462 * exp_z + vec2(-1.408124489866, 0.),
+-2.708050201102 * exp_z + vec2(-3.826020429371, 0.)
+), cadd8(
+-0.693147180560 * exp_z + vec2(-0.000000000579, 0.),
+-1.386294361120 * exp_z + vec2(-0.000001698718, 0.),
+-1.791759469228 * exp_z + vec2(-0.000341188253, 0.),
+-2.079441541680 * exp_z + vec2(-0.013102678429, 0.),
+-2.302585092994 * exp_z + vec2(-0.151061198284, 0.),
+-2.484906649788 * exp_z + vec2(-0.763635984596, 0.),
+-2.639057329615 * exp_z + vec2(-2.385658846981, 0.),
+-2.772588722240 * exp_z + vec2(-6.023245006707, 0.)
+));`,
+['ceta_strip', 'exp'], ['exp', 'sub', 'add8']);
 
 // Riemann zeta function
 const czeta = new ComplexFunction('czeta',
-'return cdiv(ceta(z), ONE - cexp(LN2 * (ONE - z)));', ['div', 'eta', 'exp']);
+'return cdiv(ceta(z), ONE - cexp(LN2 * (ONE - z)));',
+//'return ceta(z) - csub(LOG_ONE, cexp(csub(LOG_ONE, z) + vec2(log(LN2), 0)));',
+'return czeta_strip(z);',
+['div', 'eta', 'exp'], ['czeta_strip']);
 
 
 /***** Special Functions *****/
@@ -692,7 +738,7 @@ var complex_functions = {
     'gamma': cgamma,
 
     ceta_left, ceta_strip, ceta_right,
-    zeta_character,
+    zeta_character, czeta_strip,
     rerf, cerf_small, cerf_large,
     'eta': ceta,
     'zeta': czeta,

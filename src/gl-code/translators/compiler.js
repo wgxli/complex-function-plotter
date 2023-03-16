@@ -58,7 +58,8 @@ function sumProd(operator, args) {
         terms.push(compile(substitute(termAST, idxVar, ['number', i, 0])));
     }
 
-    if (operator === 'sum') {return compose(terms, 'add', 'add4', 'add8');}
+//    if (operator === 'sum') {return compose(terms, 'add', 'add4', 'add8');} // Useful in log-mode
+    if (operator === 'sum') {return compose(terms, 'add');}
     if (operator === 'prod') {return compose(terms, 'mul');}
 }
 
@@ -174,12 +175,12 @@ function compile(ast) {
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
-                if (Number.isInteger(val.re)) {return ['rawpow', subAST, val.re];}
-//                return ['exp', ['component_mul', ['log', subAST], val.re]];
+//                if (Number.isInteger(val.re)) {return ['rawpow', subAST, val.re];} // LOG_MODE only
+                return ['exp', ['component_mul', ['log', subAST], val.re]]; // Cartesian only
             }
         }
 
-//        return ['exp', ['mul', ['log', args[0]], args[1]]];
+        return ['exp', ['mul', ['log', args[0]], args[1]]]; // Cartesian only
     }
 
     return [operator, ...args];
