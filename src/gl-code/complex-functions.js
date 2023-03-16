@@ -5,7 +5,7 @@ import compile from './translators/compiler.js';
 
 const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
 
-const argument_names = ['z', 'w', 'w1', 'w2'];
+const argument_names = ['z', 'w', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6'];
 
 class ComplexFunction {
     constructor(name, body, log_body, dependencies, log_dep, num_args) {
@@ -242,6 +242,30 @@ const cmul = new ComplexFunction('cmul',
 const cdiv = new ComplexFunction('cdiv',
 'return cmul(z, creciprocal(w));', 'return z-w;', ['mul', 'reciprocal'], [], 2);
 const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', 'z = fix_phase(z); return mat2(z, -z.y, z.x) * cexpcart(w);', ['exp', 'mul', 'log'], [], 2);
+const cadd4 = new ComplexFunction('cadd4', 'return z+w+w1+w2;',
+`float offset = max(max(z.x, w.x), max(w1.x, w2.x));
+vec2 delta = vec2(offset, 0);
+return clogcart(
+    cexpcart(z - delta)
+    + cexpcart(w - delta)
+    + cexpcart(w1 - delta)
+    + cexpcart(w2 - delta)
+) + delta;`,
+[], [], 4);
+const cadd8 = new ComplexFunction('cadd8', 'return z+w+w1+w2+w3+w4+w5+w6;',
+`float offset = max(max(max(z.x, w.x), max(w1.x, w2.x)), max(max(w3.x, w4.x), max(w5.x, w6.x)));
+vec2 delta = vec2(offset, 0);
+return clogcart(
+    cexpcart(z - delta)
+    + cexpcart(w - delta)
+    + cexpcart(w1 - delta)
+    + cexpcart(w2 - delta)
+    + cexpcart(w3 - delta)
+    + cexpcart(w4 - delta)
+    + cexpcart(w5 - delta)
+    + cexpcart(w6 - delta)
+) + delta;`,
+[], [], 8);
 
 // Gamma function
 const cgamma = new ComplexFunction('cgamma',
@@ -656,6 +680,9 @@ var complex_functions = {
     'arsech': carsech, 'arcsch': carcsch, 'arcoth': carcoth,
     'neg': cneg,
     'add': cadd,
+    'add4': cadd4,
+    'add8': cadd8,
+    'rawpow': new DummyFunction(),
     'sub': csub,
     'mul': cmul,
     'div': cdiv,

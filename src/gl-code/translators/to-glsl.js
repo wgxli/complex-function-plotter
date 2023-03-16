@@ -3,6 +3,10 @@ import {get} from 'lodash';
 
 const math = require('mathjs');
 
+function terminateFloat(x) {
+    const terminator = Number.isInteger(x) ? '.' : '';
+    return x.toString() + terminator;
+}
 
 // Returns pair [ast_in_glsl, requires_parenthesis]
 function toGLSL(ast, LOG_MODE) {
@@ -10,8 +14,7 @@ function toGLSL(ast, LOG_MODE) {
         if (LOG_MODE) {return toGLSL(['number', ast, 0], LOG_MODE);}
 
         // GLSL floats must end in decimal point
-        const terminator = Number.isInteger(ast) ? '.' : '';
-        return [ast.toString() + terminator, false];
+        return [terminateFloat(ast), false];
     }
     if (!Array.isArray(ast)) {return [ast, false];}
 
@@ -25,6 +28,7 @@ function toGLSL(ast, LOG_MODE) {
             'mul': '+',
             'div': '-',
             'component_mul': '+',
+            'rawpow': '*',
         };
     }
 
@@ -47,6 +51,9 @@ function toGLSL(ast, LOG_MODE) {
     if (operator in infixOperators) {
         const op = infixOperators[operator]
         let operands = args.map(x => toGLSL(x, LOG_MODE));
+        if (operator === 'rawpow') {
+            operands[1] = [terminateFloat(args[1]), false];
+        }
 
         // Add parentheses where possibly necessary
         if (op === '-') {

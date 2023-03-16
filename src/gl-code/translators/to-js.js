@@ -15,8 +15,13 @@ const constants = {
     'phi': (1 + Math.sqrt(5))/2,
 }
 
+const add4 = (a, b, c, d) => math.add(math.add(a, b), math.add(c, d));
+
 const I = math.complex(0, 1);
 const fns = {
+    add8: (a, b, c, d, e, f, g, h) => math.add(add4(a, b, c, d), add4(e, f, g, h)),
+    add4,
+    rawpow: math.pow,
     sub: math.subtract,
     neg: math.unaryMinus,
     mul: math.multiply,

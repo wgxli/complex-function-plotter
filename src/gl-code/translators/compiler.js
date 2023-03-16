@@ -10,7 +10,7 @@ const math = require('mathjs');
 
 // Return AST where binary operation `op` is applied
 // between all given terms (AST).
-function compose(terms, op) {
+function compose(terms, op, op4, op8) {
     // Empty sum/product
     if (terms.length === 0) {return (op === 'sum') ? ['number', 0, 0] : ['number', 1, 0];}
 
@@ -19,7 +19,23 @@ function compose(terms, op) {
 
     // Distribute evenly for faster computation
     const N = Math.floor(terms.length/2);
-    return compile([op, compose(terms.slice(0, N), op), compose(terms.slice(N), op)]);
+    const app = (a, b) => compose(terms.slice(a, b), op, op4, op8);
+
+    if (N >= 4 && op8 !== undefined) {
+        const NN = Math.floor(N/2);
+        const NNN = Math.floor(N/4);
+        return compile([op8,
+            app(0, NNN), app(NNN, NN), app(NN, NN+NNN), app(NN+NNN, N),
+            app(N, N+NNN), app(N+NNN, N+NN), app(N+NN, N+NN+NNN), app(N+NN+NNN, undefined)
+        ]);
+    } else {
+        if (N >= 2 && op4 !== undefined) {
+            const NN = Math.floor(N/2);
+            return compile([op4, app(0, NN), app(NN, N), app(N, N+NN), app(N+NN, undefined)]);
+        } else {
+            return compile([op, compose(terms.slice(0, N), op), compose(terms.slice(N), op)]);
+        }
+    }
 }
 
 // Apply sum or product operator.
@@ -42,7 +58,7 @@ function sumProd(operator, args) {
         terms.push(compile(substitute(termAST, idxVar, ['number', i, 0])));
     }
 
-    if (operator === 'sum') {return compose(terms, 'add');}
+    if (operator === 'sum') {return compose(terms, 'add', 'add4', 'add8');}
     if (operator === 'prod') {return compose(terms, 'mul');}
 }
 
@@ -158,6 +174,7 @@ function compile(ast) {
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
+                if (Number.isInteger(val.re)) {return ['rawpow', subAST, val.re];}
 //                return ['exp', ['component_mul', ['log', subAST], val.re]];
             }
         }
