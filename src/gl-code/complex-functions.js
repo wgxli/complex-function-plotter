@@ -243,13 +243,15 @@ const cdiv = new ComplexFunction('cdiv',
 'return cmul(z, creciprocal(w));', 'return z-w;', ['mul', 'reciprocal'], [], 2);
 const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', 'z = fix_phase(z); return mat2(z, -z.y, z.x) * cexpcart(w);', ['exp', 'mul', 'log'], [], 2);
 
-// Lanczos approximation
+// Gamma function
 const cgamma = new ComplexFunction('cgamma',
     'if (z.x < 0.5) {return cgamma_left(z);} else {return cgamma_right(z);}',
+    'if (cos(z.y) < 0.5 * exp(-z.x)) {return cgamma_left(z);} else {return cgamma_right(z);}',
     ['cgamma_left', 'cgamma_right']);
 const cgamma_left = new ComplexFunction('cgamma_left',
     'return PI * creciprocal(cmul(csin(PI*z), cgamma_right(ONE-z)));',
-    ['mul', 'sin', 'cgamma_right']);
+    'return -(csin(z + vec2(LNPI, 0)) + cgamma_right(csub(LOG_ONE, z))) + vec2(LNPI, 0);',
+    ['mul', 'sin', 'cgamma_right'], ['mul', 'sin', 'cgamma_right']);
 const cgamma_right = new ComplexFunction('cgamma_right',
 `vec2 w = z - ONE;
 vec2 t = w + vec2(7.5, 0);
@@ -262,9 +264,11 @@ x += 12.507343278686905 * creciprocal(w + vec2(5, 0));
 x -= .13857109526572012 * creciprocal(w + vec2(6, 0));
 x += 9.9843695780195716e-6 * creciprocal(w + vec2(7, 0));
 x += 1.5056327351493116e-7 * creciprocal(w + vec2(8, 0));
-return sqrt(TAU) * cmul(x, cexp(cmul(clog(t), w + vec2(0.5, 0)) - t));`,
-['reciprocal', 'mul', 'exp', 'log']);
-const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', ['gamma']);
+return sqrt(TAU) * cmul(x, cexp(cmul(clog(t), w + vec2(0.5, 0)) - t));`, // Lanczos approximation
+`vec2 base = cadd(z, -csub(z + vec2(log(12.), 0), -z - vec2(log(10.), 0)));
+return csqrt(vec2(LN2+LNPI, 0)-z) + cpow(base - ONE, z);`, // Stirling approximation
+['reciprocal', 'mul', 'exp', 'log'], ['sqrt', 'pow', 'add', 'sub']);
+const cfact = new ComplexFunction('cfact', 'return cgamma(z + ONE);', 'return cgamma(cadd(z, LOG_ONE));', ['gamma'], ['gamma']);
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
