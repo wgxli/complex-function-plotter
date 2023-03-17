@@ -6,6 +6,8 @@ const cadd = math.sum;
 const csub = math.subtract;
 const cdiv = math.divide;
 const cmul = math.multiply;
+const cmul_i = z => math.multiply(z, I);
+const creciprocal = z => math.divide(1, z);
 const csin = math.sin;
 const cexp = math.exp;
 const clog = math.log;
@@ -102,34 +104,19 @@ const eta = z => z.re < 0 ? eta_left(z) : eta_right(z);
 const zeta = z => cdiv(eta(z), csub(1, cexp(cmul(Math.LN2, csub(1, z)))));
 
 // Small z: https://math.stackexchange.com/questions/712434/erfaib-error-function-separate-into-real    -and-imaginary-part
-// Large z: Custom expansion with Fresnel integral (centered around y=x).
-// See https://samuelj.li/blog/2021-05-05-erf-expansion
+// Large z: Expansion around infinity.
 function erf_large(z) {
-    if (z.re < 0) {return erf_large(z.neg()).neg();}
-    if (z.im < 0) {return math.conj(erf_large(math.conj(z)));}
-    const TWO_SQRTPI = 1.1283791671;
-    const W = math.complex(0.70710678118, 0.70710678118);
-    const W_BAR = math.complex(0.70710678118, -0.70710678118);
-    const rs = cmul(z, W_BAR);
-    const r = rs.re;
-    const s = rs.im;
-
-    const CS = csub(1, cmul(TWO_SQRTPI * (0.5/r), cmul(W, cmul(
-        math.complex(Math.cos(r*r), -Math.sin(r*r)),
-        math.complex(1/(2*r*r), -1)
-    ))));
-
-    const I0 = math.complex(2/r, 1/(r*r*r));
-    const I1 = cmul(s/(r*r), math.complex(-2*s/r - 3/(r*r), 2 - 2*s*s/(r*r)));
-    const integral = csub(cmul(
-        cexp(math.complex(2*r*s, s*s)),
-        math.add(I1, I0)
-    ), I0);
-    return cadd(CS, cmul(TWO_SQRTPI/4.0, cmul(W, cmul(math.complex(Math.sin(r*r), Math.cos(r*r)), integral))));
+    const k = cmul_i(creciprocal(z));
+    const k2 = csquare(k);
+    const corrections = cdiv(
+        cmul(k, cadd(1, cmul(k2, cadd(0.5, cmul(0.75, k2))))),
+        math.sqrt(Math.PI)
+    );
+    return cadd(1, cmul_i(cmul(cexp(csquare(cmul_i(z))), corrections)));
 }
 
 function erf(z) {
-    if (Math.abs(z.im) > 8) {
+    if (Math.abs(z.im) > 8.5) {
         return erf_large(z);
     }
 
@@ -139,11 +126,11 @@ function erf(z) {
     const b = math.sin(2*z.re*z.im);
 
     const series = [math.erf(z.re), cmul(K/(2*z.re), math.complex(1-a, b))];
-    for (let k = 1; k < 32; k++) {
+    for (let k = 1; k < 65; k++) {
         const kk = k*k/4 + z.re*z.re;
         const e1 = math.exp(k*z.im - kk)/2;
         const e2 = math.exp(-k*z.im - kk)/2;
-        const multiplier = 1/(k*k+q);
+        const multiplier = 1/(k*k+q) * 2/Math.PI;
         const re = multiplier * (2*z.re*(math.exp(-kk)-a*(e1+e2)) + k*b*(e1-e2));
         const im = multiplier * (2*z.re*b*(e1+e2) + k*a*(e1-e2));
         series.push(math.complex(re, im));

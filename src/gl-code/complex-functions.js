@@ -452,18 +452,8 @@ const rerf = new ComplexFunction('rerf',
 `float k = 1.0 - exp(-z.x*z.x);
 const float K = 1.1283791671;
 
-const vec4 coeff = vec4(
-    1.0/12.0,
-    7.0/480.0,
-    5.0/896.0,
-    787.0/276480.0
-);
-
-float series = 1.0;
-series -= dot(
-    coeff,
-    vec4(k, k*k, k*k*k, k*k*k*k)
-);
+const vec4 coeff = vec4(1./12., 7./480., 5./896., 787./276480.);
+float series = 1. - dot(coeff, vec4(k, k*k, k*k*k, k*k*k*k));
 
 return vec3(K * sqrt(k) * series, 0., 0.).COMPONENTS;
 `
@@ -472,69 +462,42 @@ const cerf_large = new ComplexFunction('cerf_large', // ASSUME DOWNCONVERTED
 `VEC_TYPE k = cmul_i(creciprocal(z));
 VEC_TYPE k2 = csquare(k);
 VEC_TYPE corrections = ccomponent_mul_prelog(
-cmul(k, ONE + k2 * (0.5*ONE + 0.75 * k2)),
+cmul(k, ONE + cmul(k2, 0.5*ONE + 0.75 * k2)),
 -LNPI/2.);
-return cadd(ONE, cmul_i(cmul(cexp(csquare(cmul_i(z))), corrections)));;`,
+return cadd(ONE, cmul_i(cmul(cexp(csquare(cmul_i(z))), corrections)));`,
 ['reciprocal', 'mul_i', 'component_mul_prelog', 'square', 'exp', 'mul', 'add']);
-/*
-`const float TWO_SQRTPI = 1.1283791671;
-const VEC_TYPE W = 0.70710678118 * vec3(1.0, 1.0, 0.0).COMPONENTS;
-const VEC_TYPE W_BAR = W * vec3(1.0, -1.0, 0.0).COMPONENTS;
-VEC_TYPE rs = cmul(z, W_BAR);
-float r = rs.x;
-float s = rs.y;
-
-VEC_TYPE CS = ONE - TWO_SQRTPI * (0.5/r) * cmul(W, cmul(
-    vec3(cos(r*r), -sin(r*r), 0).COMPONENTS,
-    vec3(0.5/(r*r), -1., 0).COMPONENTS
-));
-
-const vec4 re_coeff = vec4(2.0, -1.5, 13.125, -324.84375);
-const vec4 im_coeff = vec4(1.0, -3.75, 59.0625, -2111.484375);
-float r4 = r*r*r*r;
-vec4 r_power = vec4(1.0, 1.0/r4, 1.0/(r4*r4), 1.0/(r4*r4*r4))/r;
-
-VEC_TYPE I0 = vec3(dot(r_power, re_coeff), dot(r_power, im_coeff)/(r*r), 0).COMPONENTS;
-VEC_TYPE I1 = s/(r*r) * vec3(-2.0*s/r - 3.0/(r*r), 2.0 - 2.0*s*s/(r*r), 0).COMPONENTS;
-VEC_TYPE integral = csub(cmul(
-    cexp(s * vec3(2.*r, s, 0).COMPONENTS),
-    I1 + I0
-), I0);
-return cadd(CS,
-ccomponent_mul(
-cmul(W, cmul(vec3(sin(r*r), cos(r*r), 0).COMPONENTS, integral)),
-(TWO_SQRTPI/4.0)
-));`, ['mul', 'exp', 'sub', 'add', 'component_mul'])
-*/
 const cerf_small = new ComplexFunction('cerf_small', // ASSUME DOWNCONVERTED
-`float K = exp(-z.x*z.x)/PI;
-float q = 4.0*z.x*z.x;
-float a = cos(2.0*z.x*z.y);
-float b = sin(2.0*z.x*z.y);
+`float z2 = z.x*z.x;
+float xy = 2.*z.x*z.y;
+float K = exp(-z2)/PI;
+float q = 4.*z2;
+float a = cos(xy);
+float b = sin(xy);
 
 float offset = (z.y+z.x) * max(z.y-z.x, 0.);
 float scale = exp(-offset);
 
-mat2 M = mat2(-z.x*a, z.x*b, 0.5*b, 0.5*a);
-
 vec2 series = vec2(0.0, 0.0);
-for (int i = 1; i < 32; i++) {
-    float k = float(i);
-    float kk = k*k/4.0 + z.x*z.x + offset;
-    float e1 = exp(k*z.y - kk);
-    float e2 = exp(-k*z.y - kk);
+for (int i = 0; i < 16; i += 4) {
+    vec4 k = float(i) + vec4(1., 2., 3., 4.);
+    vec4 kk = k*k/4.0 + z2 + offset;
+    vec4 kz = k*z.y;
+    vec4 e1 = exp(kz - kk);
+    vec4 e2 = exp(-kz - kk);
 
-    series += 1.0/(k*k + q) * (
-        vec2(2.0*z.x * exp(-kk), 0.0)
-        + M * vec2(e1+e2, k * (e1-e2))
-    );
+    vec4 aa = z.x*(e1+e2);
+    vec4 bb = 0.5*k*(e1-e2);
+
+    vec4 denom = 1./(k*k + q);
+    series.x += dot(2.*z.x * exp(-kk) - a*aa + b*bb, denom);
+    series.y += dot(b*aa + a*bb, denom);
 }
 return scale * (rerf(z) + (K/(2.0 * z.x)) * vec3(1.0-a, b, 0).COMPONENTS) + vec3(series*2./PI, offset).COMPONENTS;`, ['rerf']);
 const cerf = new ComplexFunction('cerf',
 `z = downconvert(z);
 VEC_TYPE result;
 
-if (abs(z.y) > 8.5) {
+if (abs(z.y) > 5.5) {
     result = cerf_large(abs(z));
 } else {
     result = cerf_small(abs(z));
