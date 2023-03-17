@@ -24,7 +24,7 @@ function loadShader(gl, type, source) {
 function createShaderProgram(gl, expression, customShader, variableNames) {
   if (expression === null) {return null;}
 
-  gl.LOG_MODE = false; //!customShader; // Whether to use (log-magnitude, phase) representation
+  gl.LOG_MODE = !customShader; // Whether to use (log-magnitude, phase) representation
   const fragmentShaderSource = getFragmentShaderSource(
     expression,
     customShader, 
@@ -124,6 +124,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   const float checkerboard_scale = 0.25;
 
+  const ${vectype} ZERO = ${LOG_MODE ? 'vec3(0)' : 'vec2(0)'};
   const ${vectype} ONE = ${LOG_MODE ? 'vec3(1., 0, 0)' : 'vec2(1., 0)'};
   const vec2 I = vec2(0, 1);
   const ${vectype} C_PI = ${LOG_MODE ? 'vec3(PI, 0, 0)' : 'vec2(PI, 0)'};
@@ -133,7 +134,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
 
   vec2 clogcart(${vectype} z) {return vec2(${LOG_MODE ? 'log(length(z.xy)) + z.z' : 'log(length(z))'}, atan(z.y, z.x));}
   vec2 encodereal(float a) {return vec2(log(abs(a)), 0.5*PI*(1. - sign(a)));}
-  vec3 downconvert(vec3 z) {return vec3(vec2(z.xy) * exp(z.z), 0);}
+  ${LOG_MODE ? 'vec3 downconvert(vec3 z) {return vec3(vec2(z.xy) * exp(z.z), 0);}' : 'vec2 downconvert (vec2 z) {return z;}'}
   vec3 upconvert(vec3 z) {float l = length(z.xy); return vec3(z.xy/l, z.z + log(l));}
 
   ${variableDeclarations}

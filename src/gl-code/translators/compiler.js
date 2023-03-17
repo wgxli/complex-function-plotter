@@ -58,9 +58,9 @@ function sumProd(operator, args) {
         terms.push(compile(substitute(termAST, idxVar, ['number', i, 0])));
     }
 
-//    if (operator === 'sum') {return compose(terms, 'add', 'add4', 'add8');} // Useful in log-mode
-    if (operator === 'sum') {return compose(terms, 'add');}
-    if (operator === 'prod') {return compose(terms, 'mul');}
+    if (operator === 'sum') {return compose(terms, 'add', 'add4', 'add8');} // Log-cartesian
+//    if (operator === 'sum') {return compose(terms, 'add');} // Cartesian
+    if (operator === 'prod') {return compose(terms, 'mul', 'mul4');}
 }
 
 function getConst(val) {
@@ -152,7 +152,8 @@ function compile(ast) {
             if (val.im === 0) {
                 if (val.re === 1) {return args[1];}
                 if (val.re === -1) {return ['neg', args[1]];}
-                return compile(['component_mul', args[1], val.re]);
+//                return compile(['component_mul', args[1], val.re]);
+                return compile(['component_mul_prelog', args[1], math.log(val.re)]);
             }
         }
     }
@@ -176,7 +177,8 @@ function compile(ast) {
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
 //                if (Number.isInteger(val.re)) {return ['rawpow', subAST, val.re];} // LOG_MODE only
-                return ['exp', ['component_mul', ['log', subAST], val.re]]; // Cartesian only
+//                return ['exp', ['component_mul', ['log', subAST], val.re]]; // Cartesian only
+                return ['exp', ['component_mul_prelog', ['log', subAST], math.log(val.re)]]; // Cartesian only
             }
         }
 

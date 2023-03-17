@@ -21,6 +21,7 @@ const I = math.complex(0, 1);
 const fns = {
     add8: (a, b, c, d, e, f, g, h) => math.add(add4(a, b, c, d), add4(e, f, g, h)),
     add4,
+    mul4: (a, b, c, d) => math.multiply(math.multiply(a, b), math.multiply(c, d)),
     rawpow: math.pow,
     sub: math.subtract,
     neg: math.unaryMinus,
@@ -28,6 +29,7 @@ const fns = {
     div: math.divide,
     reciprocal: z => math.divide(1, z),
     component_mul: (z, alpha) => math.complex(alpha*z.re, alpha*z.im),
+    component_mul_prelog: (z, alpha) => math.complex(math.exp(alpha)*z.re, math.exp(alpha)*z.im),
     real: math.re,
     imag: math.im,
     step: z => (z.re >= 0) ? 1 : 0,
