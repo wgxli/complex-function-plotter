@@ -1,16 +1,16 @@
 {
-  "main.css": "/complex-function-plotter/static/css/main.b7f9e66a.chunk.css",
-  "main.js": "/complex-function-plotter/static/js/main.b59772c4.chunk.js",
-  "main.js.map": "/complex-function-plotter/static/js/main.b59772c4.chunk.js.map",
+  "main.css": "/complex-function-plotter/static/css/main.8faa3314.chunk.css",
+  "main.js": "/complex-function-plotter/static/js/main.d5bd1d6c.chunk.js",
+  "main.js.map": "/complex-function-plotter/static/js/main.d5bd1d6c.chunk.js.map",
   "runtime~main.js": "/complex-function-plotter/static/js/runtime~main.bb090d5a.js",
   "runtime~main.js.map": "/complex-function-plotter/static/js/runtime~main.bb090d5a.js.map",
   "static/css/2.afb603c3.chunk.css": "/complex-function-plotter/static/css/2.afb603c3.chunk.css",
-  "static/js/2.0535bf0f.chunk.js": "/complex-function-plotter/static/js/2.0535bf0f.chunk.js",
-  "static/js/2.0535bf0f.chunk.js.map": "/complex-function-plotter/static/js/2.0535bf0f.chunk.js.map",
+  "static/js/2.4564275e.chunk.js": "/complex-function-plotter/static/js/2.4564275e.chunk.js",
+  "static/js/2.4564275e.chunk.js.map": "/complex-function-plotter/static/js/2.4564275e.chunk.js.map",
   "index.html": "/complex-function-plotter/index.html",
-  "precache-manifest.b88b5bdb57657768a1b935b0d05d9dc4.js": "/complex-function-plotter/precache-manifest.b88b5bdb57657768a1b935b0d05d9dc4.js",
+  "precache-manifest.ac8aa6e08a5e8cda225c5a6574f7afc7.js": "/complex-function-plotter/precache-manifest.ac8aa6e08a5e8cda225c5a6574f7afc7.js",
   "service-worker.js": "/complex-function-plotter/service-worker.js",
   "static/css/2.afb603c3.chunk.css.map": "/complex-function-plotter/static/css/2.afb603c3.chunk.css.map",
-  "static/css/main.b7f9e66a.chunk.css.map": "/complex-function-plotter/static/css/main.b7f9e66a.chunk.css.map",
+  "static/css/main.8faa3314.chunk.css.map": "/complex-function-plotter/static/css/main.8faa3314.chunk.css.map",
   "static/media/katex.min.css": "/complex-function-plotter/static/media/KaTeX_Typewriter-Regular.f43e8696.woff2"
 }
