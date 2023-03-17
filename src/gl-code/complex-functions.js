@@ -109,7 +109,7 @@ return exp(z.x) * vec3(cos(phase), sin(phase), 0).COMPONENTS;`);
 const cexp = new ComplexFunction('cexp',
 `float phase = z.y;
 return exp(z.x) * vec2(cos(phase), sin(phase));`,
-`float phase = z.y * exp(z.z);
+`float phase = mod(z.y * exp(z.z), TAU);
 return vec3(cos(phase), sin(phase), z.x * exp(z.z));`);
 const clog = new ComplexFunction('clog',
 `float magnitude = log(length(z));

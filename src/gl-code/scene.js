@@ -1,7 +1,4 @@
 import createShaderProgram from './shaders.js';
-import {hiddenVariables} from '../components/SliderPanel/SliderPanel.js';
-
-const math = require('mathjs');
 
 
 function initBuffers(gl) {

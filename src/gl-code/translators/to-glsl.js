@@ -1,4 +1,3 @@
-import {constants, fns} from './to-js.js';
 import {get} from 'lodash';
 
 const math = require('mathjs');
