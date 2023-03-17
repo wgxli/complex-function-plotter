@@ -449,8 +449,8 @@ const czeta = new ComplexFunction('czeta',
 // Large z: Custom expansion with Fresnel integral (centered around y=x).
 // See https://samuelj.li/blog/2021-05-05-erf-expansion
 const rerf = new ComplexFunction('rerf',
-`float k = 1.0 - exp(-z.x*z.x);
-const float K = 1.1283791671;
+`float k = 1. - exp(-z.x*z.x);
+const float K = 1.119;
 
 const vec4 coeff = vec4(1./12., 7./480., 5./896., 787./276480.);
 float series = 1. - dot(coeff, vec4(k, k*k, k*k*k, k*k*k*k));
@@ -462,7 +462,7 @@ const cerf_large = new ComplexFunction('cerf_large', // ASSUME DOWNCONVERTED
 `VEC_TYPE k = cmul_i(creciprocal(z));
 VEC_TYPE k2 = csquare(k);
 VEC_TYPE corrections = ccomponent_mul_prelog(
-cmul(k, ONE + cmul(k2, 0.5*ONE + 0.75 * k2)),
+cmul(k, ONE + 0.5 * k2),
 -LNPI/2.);
 return cadd(ONE, cmul_i(cmul(cexp(csquare(cmul_i(z))), corrections)));`,
 ['reciprocal', 'mul_i', 'component_mul_prelog', 'square', 'exp', 'mul', 'add']);
@@ -492,7 +492,7 @@ for (int i = 0; i < 16; i += 4) {
     series.x += dot(2.*z.x * exp(-kk) - a*aa + b*bb, denom);
     series.y += dot(b*aa + a*bb, denom);
 }
-return scale * (rerf(z) + (K/(2.0 * z.x)) * vec3(1.0-a, b, 0).COMPONENTS) + vec3(series*2./PI, offset).COMPONENTS;`, ['rerf']);
+return scale * (rerf(z) + (K/(2. * z.x)) * vec3(1.-a, b, 0).COMPONENTS) + vec3(series*2./PI, offset).COMPONENTS;`, ['rerf']);
 const cerf = new ComplexFunction('cerf',
 `z = downconvert(z);
 VEC_TYPE result;
@@ -503,8 +503,8 @@ if (abs(z.y) > 5.5) {
     result = cerf_small(abs(z));
 }
 
-if (z.y < 0.0) {result.y *= -1.0;}
-if (z.x < 0.0) {result.x *= -1.0;}
+if (z.y < 0.0) {result.y *= -1.;}
+if (z.x < 0.0) {result.x *= -1.; result.x -= 1e-7;}
 
 return result;`, ['cerf_small', 'cerf_large']);
 
