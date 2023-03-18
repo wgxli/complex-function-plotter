@@ -56,7 +56,7 @@ function AnimationMode({mode, speed, onChangeMode, onChangeSpeed}) {
                 onChangeSpeed((speed + 1) % SPEEDS.length);
             }}
             className={css`
-                font-size: 12px;
+                font-size: 14px;
                 color: hsl(200, 20%, 40%);
                 cursor: pointer;
                 font-family: 'KaTeX_Main';
@@ -139,7 +139,9 @@ class Slider extends PureComponent {
             if (newValue > max) {newValue = min;}
         }
 
-        onChange(Math.round(1e3 * newValue)/1e3);
+        const digits = Math.max(-Math.floor(Math.log10(max-min))+3, 3);
+        const scale = Math.pow(10, digits);
+        onChange(Math.round(scale * newValue)/scale);
 
         if (animationMode === '') {return;}
         if (this._mounted) {
