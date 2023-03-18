@@ -104,6 +104,7 @@ unaryFunction ->
    | "sm"
    | "cm"
    | "j"
+   | "e4" | "e6" | "e8" | "e10" | "e12" | "e14" | "e16"
 
 # Trigonometric functions
 baseTrigFunction ->

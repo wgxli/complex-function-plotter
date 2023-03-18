@@ -82,8 +82,18 @@ class ZetaHelper2 extends ComplexFunction {
     get log_code() {return `vec3 ${this.name}(VEC_TYPE z, mat4 bases, mat4 coeffs) {${this.log_body}}`;}
 }
 class LatticeReduce extends ComplexFunction {
-    get declaration() {return `VEC_TYPE ${this.name}(vec2);`}
-    get code() {return `VEC_TYPE ${this.name}(vec2 z) {${this.body}}`;}
+    get declaration() {return `vec4 ${this.name}(vec2);`}
+    get code() {return `vec4 ${this.name}(vec2 z) {${this.body}}`;}
+    get log_code() {return this.code;}
+}
+class Nome extends ComplexFunction {
+    get declaration() {return `vec4 ${this.name}(VEC_TYPE);`}
+    get code() {return `vec4 ${this.name}(VEC_TYPE z) {${this.body}}`;}
+    get log_code() {return this.code;}
+}
+class EHelper extends ComplexFunction {
+    get declaration() {return `VEC_TYPE ${this.name}(vec4);`}
+    get code() {return `VEC_TYPE ${this.name}(vec4 h) {${this.body}}`;}
     get log_code() {return this.code;}
 }
 
@@ -110,7 +120,7 @@ const cstep = new ComplexFunction('cstep', 'return vec2(step(0., z.x), 0);', 're
 const ccis = new ComplexFunction('ccis', 'return cexp(cmul_i(z));', ['exp', 'mul_i']);
 const cexp_raw = new ComplexFunction('cexp_raw', // ASSUME DOWNCONVERTED
 `float phase = z.y;
-return exp(max(z.x, -50.)) * vec3(cos(phase), sin(phase), 0).COMPONENTS;`);
+return exp(max(z.x, -40.)) * vec3(cos(phase), sin(phase), 0).COMPONENTS;`);
 const cexp = new ComplexFunction('cexp',
 `float phase = z.y;
 return exp(z.x) * vec2(cos(phase), sin(phase));`,
@@ -669,7 +679,7 @@ return ONE + 2.0 * creciprocal(3. * raw_wpp(zz, A, tau) - ONE);`,
 
 // Modular functions
 const lattice_reduce = new LatticeReduce('lattice_reduce', // LLL basis reduction algorithm, ASSUME DOWNCONVERTED
-`if (z.y < 0.) {return -1./0. * ONE;}
+`if (z.y < 0.) {return -1./0. * vec4(1);}
 vec4 coeffs = vec4(1., 0, 0, 1.);
 vec2 a = z;
 vec2 b = vec2(1., 0);
@@ -685,10 +695,18 @@ vec4 res = vec4(coeffs.x*z, coeffs.z*z) + vec4(coeffs.y, 0, coeffs.w, 0);
 float p = step(length(res.xy), length(res.zw));
 vec2 num = res.xy * (1.-p) + res.zw * p;
 vec2 denom = res.xy * p + res.zw * (1.-p);
-return (1.-2.*p)*cdiv(vec3(num, 0).COMPONENTS, vec3(denom, 0).COMPONENTS);`, ['div']);
-const cj = new ComplexFunction('cj',
+vec2 representative = (1.-2.*p)*cdiv(vec3(num, 0).COMPONENTS, vec3(denom, 0).COMPONENTS).xy;
+return vec4(representative, denom);`, ['div']);
+const nome = new Nome('nome',
 `z = downconvert(z);
-z = lattice_reduce(z.xy);
+vec4 reduced = lattice_reduce(z.xy);
+z = vec3(reduced.xy, 0).COMPONENTS;
+VEC_TYPE weight = vec3(reduced.zw, 0).COMPONENTS;
+VEC_TYPE q = cexp_raw(2.*PI*cmul_i(z));
+return vec4(q.xy, clog(weight).xy);`, ['lattice_reduce', 'log', 'exp_raw', 'mul_i'])
+const cj = new ComplexFunction('cj', // j-invariant
+`z = downconvert(z);
+z = vec3(lattice_reduce(z.xy).xy, 0).COMPONENTS;
 VEC_TYPE q = cexp_raw(PI*cmul_i(z));
 VEC_TYPE q2 = csquare(q);
 VEC_TYPE a = 8.*LN2*ONE + 2.*PI*cmul_i(z) + 8.*cmul(q2, ONE - 0.5*q2); // log(theta10^8)
@@ -698,6 +716,57 @@ VEC_TYPE b = even+odd; // log(theta00^8)
 VEC_TYPE c = even-odd; // log(theta01^8)
 return cexp(3.*clog(cexp_raw(a) + cexp_raw(b) + cexp_raw(c)) - (a+2.*even) + 5.*LN2*ONE);`,
 ['lattice_reduce', 'theta00', 'theta10', 'theta01', 'log', 'exp', 'exp_raw', 'cis', 'mul_i', 'square']);
+const ce2 = new ComplexFunction('ce2',
+`vec4 h = nome(z);
+VEC_TYPE q = vec3(h.xy, 0).COMPONENTS;
+VEC_TYPE log_weight = vec3(h.zw, 0).COMPONENTS;
+VEC_TYPE q2 = csquare(q);
+VEC_TYPE q3 = cmul(q, q2);
+VEC_TYPE q4 = csquare(q2);
+VEC_TYPE q5 = cmul(q, q4);
+VEC_TYPE q6 = cmul(q2, q4);
+VEC_TYPE q7 = cmul(q3, q4);
+VEC_TYPE q8 = csquare(q4);
+VEC_TYPE series = ONE - 24.*(
+    cdiv(q, ONE-q) + 2.*cdiv(q2, ONE-q2) + 3.*cdiv(q3, ONE-q3) + 4.*cdiv(q4, ONE-q4)
+    +5. * cdiv(q5, ONE-q5) + 6.*cdiv(q6, ONE-q6) + 7.*cdiv(q7, ONE-q7) + 8.*cdiv(q8, ONE-q8)
+);
+return cmul(series, cexp(log_weight * -2.));`,
+['nome', 'square', 'exp']);
+const e4_helper = new EHelper('e4_helper', // Eisenstein E4, given nome/log_weight
+`VEC_TYPE q = vec3(h.xy, 0).COMPONENTS;
+VEC_TYPE log_weight = vec3(h.zw, 0).COMPONENTS;
+VEC_TYPE q2_chr = csquare(2.8284271247*q); // 8q^2
+VEC_TYPE q3_chr = cmul(3.375*q, q2_chr); // 27q^3
+VEC_TYPE series = ONE + 240.*(cdiv(q, ONE-q) + q2_chr + q3_chr);
+return cmul(series, cexp(log_weight * -4.));`,
+['exp', 'log', 'square', 'mul', 'div']);
+const e6_helper = new EHelper('e6_helper', // Eisenstein E6, given nome/log_weight
+`VEC_TYPE q = vec3(h.xy, 0).COMPONENTS;
+VEC_TYPE log_weight = vec3(h.zw, 0).COMPONENTS;
+VEC_TYPE q2_chr = csquare(5.65685425*q); // 32q^2
+VEC_TYPE q3_chr = cmul(7.59375*q, q2_chr); // 243q^3
+VEC_TYPE q4_chr = csquare(q2_chr); // 1024q^5
+VEC_TYPE series = ONE - 504.* (cdiv(q, ONE-q) + cdiv(q2_chr, ONE-0.03125*q2_chr) + q3_chr + q4_chr);
+return cmul(series, cexp(log_weight * -6.));`,
+['exp', 'log', 'square', 'mul', 'div', 'exp_raw', 'sub', 'component_mul_prelog']);
+const ce4 = new ComplexFunction('ce4', 'vec4 h = nome(z); return e4_helper(h);', ['nome', 'e4_helper']);
+const ce6 = new ComplexFunction('ce6', 'vec4 h = nome(z); return e6_helper(h);', ['nome', 'e6_helper']);
+const ce8 = new ComplexFunction('ce8', 'return csquare(ce4(z));', ['square', 'e4']);
+const ce10 = new ComplexFunction('ce10',
+'vec4 h = nome(z); return cmul(e4_helper(h), e6_helper(h));',
+['mul', 'nome', 'e4_helper', 'e6_helper']);
+const ce12 = new ComplexFunction('ce12',
+`vec4 h = nome(z); VEC_TYPE a = e4_helper(h); VEC_TYPE b = e6_helper(h);
+return cadd(ccomponent_mul(cexp(3.*clog(a)), 441./691.), ccomponent_mul(csquare(b), 250./691.));`,
+['add', 'nome', 'e4_helper', 'e6_helper', 'component_mul', 'square']);
+const ce14 = new ComplexFunction('ce14',
+`vec4 h = nome(z); return cmul(csquare(e4_helper(h)), e6_helper(h));`,
+['nome', 'e4_helper', 'e6_helper', 'mul', 'square']);
+const ce16 = new ComplexFunction('ce16',
+`vec4 h = nome(z); VEC_TYPE a = e4_helper(h); VEC_TYPE b = e6_helper(h);
+return cadd(ccomponent_mul(cexp(4.*clog(a)), 1617./3617.), ccomponent_mul(csquare(b), 2000./3617.));`,
+['add', 'nome', 'e4_helper', 'e6_helper', 'component_mul', 'square']);
 
 /**** Function List ****/
 var complex_functions = {
@@ -774,8 +843,16 @@ var complex_functions = {
     'sm': csm,
     'cm': ccm,
 
-    lattice_reduce,
+    lattice_reduce, nome, e4_helper, e6_helper,
     'j': cj,
+    'e2': ce2,
+    'e4': ce4,
+    'e6': ce6,
+    'e8': ce8,
+    'e10': ce10,
+    'e12': ce12,
+    'e14': ce14,
+    'e16': ce16,
 };
 
 function parseExpression(expression) {

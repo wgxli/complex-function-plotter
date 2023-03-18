@@ -14,6 +14,7 @@ const clog = math.log;
 const csqrt = math.sqrt;
 const cpow = math.pow;
 const csquare = z => cmul(z, z);
+const ccis = z => cexp(cmul_i(z));
 
 const gamma_right = math.gamma;
 const gamma_left = z => math.divide(math.pi, math.multiply(
@@ -257,12 +258,12 @@ function wpp(z, tau) {
 
 
 // Dixon elliptic functions
-const e2 = math.complex(0.20998684165, 0);
+const e2v = math.complex(0.20998684165, 0);
 const e1 = math.complex(-0.10499342083, 0.18185393933);
 const e3 = math.complex(-0.10499342083, -0.18185393933);
 
 const A = csqrt(csub(e1, e3));
-const B = csqrt(csub(e2, e3));
+const B = csqrt(csub(e2v, e3));
 const k = cdiv(B, A);
 
 function cm(z) {
@@ -278,7 +279,7 @@ function sm(z) {
 function dot(z, w) {return z.re * w.re + z.im * w.im;}
 
 function lattice_reduce(z) {
-    if (z.im < 0) {return math.complex(0, 1/0);}
+    if (z.im < 0) {return [math.complex(0, 1/0), 0];}
     const coeffs = [math.complex(1, 0), I];
     let a = z;
     let b = math.complex(1, 0);
@@ -294,12 +295,12 @@ function lattice_reduce(z) {
     const num = cadd(cmul(coeffs[0].re, z), coeffs[0].im);
     const denom = cadd(cmul(coeffs[1].re, z), coeffs[1].im);
     const res = cdiv(num, denom);
-    if (math.abs(res) < 1) {return cdiv(-1, res);}
-    return res;
+    if (math.abs(res) < 1) {return [cdiv(-1, res), num];}
+    return [res, denom];
 }
 
 function j(z) {
-    z = lattice_reduce(z);
+    z = lattice_reduce(z)[0];
     const a = theta10(0, z);
     const b = theta00(0, z);
     const c = theta01(0, z);
@@ -310,11 +311,36 @@ function j(z) {
     ));
 }
 
+function e_term(q, n, p) {
+    const qn = math.pow(q, n);
+    return cmul(math.pow(n, p), cdiv(qn, csub(1, qn)));
+}
+
+function eisenstein(z, coeff, pow) {
+    let [zz, weight] = lattice_reduce(z);
+    const q = ccis(cmul(2*Math.PI, zz));
+    let series = 0;
+    for (let n = 1; n < 8; n++) {series = cadd(series, e_term(q, n, pow));}
+    return cmul(cadd(1, cmul(coeff, series)), cpow(weight, -2*pow));
+}
+
+function e2(z) {return eisenstein(z, -24, 1);}
+function e4(z) {return eisenstein(z, 240, 3);}
+function e6(z) {return eisenstein(z, -504, 5);}
+function e8(z) {return csquare(e4(z));}
+function e10(z) {return cmul(e4(z), e6(z));}
+function e12(z) {return cadd(cmul(441/691, cpow(e4(z), 3)), cmul(250/691, csquare(e6(z))));}
+function e14(z) {return cmul(e8(z), e6(z));}
+function e16(z) {
+    const a = e4(z); const b = e6(z);
+    return cadd(cmul(1617/3617, csquare(csquare(a))), cmul(2000/3617, cmul(a, csquare(b))));
+}
+
 export {
     zeta, eta, gamma, erf,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
     wp, wpp,
     sm, cm,
-    j
+    j, e2, e4, e6, e8, e10, e12, e14, e16
 };

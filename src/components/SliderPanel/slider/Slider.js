@@ -56,11 +56,15 @@ function AnimationMode({mode, speed, onChangeMode, onChangeSpeed}) {
                 onChangeSpeed((speed + 1) % SPEEDS.length);
             }}
             className={css`
-                font-size: 14px;
+                font-size: 15px;
                 color: hsl(200, 20%, 40%);
                 cursor: pointer;
                 font-family: 'KaTeX_Main';
                 user-select: none;
+
+                @media (max-width: 480px) {
+                  font-size: 14px;
+                }
             `}
         >
             {SPEEDS[speed].toFixed(1)}×

@@ -47,6 +47,8 @@ const diffTable = {
 
     'square': x => ['component_mul', x, 2],
     'sqrt': x => ['reciprocal', ['component_mul', ['sqrt', x], 2]],
+
+    'erf': x => ['mul', ['number', 1.1283791670955126, 0], ['exp', ['neg', ['square', x]]]],
 }
 
 // Analytically compute the derivative of the given AST
