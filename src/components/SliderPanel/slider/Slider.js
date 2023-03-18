@@ -75,6 +75,7 @@ class Slider extends PureComponent {
         animationMode: '',
         animationSpeed: 2,
         animationCurrentDirection: 1,
+        changing: false,
     };
     deleted = false;
 
@@ -140,23 +141,42 @@ class Slider extends PureComponent {
         onChange(Math.round(1e3 * newValue)/1e3);
 
         if (animationMode === '') {return;}
-        requestAnimationFrame(this.runAnimationTick.bind(this));
+        if (this._mounted) {
+          requestAnimationFrame(this.runAnimationTick.bind(this));
+        }
     }
 
     componentDidMount() {
         this.ensureConsistency();
+        this._mounted = true;
+    }
+
+    componentWillUnmount() {
+        this._mounted = false;
+        this.props.setChanging(false);
+    }
+
+    handleCommit() {
+        this.setState({changing: false});
+        this.props.setChanging(this.state.animationMode !== '');
     }
 
     render() {
-        const {min, max, animationMode, animationSpeed} = this.state;
+        const {min, max, animationMode, animationSpeed, changing} = this.state;
         return (
-            <div className={css`
+            <div className={`slider-wrapper ${css`
                 display: flex;
                 flex-direction: row;
                 align-items: center;
-                margin: 10px 0;
-                margin-left: 10px;
-            `}>
+                padding: 5px 0;
+                margin: 8px 4px;
+                padding-left: 10px;
+                background-color: white;
+                border-radius: 8px;
+                `}`}
+                onMouseUp={this.handleCommit.bind(this)}
+                onTouchEnd={this.handleCommit.bind(this)}
+             >
                 <AnimationMode
                     mode={animationMode}
                     speed={animationSpeed}
@@ -165,6 +185,7 @@ class Slider extends PureComponent {
                             this.state.animationMode = mode; // To avoid race conditions
                             this.setState({animationMode: mode, animationCurrentDirection: 1});
                             this.runAnimationTick();
+                            this.props.setChanging(mode !== '');
                         }
                     }
                     onChangeSpeed={
@@ -203,7 +224,11 @@ class Slider extends PureComponent {
                             max={max}
                             value={this.props.value}
                             step={(max - min)/1e3}
-                            onChange={(e, v) => this.setValue(v)}
+                            onChange={(e, v) => {
+                                if (!this.state.changing) {this.props.setChanging(true);}
+                                this.state.changing = true;
+                                this.setValue(v);
+                            }}
                         />
                         <EditableValue
                             name='upper-bound'

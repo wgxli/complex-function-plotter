@@ -25,12 +25,18 @@ class SliderPanel extends React.Component {
   constructor(props) {
     super(props);
     this.textField = React.createRef();
+    this.changing = {}
   }
 
   handleChange(name, value) {
     this.props.variables[name] = value;
     this.props.onUpdate({[name]: value});
     this.forceUpdate();
+  }
+
+  handleSetChanging(name, v) {
+    this.changing[name] = v;
+    this.props.setChanging(Object.keys(this.props.variables).some((x) => this.changing[x]));
   }
 
   renderSliderList() {
@@ -48,6 +54,7 @@ class SliderPanel extends React.Component {
 	  value={value}
 	  onChange={(value) => this.handleChange(name, value)}
 	  onDelete={() => this.props.onRemove(name)}
+            setChanging={(v) => this.handleSetChanging(name, v)}
 	/>
       );
     }
@@ -56,8 +63,7 @@ class SliderPanel extends React.Component {
   }
 
   render() {
-    return (
-      <List id='variable-list'>
+    return (<List className='slider-list'>
 	<ListSubheader disableSticky>Variables</ListSubheader>
 	{this.renderSliderList()}
 	<VariableAdder

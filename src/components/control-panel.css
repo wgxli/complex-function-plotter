@@ -2,6 +2,8 @@
   width: 330px;
   height: 100% !important;
   resize: horizontal;
+  background-color: white;
+  transition: background-color 0.2s 0s !important;
 }
 
 
@@ -10,5 +12,13 @@
 @media (max-width: 480px) {
   .control-panel {
     width: 100%;
+  }
+
+  .MuiBackdrop-root {
+   background-color: unset !important;
+  }
+
+  .control-panel.changing {
+    background-color: rgba(0, 0, 0, 0);
   }
 }

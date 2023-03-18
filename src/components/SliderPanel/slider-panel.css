@@ -1,3 +1,13 @@
 div.variable-slider {
   width: 90%;
 }
+
+@media (max-width: 480px) {
+    .control-panel.changing .variable-adder {
+        opacity: 0;
+    }
+
+    .control-panel.changing .MuiListSubheader-root {
+        opacity: 0;
+    }
+}

@@ -25,6 +25,7 @@ import {parseExpression} from './gl-code/complex-functions';
 
 
 const defaultShader = `vec2 mapping(vec2 z) {
+  z += t;
   vec2 c = z;
   for (int i=0; i<64; i++) {
     z = cmul(z, z) + c;
@@ -49,8 +50,8 @@ function extractVariables(expression) {
 
 class App extends React.Component {
     state = {
-        expressionText: 'z',
-        expression: ['variable', 'z'],
+        expressionText: 'z-t',
+        expression: ['sub', ['variable', 'z'], ['variable', 't']],
         expressionError: false,
         typingTimer: null,
 
@@ -59,6 +60,7 @@ class App extends React.Component {
 
         menuOpen: false,
         helpOpen: false,
+        variableChanging: false,
 
         integrationStrategy: null,
 
@@ -154,7 +156,7 @@ class App extends React.Component {
     handleHashChange() {
         const hash = window.location.hash;
         if (hash === '') {
-            this.setExpression('z', true);
+            this.setExpression('z-t', true);
         } else {
             this.setExpression(decodeURIComponent(hash.slice(1)), true);
         }
@@ -179,7 +181,7 @@ class App extends React.Component {
             const newVariables = {...this.state.variables};
             
             for (let entry of variables) {
-                newVariables[entry] = 0.5;
+                newVariables[entry] = 0.3;
             }
 
             this.setState({expression, variables: newVariables});
@@ -222,6 +224,7 @@ class App extends React.Component {
             menuOpen, helpOpen,
             expressionError,
             integrationStrategy,
+            variableChanging,
         } = this.state;
 
         const useCustomShader = variables.custom_function > 0.5;
@@ -243,7 +246,7 @@ class App extends React.Component {
                         disabled={useCustomShader}
                     />
                     <SidePanel
-                        className='control-panel'
+                        className={`control-panel ${variableChanging ? 'changing' : ''}`}
                         open={menuOpen} 
                         onToggle={this.handleMenuButton.bind(this)}
                         anchor='left'
@@ -254,6 +257,7 @@ class App extends React.Component {
                             onUpdate={this.handleVariableUpdate.bind(this)}
                             onAdd={this.handleVariableAdd.bind(this)}
                             onRemove={this.handleVariableRemove.bind(this)}
+                            setChanging={(x) => this.setState({variableChanging: x})}
                         />
                         <IntegralPanel
                             variables={variables}

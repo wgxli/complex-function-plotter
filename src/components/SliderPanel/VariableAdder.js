@@ -45,10 +45,10 @@ class VariableAdder extends React.PureComponent {
 
     render() {
         return (
-            <ListItem className={css`
+            <ListItem className={`variable-adder ${css`
                 margin-left: 10px;
                 width: 100%;
-            `}>
+            `}`}>
                 <TextField
                     placeholder='Name'
                     onChange={event => this.setValue(event.target.value)}

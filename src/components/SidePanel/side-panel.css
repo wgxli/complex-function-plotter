@@ -1,3 +1,22 @@
 .drawer-content {
   overflow-x: hidden;
+  background-color: white;
+}
+
+.MuiList-root {
+    background-color: white;
+}
+
+@media (max-width: 480px) {
+    .drawer-content {
+        background-color: unset;
+    }
+
+    .MuiList-root {
+        background-color: unset;
+    }
+
+    .control-panel.changing .MuiList-root:not(.slider-list) {
+        opacity: 0;
+    }
 }
