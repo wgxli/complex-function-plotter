@@ -110,7 +110,7 @@ const cstep = new ComplexFunction('cstep', 'return vec2(step(0., z.x), 0);', 're
 const ccis = new ComplexFunction('ccis', 'return cexp(cmul_i(z));', ['exp', 'mul_i']);
 const cexp_raw = new ComplexFunction('cexp_raw', // ASSUME DOWNCONVERTED
 `float phase = z.y;
-return exp(z.x) * vec3(cos(phase), sin(phase), 0).COMPONENTS;`);
+return exp(max(z.x, -50.)) * vec3(cos(phase), sin(phase), 0).COMPONENTS;`);
 const cexp = new ComplexFunction('cexp',
 `float phase = z.y;
 return exp(z.x) * vec2(cos(phase), sin(phase));`,
@@ -691,11 +691,12 @@ const cj = new ComplexFunction('cj',
 z = lattice_reduce(z.xy);
 VEC_TYPE q = cexp_raw(PI*cmul_i(z));
 VEC_TYPE q2 = csquare(q);
-VEC_TYPE q4 = csquare(q2);
-VEC_TYPE a = clog(2.*ONE + 2.*q2) + PI/4.*cmul_i(z); // theta10
-VEC_TYPE b = clog(ONE + 2.*(q+q4)); // theta00
-VEC_TYPE c = clog(ONE - 2.*(q-q4)); // theta01
-return cexp(3.*clog(cexp_raw(8.*a) + cexp_raw(8.*b) + cexp_raw(8.*c)) - 8.*(a+b+c) + 5.*LN2*ONE);`,
+VEC_TYPE a = 8.*LN2*ONE + 2.*PI*cmul_i(z) + 8.*cmul(q2, ONE - 0.5*q2); // log(theta10^8)
+VEC_TYPE even = -16.*cmul(q2, ONE + q2);
+VEC_TYPE odd = 16.*cmul(q, ONE + 4./3.*q2);
+VEC_TYPE b = even+odd; // log(theta00^8)
+VEC_TYPE c = even-odd; // log(theta01^8)
+return cexp(3.*clog(cexp_raw(a) + cexp_raw(b) + cexp_raw(c)) - (a+2.*even) + 5.*LN2*ONE);`,
 ['lattice_reduce', 'theta00', 'theta10', 'theta01', 'log', 'exp', 'exp_raw', 'cis', 'mul_i', 'square']);
 
 /**** Function List ****/
