@@ -35,8 +35,6 @@
 	font-weight: 500;
 	font-family: 'KaTeX_Main', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 	line-height: 20px;
-
-        padding-top: 4px;
 }
 
 .slider .info-row .editable-value {
@@ -85,6 +83,10 @@
 @media (max-width: 480px) {
     .control-panel.changing .slider-wrapper {
         box-shadow: 1px 1px 4px hsla(200, 10%, 10%, 0.3);
+    }
+
+    .slider .info-row {
+        padding-top: 8px;
     }
 }
 

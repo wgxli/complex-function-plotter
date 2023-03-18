@@ -208,8 +208,9 @@ class HelpText extends React.Component {
                 <p>Drag the plot to pan, and use the scroll wheel to zoom in and out.</p>
 
                 <h2>Supported Functions</h2>
-                <p>Click on any function to see an example.</p>
+                <p style={{marginBottom: 8}}>Click on any function to see an example.</p>
                 <div className='help-indent'>
+                    <Typography variant='caption'>Don’t see what you want? <a href='mailto:contact@samuelj.li'>Request a function</a></Typography>
                     {this.renderSupportedFunctions()}
                     <p style={{marginTop: 16}}></p>
                     <Typography variant='caption'>Warning: Large sums or products may cause the plotter to freeze!</Typography>
