@@ -53,18 +53,19 @@ const supportedFunctions = [
         entries: ['e', 'pi', 'phi', 'tau'],
     },
     {
-        name: 'Elliptic',
+        name: 'Elliptic/Modular',
         entries: [
             'sn(z, k)',
             'cn(z, k)',
             'dn(z, k)',
             'wp(z, τ)',
             "wp'(z, τ)",
+            'sm', 'cm',
             'theta00(z, τ)',
             'theta01(z, τ)',
             'theta10(z, τ)',
             'theta11(z, τ)',
-            'sm', 'cm',
+            'j(τ)',
         ]
     },
     {
@@ -115,6 +116,7 @@ const EXAMPLES = {
     'theta01(z, τ)': 'theta01(z, t + i)',
     'theta10(z, τ)': 'theta10(z, t + i)',
     'theta11(z, τ)': 'theta11(z, t + i)',
+    'j(τ)': 'j(z)',
 
     'sum': 'sum(z^n/n!, n, 0, 5)',
     'product': 'prod(1-z/n, n, 1, 5)',

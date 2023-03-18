@@ -103,6 +103,7 @@ unaryFunction ->
    | "im" {% () => ['imag'] %}
    | "sm"
    | "cm"
+   | "j"
 
 # Trigonometric functions
 baseTrigFunction ->

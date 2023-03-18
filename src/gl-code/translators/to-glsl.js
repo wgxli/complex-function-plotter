@@ -29,7 +29,8 @@ function toGLSL(ast, LOG_MODE) {
     if (operator === 'number') {
         const [real, imag] = args;
         if (LOG_MODE) {
-            const length = math.hypot(real, imag)
+            let length = math.hypot(real, imag)
+            if (length === 0) {length = 1;}
             return [`vec3(${real/length}, ${imag/length}, ${math.log(length)})`, false];
         } else {
             if (real === 1 && imag === 0) {return ['ONE', false];}

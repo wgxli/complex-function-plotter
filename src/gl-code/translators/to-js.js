@@ -5,6 +5,7 @@ import {
     sn, cn, dn,
     wp, wpp,
     sm, cm,
+    j,
 } from './custom-functions.js'
 const math = require('mathjs');
 
@@ -61,6 +62,7 @@ const fns = {
     sn, cn, dn,
     wp, wpp,
     sm, cm,
+    j,
 }
 
 /**

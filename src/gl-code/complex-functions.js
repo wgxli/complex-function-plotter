@@ -81,6 +81,11 @@ class ZetaHelper2 extends ComplexFunction {
     get code() {return `vec2 ${this.name}(VEC_TYPE z, mat4 bases, mat4 coeffs) {${this.body}}`;}
     get log_code() {return `vec3 ${this.name}(VEC_TYPE z, mat4 bases, mat4 coeffs) {${this.log_body}}`;}
 }
+class LatticeReduce extends ComplexFunction {
+    get declaration() {return `VEC_TYPE ${this.name}(vec2);`}
+    get code() {return `VEC_TYPE ${this.name}(vec2 z) {${this.body}}`;}
+    get log_code() {return this.code;}
+}
 
 /***** BEGIN FUNCTION DEFINITIONS *****/
 
@@ -662,6 +667,37 @@ VEC_TYPE zz = jacobi_reduce(u, tau);
 return ONE + 2.0 * creciprocal(3. * raw_wpp(zz, A, tau) - ONE);`,
 ['reciprocal', 'jacobi_reduce', 'raw_wpp']);
 
+// Modular functions
+const lattice_reduce = new LatticeReduce('lattice_reduce', // LLL basis reduction algorithm, ASSUME DOWNCONVERTED
+`if (z.y < 0.) {return -1./0. * ONE;}
+vec4 coeffs = vec4(1., 0, 0, 1.);
+vec2 a = z;
+vec2 b = vec2(1., 0);
+for (int i = 0; i < 5; i++) {
+float mu = floor(dot(a, b)/dot(b, b) + 0.5);
+a -= mu * b;
+coeffs.xy -= mu * coeffs.zw;
+mu = floor(dot(a, b)/dot(a, a) + 0.5);
+b -= mu * a;
+coeffs.zw -= mu * coeffs.xy;
+}
+vec4 res = vec4(coeffs.x*z, coeffs.z*z) + vec4(coeffs.y, 0, coeffs.w, 0);
+float p = step(length(res.xy), length(res.zw));
+vec2 num = res.xy * (1.-p) + res.zw * p;
+vec2 denom = res.xy * p + res.zw * (1.-p);
+return (1.-2.*p)*cdiv(vec3(num, 0).COMPONENTS, vec3(denom, 0).COMPONENTS);`, ['div']);
+const cj = new ComplexFunction('cj',
+`z = downconvert(z);
+z = lattice_reduce(z.xy);
+VEC_TYPE q = cexp_raw(PI*cmul_i(z));
+VEC_TYPE q2 = csquare(q);
+VEC_TYPE q4 = csquare(q2);
+VEC_TYPE a = clog(2.*ONE + 2.*q2) + PI/4.*cmul_i(z); // theta10
+VEC_TYPE b = clog(ONE + 2.*(q+q4)); // theta00
+VEC_TYPE c = clog(ONE - 2.*(q-q4)); // theta01
+return cexp(3.*clog(cexp_raw(8.*a) + cexp_raw(8.*b) + cexp_raw(8.*c)) - 8.*(a+b+c) + 5.*LN2*ONE);`,
+['lattice_reduce', 'theta00', 'theta10', 'theta01', 'log', 'exp', 'exp_raw', 'cis', 'mul_i', 'square']);
+
 /**** Function List ****/
 var complex_functions = {
     mul_i,
@@ -736,6 +772,9 @@ var complex_functions = {
 
     'sm': csm,
     'cm': ccm,
+
+    lattice_reduce,
+    'j': cj,
 };
 
 function parseExpression(expression) {

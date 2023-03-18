@@ -275,6 +275,40 @@ function sm(z) {
     return cm(csub(1.7666387502854499, z));
 }
 
+function dot(z, w) {return z.re * w.re + z.im * w.im;}
+
+function lattice_reduce(z) {
+    if (z.im < 0) {return math.complex(0, 1/0);}
+    const coeffs = [math.complex(1, 0), I];
+    let a = z;
+    let b = math.complex(1, 0);
+    for (let i = 0; i < 16; i++) {
+        let mu = Math.round(dot(a, b)/dot(b, b));
+        a = csub(a, cmul(mu, b));
+        coeffs[0] = csub(coeffs[0], cmul(mu, coeffs[1]));
+
+        mu = Math.round(dot(a, b)/dot(a, a));
+        b = csub(b, cmul(mu, a));
+        coeffs[1] = csub(coeffs[1], cmul(mu, coeffs[0]));
+    }
+    const num = cadd(cmul(coeffs[0].re, z), coeffs[0].im);
+    const denom = cadd(cmul(coeffs[1].re, z), coeffs[1].im);
+    const res = cdiv(num, denom);
+    if (math.abs(res) < 1) {return cdiv(-1, res);}
+    return res;
+}
+
+function j(z) {
+    z = lattice_reduce(z);
+    const a = theta10(0, z);
+    const b = theta00(0, z);
+    const c = theta01(0, z);
+
+    return cmul(32, cdiv(
+        cpow(cadd(cadd(cpow(a, 8), cpow(b, 8)), cpow(c, 8)), 3),
+        cpow(cmul(a, cmul(b, c)), 8)
+    ));
+}
 
 export {
     zeta, eta, gamma, erf,
@@ -282,4 +316,5 @@ export {
     sn, cn, dn,
     wp, wpp,
     sm, cm,
+    j
 };
