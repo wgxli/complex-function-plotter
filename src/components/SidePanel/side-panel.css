@@ -5,6 +5,8 @@
 
 .MuiList-root {
     background-color: white;
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
 }
 
 @media (max-width: 480px) {

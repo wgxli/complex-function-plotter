@@ -31,9 +31,9 @@
 }
 
 .slider .info-row {
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 500;
-	font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+	font-family: 'KaTeX_Main', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 	line-height: 20px;
 
         padding-top: 4px;
@@ -41,6 +41,12 @@
 
 .slider .info-row .editable-value {
 	color: black;
+}
+
+.slider .info-row .editable-value.name-italic {
+    font-style: italic;
+    font-family: 'KaTeX_Math';
+    margin-right: 4px;
 }
 
 .slider .info-row .editable-value.invalid {
@@ -65,8 +71,8 @@
 }
 
 .slider .main-row .editable-value {
-	font-size: 14px;
-	font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+	font-size: 16px;
+	font-family: 'KaTeX_Main', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 	line-height: 30px;
 }
 

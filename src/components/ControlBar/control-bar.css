@@ -11,10 +11,19 @@
   margin-right: 75px;
 
   overflow: hidden;
-  flex-grow: 1
+  flex-grow: 1;
+
+  font-size: 18px;
+  font-family: 'KaTeX_Main';
 }
 
 #help-button {
   position: absolute;
   right: 0;
+}
+
+@media (max-width: 480px) {
+    #function-input {
+        font-size: 16px;
+    }
 }

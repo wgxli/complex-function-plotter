@@ -59,6 +59,7 @@ function AnimationMode({mode, speed, onChangeMode, onChangeSpeed}) {
                 font-size: 12px;
                 color: hsl(200, 20%, 40%);
                 cursor: pointer;
+                font-family: 'KaTeX_Main';
                 user-select: none;
             `}
         >
@@ -197,7 +198,7 @@ class Slider extends PureComponent {
                 <div className='slider'>
                     <div className='info-row'>
                         <EditableValue
-                            name='name'
+                            name={'name' + (this.props.name.length === 1 ? '-italic' : '')}
                             value={this.props.name}
                             parser='lower'
                             onChange={this.props.onNameChange}

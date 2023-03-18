@@ -29,7 +29,7 @@ class ControlPanel extends React.PureComponent {
             <div id='function-input'>
               <TextField
                   id='function-input'
-                  placeholder='Enter a complex function of z'
+                  placeholder={window.innerWidth > 480 ? 'Enter a complex function of z' : 'f(z)'}
                   value={value}
                   onChange={(event) => this.handleTextChange(event)}
                   error={error}
