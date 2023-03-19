@@ -35,7 +35,7 @@ function createShaderProgram(gl, expression, customShader, variableNames) {
 
   if (fragmentShaderSource === null) {return null;}
 
-  console.log(fragmentShaderSource);
+//  console.log(fragmentShaderSource);
 
   // Load vertex and fragment shaders
   const vertexShader = loadShader(gl,

@@ -161,6 +161,8 @@ function compile(ast) {
         if (args[1] === 0 || isZero(args[0])) {return ['number', 0, 0];}
         if (args[1] > 0) {
             return ['component_mul_prelog', args[0], math.log(args[1])];
+        } else {
+            return ['component_mul_prelog', compile(['neg', args[0]]), math.log(-args[1])];
         }
     }
 
@@ -178,8 +180,7 @@ function compile(ast) {
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
-//                return ['exp', ['component_mul', ['log', subAST], val.re]]; // Cartesian only
-                return ['exp', ['component_mul_prelog', ['log', subAST], math.log(val.re)]]; // Log-cartesian only
+                return ['exp', compile(['component_mul', ['log', subAST], val.re])]; // Cartesian only
             }
         }
 
