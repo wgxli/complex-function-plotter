@@ -63,7 +63,8 @@ fourFunction ->
    | "prod"
 
 binaryFunction ->
-   "sn"
+   "beta"
+   | "sn"
    | "cn"
    | "dn"
    | "wp"

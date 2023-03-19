@@ -169,20 +169,34 @@ function compile(ast) {
 
         if (isConst(args[1])) {
             const val = getConst(args[1]);
-            const subAST = compile(args[0]);
+            const subAST = args[0];
             if (val.im === 0) {
                 if (val.re === -1) {return ['reciprocal', subAST];}
                 if (val.re === 0) {return ['number', 1, 0];}
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
                 if (val.re === 2) {return ['square', subAST];}
-//                if (Number.isInteger(val.re)) {return ['rawpow', subAST, val.re];} // LOG_MODE only
 //                return ['exp', ['component_mul', ['log', subAST], val.re]]; // Cartesian only
-                return ['exp', ['component_mul_prelog', ['log', subAST], math.log(val.re)]]; // Cartesian only
+                return ['exp', ['component_mul_prelog', ['log', subAST], math.log(val.re)]]; // Log-cartesian only
             }
         }
 
 //        return ['exp', ['mul', ['log', args[0]], args[1]]]; // Cartesian only
+    }
+
+    if (operator === 'beta') {
+        if (isConst(args[0])) {args = [args[1], args[0]];}
+        if (isConst(args[1])) {
+            const val = getConst(args[1]);
+            if (val.im === 0 && Number.isInteger(val.re) && val.re > 0) {
+                const prefactor = ['component_mul', args[0], math.factorial(val.re)/val.re];
+                const terms = [prefactor];
+                for (let i = 1; i < val.re; i++) {
+                    terms.push(['add', args[0], ['number', i, 0]]);
+                }
+                return ['reciprocal', compose(terms, 'mul', 'mul4')];
+            }
+        }
     }
 
     return [operator, ...args];

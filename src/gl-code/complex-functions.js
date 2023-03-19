@@ -277,7 +277,7 @@ const cgamma = new ComplexFunction('cgamma',
 'if (z.x < 0.5) {return cgamma_left(z);} else {return cgamma_right(z);}',
 'if (z.x * exp(z.z) < 0.5) {return cgamma_left(z);} else {return cgamma_right(z);}',
 ['cgamma_left', 'cgamma_right'], ['cgamma_left', 'cgamma_right']);
-const cgamma_left = new ComplexFunction('cgamma_left',
+const cgamma_left = new ComplexFunction('cgamma_left', // Use functional equation
 'return ccomponent_mul_prelog(creciprocal(cmul(csin(ccomponent_mul_prelog(z, LNPI)), cgamma_right(csub(ONE, z)))), LNPI);',
 ['mul', 'sin', 'cgamma_right', 'component_mul_prelog', 'reciprocal', 'sub']);
 const cgamma_right = new ComplexFunction('cgamma_right',
@@ -310,6 +310,7 @@ x.z -= w.z;
 return ccomponent_mul(cmul(x, cexp(csub(cmul(clog(t), w + 0.5*scale_one), t))), sqrt(TAU));`, // Lanczos approximation
 ['reciprocal', 'mul', 'exp', 'log'], ['sqrt', 'reciprocal', 'sub', 'mul', 'exp', 'log', 'component_mul']);
 const cfact = new ComplexFunction('cfact', 'return cgamma(cadd(z, ONE));', ['gamma', 'add']);
+const cbeta = new ComplexFunction('cbeta', 'return cdiv(cmul(cgamma(z), cgamma(w)), cgamma(cadd(z, w)));', ['add', 'gamma', 'div', 'mul'], 2);
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
@@ -816,6 +817,7 @@ var complex_functions = {
 
     cgamma_left, cgamma_right,
     'gamma': cgamma,
+    'beta': cbeta,
 
     ceta_left, ceta_strip, ceta_right,
     zeta_character, czeta_strip, czeta_helper, czeta_helper_2,

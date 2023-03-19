@@ -23,6 +23,8 @@ const gamma_left = z => math.divide(math.pi, math.multiply(
 ));
 const gamma = z => z.re < 0.5 ? gamma_left(z) : gamma_right(z);
 
+const beta = (z, w) => cdiv(cmul(gamma(z), gamma(w)), gamma(cadd(z, w)));
+
 
 const ETA_COEFFICIENTS = [
 [ 1.00000000000000000000, 0.00000000000000000000],
@@ -337,7 +339,7 @@ function e16(z) {
 }
 
 export {
-    zeta, eta, gamma, erf,
+    zeta, eta, gamma, beta, erf,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
     wp, wpp,

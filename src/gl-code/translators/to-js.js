@@ -1,6 +1,6 @@
 import {get, isNil} from 'lodash';
 import {
-    zeta, eta, gamma, erf,
+    zeta, eta, gamma, beta, erf,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
     wp, wpp,
@@ -51,7 +51,7 @@ const fns = {
 
     cis: z => math.exp(math.multiply(z, I)),
 
-    gamma,
+    gamma, beta,
     eta,
     zeta,
     erf,

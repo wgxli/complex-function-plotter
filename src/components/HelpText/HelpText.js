@@ -79,7 +79,7 @@ const supportedFunctions = [
         name: 'Special Functions',
         entries: [
             'sqrt',
-            'gamma', 'eta', 'zeta',
+            'gamma', 'beta', 'eta', 'zeta',
             'erf',
         ]
     },
@@ -113,6 +113,8 @@ const EXAMPLES = {
     'pi': null,
     'tau': null,
     'phi': null,
+
+    'beta': 'beta(z, 3)',
 
     'sn(z, k)': 'sn(z, t + i)',
     'cn(z, k)': 'cn(z, t + i)',
