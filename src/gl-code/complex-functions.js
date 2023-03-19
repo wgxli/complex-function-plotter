@@ -112,8 +112,8 @@ const csgn = new ComplexFunction('csgn', 'return normalize(z);', 'return vec3(no
 const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);', 'return vec3(z.x, 0, z.z);');
 const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);', 'return vec3(z.y, 0, z.z);');
 const cfloor = new ComplexFunction('cfloor', 'return floor(z);', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy), 0);}');
-const cceil = new ComplexFunction('cceil', 'return floor(z + vec2(0.9999999, 0.9999999));', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + vec2(0.9999999, 0.9999999)), 0);}'); // Built-in ceil fails on iOS
-const cround = new ComplexFunction('cround', 'return floor(z + vec2(0.5, 0.5));', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + vec2(0.5, 0.5)), 0);}');
+const cceil = new ComplexFunction('cceil', 'return floor(z + 0.9999999));', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + 0.9999999), 0);}'); // Built-in ceil fails on iOS
+const cround = new ComplexFunction('cround', 'return floor(z + 0.5);', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + 0.5), 0);}');
 const cstep = new ComplexFunction('cstep', 'return vec2(step(0., z.x), 0);', 'return vec3(step(0., z.x), 0, 0);')
 
 // Exponentials
@@ -146,8 +146,8 @@ return (magnitude * magnitude) * vec2(cos(phase), sin(phase));`,
 float phase = atan(z.y, z.x) * 2.0;
 return vec3((magnitude * magnitude) * vec2(cos(phase), sin(phase)), 2.*z.z);`);
 
-// Trigonometry //
-// Basic Trigonometric Functions
+// Trigonredtry //
+// Basic Trigonredtric Functions
 const csin = new ComplexFunction('csin',
 `VEC_TYPE iz = cmul_i(z);
 return ccomponent_mul(cmul_i(csub(cexp(iz), cexp(cneg(iz)))), -0.5);`,
@@ -164,7 +164,7 @@ const ccsc = new ComplexFunction('ccsc', 'return creciprocal(csin(z));',
 const ccot = new ComplexFunction('ccot', 'return creciprocal(ctan(z));',
     ['reciprocal', 'tan']);
 
-// Inverse Trigonomeric Functions
+// Inverse Trigonredric Functions
 const carcsin = new ComplexFunction('carcsin',
 `VEC_TYPE a = csqrt(csub(ONE, csquare(z)));
 if (z.y < 0.) {
@@ -188,7 +188,7 @@ const carcsec = new ComplexFunction('carcsec', 'return carccos(creciprocal(z));'
 const carccsc = new ComplexFunction('carccsc', 'return carcsin(creciprocal(z));', ['arcsin', 'reciprocal']);
 
 
-// Hyperbolic Trigonometric Functions
+// Hyperbolic Trigonredtric Functions
 const csinh = new ComplexFunction('csinh',
 `VEC_TYPE exp_z = cexp(z); return ccomponent_mul(csub(exp_z, creciprocal(exp_z)), 0.5);`,
 ['exp', 'sub', 'component_mul', 'reciprocal']);
@@ -311,6 +311,9 @@ return ccomponent_mul(cmul(x, cexp(csub(cmul(clog(t), w + 0.5*scale_one), t))), 
 ['reciprocal', 'mul', 'exp', 'log'], ['sqrt', 'reciprocal', 'sub', 'mul', 'exp', 'log', 'component_mul']);
 const cfact = new ComplexFunction('cfact', 'return cgamma(cadd(z, ONE));', ['gamma', 'add']);
 const cbeta = new ComplexFunction('cbeta', 'return cdiv(cmul(cgamma(z), cgamma(w)), cgamma(cadd(z, w)));', ['add', 'gamma', 'div', 'mul'], 2);
+const cbinom = new ComplexFunction('cbinom',
+`VEC_TYPE zz = csub(z, w);
+return cdiv(z, cmul(cmul(w, zz), cbeta(zz, w)));`, ['sub', 'mul', 'div', 'beta'], 2);
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
@@ -526,6 +529,9 @@ return result;`, ['cerf_small', 'cerf_large']);
 
 
 /***** Elliptic Functions *****/
+const cnome = new ComplexFunction('cnome',
+'return ccomponent_mul(cmul_i(clog(z)), -0.5/PI);', ['log', 'mul_i', 'component_mul']);
+
 // Jacobi Theta functions
 const ctheta00 = new ComplexFunction('ctheta00',
 `z = downconvert(z); w = downconvert(w);
@@ -635,7 +641,7 @@ VEC_TYPE e2 = -(PI*PI/3.0) * (csquare(t102) + csquare(t002));
 return PI*PI*cmul(cmul(t002, t102), csquare(cdiv(theta01f(zz, w), theta11f(zz, w)))) + e2;` ,
 ['square', 'div', 'mul', 'theta000', 'theta10f', 'theta01f', 'theta11f'], 2);
 const raw_wpp = new ComplexFunction('raw_wpp',
-`return -2.0 * cmul(
+`return -2. * cmul(
     cexp_raw(3. * clog(cdiv(w, raw_sn(z, w1)))),
     cmul(raw_cn(z, w1), raw_dn(z, w1))
 );`, [
@@ -671,11 +677,12 @@ return raw_wpp(zz, A, tau);`, [
 // Dixon ellptic functions
 const csm = new ComplexFunction('csm', 'z = downconvert(z); return ccm(1.7666387502854499*ONE-z);', ['cm']);
 const ccm = new ComplexFunction('ccm', 
-`const VEC_TYPE A = vec3(0.42644336004913946, 0.42644336004913946, 0).COMPONENTS;
+`z = downconvert(z);
+const VEC_TYPE A = vec3(0.42644336004913946, 0.42644336004913946, 0).COMPONENTS;
 const VEC_TYPE tau = vec3(-0.5, 0.8660254037844386, 0).COMPONENTS;
 VEC_TYPE u = cmul(z, A);
 VEC_TYPE zz = jacobi_reduce(u, tau);
-return ONE + 2.0 * creciprocal(3. * raw_wpp(zz, A, tau) - ONE);`,
+return ONE + 2. * creciprocal(3. * raw_wpp(zz, A, tau) - ONE);`,
 ['reciprocal', 'jacobi_reduce', 'raw_wpp']);
 
 // Modular functions
@@ -698,7 +705,7 @@ vec2 num = res.xy * (1.-p) + res.zw * p;
 vec2 denom = res.xy * p + res.zw * (1.-p);
 vec2 representative = (1.-2.*p)*cdiv(vec3(num, 0).COMPONENTS, vec3(denom, 0).COMPONENTS).xy;
 return vec4(representative, denom);`, ['div']);
-const nome = new Nome('nome',
+const nred = new Nome('nred',
 `z = downconvert(z);
 vec4 reduced = lattice_reduce(z.xy);
 z = vec3(reduced.xy, 0).COMPONENTS;
@@ -718,7 +725,7 @@ VEC_TYPE c = even-odd; // log(theta01^8)
 return cexp(3.*clog(cexp_raw(a) + cexp_raw(b) + cexp_raw(c)) - (a+2.*even) + 5.*LN2*ONE);`,
 ['lattice_reduce', 'theta00', 'theta10', 'theta01', 'log', 'exp', 'exp_raw', 'cis', 'mul_i', 'square']);
 const ce2 = new ComplexFunction('ce2',
-`vec4 h = nome(z);
+`vec4 h = nred(z);
 VEC_TYPE q = vec3(h.xy, 0).COMPONENTS;
 VEC_TYPE log_weight = vec3(h.zw, 0).COMPONENTS;
 VEC_TYPE q2 = csquare(q);
@@ -733,7 +740,7 @@ VEC_TYPE series = ONE - 24.*(
     +5. * cdiv(q5, ONE-q5) + 6.*cdiv(q6, ONE-q6) + 7.*cdiv(q7, ONE-q7) + 8.*cdiv(q8, ONE-q8)
 );
 return cmul(series, cexp(log_weight * -2.));`,
-['nome', 'square', 'exp']);
+['nred', 'square', 'exp']);
 const e4_helper = new EHelper('e4_helper', // Eisenstein E4, given nome/log_weight
 `VEC_TYPE q = vec3(h.xy, 0).COMPONENTS;
 VEC_TYPE log_weight = vec3(h.zw, 0).COMPONENTS;
@@ -751,23 +758,23 @@ VEC_TYPE q4_chr = csquare(q2_chr); // 1024q^5
 VEC_TYPE series = ONE - 504.* (cdiv(q, ONE-q) + cdiv(q2_chr, ONE-0.03125*q2_chr) + q3_chr + q4_chr);
 return cmul(series, cexp(log_weight * -6.));`,
 ['exp', 'log', 'square', 'mul', 'div', 'exp_raw', 'sub', 'component_mul_prelog']);
-const ce4 = new ComplexFunction('ce4', 'vec4 h = nome(z); return e4_helper(h);', ['nome', 'e4_helper']);
-const ce6 = new ComplexFunction('ce6', 'vec4 h = nome(z); return e6_helper(h);', ['nome', 'e6_helper']);
+const ce4 = new ComplexFunction('ce4', 'vec4 h = nred(z); return e4_helper(h);', ['nred', 'e4_helper']);
+const ce6 = new ComplexFunction('ce6', 'vec4 h = nred(z); return e6_helper(h);', ['nred', 'e6_helper']);
 const ce8 = new ComplexFunction('ce8', 'return csquare(ce4(z));', ['square', 'e4']);
 const ce10 = new ComplexFunction('ce10',
-'vec4 h = nome(z); return cmul(e4_helper(h), e6_helper(h));',
-['mul', 'nome', 'e4_helper', 'e6_helper']);
+'vec4 h = nred(z); return cmul(e4_helper(h), e6_helper(h));',
+['mul', 'nred', 'e4_helper', 'e6_helper']);
 const ce12 = new ComplexFunction('ce12',
-`vec4 h = nome(z); VEC_TYPE a = e4_helper(h); VEC_TYPE b = e6_helper(h);
+`vec4 h = nred(z); VEC_TYPE a = e4_helper(h); VEC_TYPE b = e6_helper(h);
 return cadd(ccomponent_mul(cexp(3.*clog(a)), 441./691.), ccomponent_mul(csquare(b), 250./691.));`,
-['add', 'nome', 'e4_helper', 'e6_helper', 'component_mul', 'square']);
+['add', 'nred', 'e4_helper', 'e6_helper', 'component_mul', 'square']);
 const ce14 = new ComplexFunction('ce14',
-`vec4 h = nome(z); return cmul(csquare(e4_helper(h)), e6_helper(h));`,
-['nome', 'e4_helper', 'e6_helper', 'mul', 'square']);
+`vec4 h = nred(z); return cmul(csquare(e4_helper(h)), e6_helper(h));`,
+['nred', 'e4_helper', 'e6_helper', 'mul', 'square']);
 const ce16 = new ComplexFunction('ce16',
-`vec4 h = nome(z); VEC_TYPE a = e4_helper(h); VEC_TYPE b = e6_helper(h);
+`vec4 h = nred(z); VEC_TYPE a = e4_helper(h); VEC_TYPE b = e6_helper(h);
 return cadd(ccomponent_mul(cexp(4.*clog(a)), 1617./3617.), ccomponent_mul(csquare(b), 2000./3617.));`,
-['add', 'nome', 'e4_helper', 'e6_helper', 'component_mul', 'square']);
+['add', 'nred', 'e4_helper', 'e6_helper', 'component_mul', 'square']);
 
 /**** Function List ****/
 var complex_functions = {
@@ -818,6 +825,7 @@ var complex_functions = {
     cgamma_left, cgamma_right,
     'gamma': cgamma,
     'beta': cbeta,
+    'binom': cbinom,
 
     ceta_left, ceta_strip, ceta_right,
     zeta_character, czeta_strip, czeta_helper, czeta_helper_2,
@@ -828,6 +836,7 @@ var complex_functions = {
 
     invert_tau, jacobi_reduce, 
     theta000, theta00f, theta01f, theta10f, theta11f,
+    'nome': cnome,
     'theta00': ctheta00,
     'theta01': ctheta01,
     'theta10': ctheta10,
@@ -845,7 +854,7 @@ var complex_functions = {
     'sm': csm,
     'cm': ccm,
 
-    lattice_reduce, nome, e4_helper, e6_helper,
+    lattice_reduce, nred, e4_helper, e6_helper,
     'j': cj,
     'e2': ce2,
     'e4': ce4,

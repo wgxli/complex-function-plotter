@@ -54,7 +54,7 @@ class SliderPanel extends React.Component {
 	  value={value}
 	  onChange={(value) => this.handleChange(name, value)}
 	  onDelete={() => this.props.onRemove(name)}
-            setChanging={(v) => this.handleSetChanging(name, v)}
+          setChanging={(v) => this.handleSetChanging(name, v)}
 	/>
       );
     }

@@ -152,14 +152,16 @@ function compile(ast) {
             if (val.im === 0) {
                 if (val.re === 1) {return args[1];}
                 if (val.re === -1) {return ['neg', args[1]];}
-//                return compile(['component_mul', args[1], val.re]);
-                return compile(['component_mul_prelog', args[1], math.log(val.re)]);
+                return compile(['component_mul', args[1], val.re]);
             }
         }
     }
 
     if (operator === 'component_mul') {
         if (args[1] === 0 || isZero(args[0])) {return ['number', 0, 0];}
+        if (args[1] > 0) {
+            return ['component_mul_prelog', args[0], math.log(args[1])];
+        }
     }
 
     if (operator === 'pow') {
@@ -188,13 +190,27 @@ function compile(ast) {
         if (isConst(args[0])) {args = [args[1], args[0]];}
         if (isConst(args[1])) {
             const val = getConst(args[1]);
-            if (val.im === 0 && Number.isInteger(val.re) && val.re > 0) {
-                const prefactor = ['component_mul', args[0], math.factorial(val.re)/val.re];
+            if (val.im === 0 && Number.isInteger(val.re) && val.re > 0 && val.re < 20) {
+                const prefactor = compile(['component_mul', args[0], math.factorial(val.re)/val.re]);
                 const terms = [prefactor];
                 for (let i = 1; i < val.re; i++) {
                     terms.push(['add', args[0], ['number', i, 0]]);
                 }
                 return ['reciprocal', compose(terms, 'mul', 'mul4')];
+            }
+        }
+    }
+
+    if (operator === 'binom') {
+        if (isConst(args[0])) {args = [args[1], args[0]];}
+        if (isConst(args[1])) {
+            const val = getConst(args[1]);
+            if (val.im === 0 && Number.isInteger(val.re) && val.re > 0 && val.re < 20) {
+                const terms = [];
+                for (let i = 0; i < val.re; i++) {
+                    terms.push(['sub', args[0], ['number', i, 0]]);
+                }
+                return compile(['component_mul', compose(terms, 'mul', 'mul4'), 1/math.factorial(val.re)]);
             }
         }
     }

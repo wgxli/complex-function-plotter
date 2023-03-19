@@ -64,6 +64,9 @@ fourFunction ->
 
 binaryFunction ->
    "beta"
+   | "binom"
+   | "binomial" {% () => ['binom'] %}
+   | "choose" {% () => ['binom'] %}
    | "sn"
    | "cn"
    | "dn"
@@ -102,6 +105,7 @@ unaryFunction ->
    | "step"
    | "re" {% () => ['real'] %}
    | "im" {% () => ['imag'] %}
+   | "nome"
    | "sm"
    | "cm"
    | "j"

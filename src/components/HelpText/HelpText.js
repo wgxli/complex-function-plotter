@@ -55,6 +55,7 @@ const supportedFunctions = [
     {
         name: 'Elliptic/Modular',
         entries: [
+            'nome',
             'sn(z, k)',
             'cn(z, k)',
             'dn(z, k)',
@@ -79,7 +80,7 @@ const supportedFunctions = [
         name: 'Special Functions',
         entries: [
             'sqrt',
-            'gamma', 'beta', 'eta', 'zeta',
+            'gamma', 'beta', 'binomial', 'eta', 'zeta',
             'erf',
         ]
     },
@@ -115,7 +116,9 @@ const EXAMPLES = {
     'phi': null,
 
     'beta': 'beta(z, 3)',
+    'binomial': 'binom(z, 5)',
 
+    'nome': 'j(nome(z))',
     'sn(z, k)': 'sn(z, t + i)',
     'cn(z, k)': 'cn(z, t + i)',
     'dn(z, k)': 'dn(z, t + i)',
