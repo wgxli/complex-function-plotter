@@ -1,6 +1,7 @@
 const math = require('mathjs');
 
 const I = math.complex(0, 1);
+const isZero = (x) => (x === 0 || (x.re === 0 && x.im === 0));
 
 const cadd = math.sum;
 const csub = math.subtract;
@@ -24,7 +25,7 @@ const gamma_left = z => math.divide(math.pi, math.multiply(
 const gamma = z => z.re < 0.5 ? gamma_left(z) : gamma_right(z);
 
 const beta = (z, w) => cdiv(cmul(gamma(z), gamma(w)), gamma(cadd(z, w)));
-const binom = (z, w) => cdiv(z, cmul(cmul(w, csub(z, w)), beta(w, csub(z, w))));
+const binom = (z, w) => (isZero(w) || isZero(csub(z, w))) ? 1 : (isZero(z) ? 0 : cdiv(z, cmul(cmul(w, csub(z, w)), beta(w, csub(z, w)))));
 const nome = z => cmul(cmul_i(clog(z)), 0.5/Math.PI);
 
 
