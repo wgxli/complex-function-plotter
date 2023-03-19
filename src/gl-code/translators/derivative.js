@@ -108,10 +108,10 @@ function numericalDiff(ast, arg, compile) {
     const dz = 1e-2; // Finite difference step
     if (arg[0] !== 'variable') {return null;}
 
-    const high = compile(substitute(ast, arg[1], ['add', arg, ['number', dz, 0]]));
-    const low = compile(substitute(ast, arg[1], ['sub', arg, ['number', dz, 0]]));
+    const high = substitute(ast, arg[1], ['add', arg, ['number', dz, 0]]);
+    const low = substitute(ast, arg[1], ['sub', arg, ['number', dz, 0]]);
 
-    return ['component_mul', ['sub', high, low], 1/(2*dz)];
+    return compile(['component_mul', ['sub', high, low], 1/(2*dz)]);
 }
 
 export {substitute};

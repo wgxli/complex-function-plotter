@@ -112,7 +112,7 @@ const csgn = new ComplexFunction('csgn', 'return normalize(z);', 'return vec3(no
 const creal = new ComplexFunction('creal', 'return vec2(z.x, 0);', 'return vec3(z.x, 0, z.z);');
 const cimag = new ComplexFunction('cimag', 'return vec2(z.y, 0);', 'return vec3(z.y, 0, z.z);');
 const cfloor = new ComplexFunction('cfloor', 'return floor(z);', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy), 0);}');
-const cceil = new ComplexFunction('cceil', 'return floor(z + 0.9999999));', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + 0.9999999), 0);}'); // Built-in ceil fails on iOS
+const cceil = new ComplexFunction('cceil', 'return floor(z + 0.9999999);', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + 0.9999999), 0);}'); // Built-in ceil fails on iOS
 const cround = new ComplexFunction('cround', 'return floor(z + 0.5);', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + 0.5), 0);}');
 const cstep = new ComplexFunction('cstep', 'return vec2(step(0., z.x), 0);', 'return vec3(step(0., z.x), 0, 0);')
 
@@ -907,24 +907,26 @@ function functionDefinitions(ast, LOG_MODE) {
     if (Array.isArray(ast)) {
         // Extract functions used
         required = getRequirements(ast);
-
-        // Resolve dependencies
-        const stack = Array.from(required);
-        while (stack.length > 0) {
-            const f = stack.pop();
-            const fObj = complex_functions[f];
-            const dependencies = LOG_MODE ? fObj.log_dependencies : fObj.dependencies;
-            for (let dep of dependencies) {
-                if (!required.has(dep)) {
-                    required.add(dep);
-                    stack.push(dep);
-                }
-            }
-        }
     } else {
         required = new Set();
         for (let name of Object.keys(complex_functions)) {
-            required.add(name);
+            if (ast.includes(name)) {
+                required.add(name);
+            }
+        }
+    }
+
+    // Resolve dependencies
+    const stack = Array.from(required);
+    while (stack.length > 0) {
+        const f = stack.pop();
+        const fObj = complex_functions[f];
+        const dependencies = LOG_MODE ? fObj.log_dependencies : fObj.dependencies;
+        for (let dep of dependencies) {
+            if (!required.has(dep)) {
+                required.add(dep);
+                stack.push(dep);
+            }
         }
     }
     

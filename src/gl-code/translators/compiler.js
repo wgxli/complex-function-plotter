@@ -90,6 +90,7 @@ function isZero(ast) {
 const inverseMap = {
     'neg': 'neg',
     'reciprocal': 'reciprocal',
+    'conj': 'conj',
     'exp': 'log',
     'sin': 'arcsin',
     'cos': 'arccos',
