@@ -910,7 +910,7 @@ function functionDefinitions(ast, LOG_MODE) {
     } else {
         required = new Set();
         for (let name of Object.keys(complex_functions)) {
-            if (ast.includes(name)) {
+            if (ast.includes(name+'(')) {
                 required.add(name);
             }
         }
