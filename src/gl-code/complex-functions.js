@@ -537,15 +537,21 @@ const ctheta00 = new ComplexFunction('ctheta00',
 `z = downconvert(z); w = downconvert(w);
 VEC_TYPE result = ONE;
 VEC_TYPE A = 2.*z;
-for (int i = 1; i < 8; i++) {
+for (int i = 2; i < 10; i += 4) {
     float n = float(i);
-    VEC_TYPE B = n * w;
-    result = cadd(result, cadd(
-        ccis(PI * n * (B + A)),
-        ccis(PI * n * (B - A))
+    VEC_TYPE B = n*w;
+    result = cadd(result, cadd8(
+        ccis(PI*(n-1.)*(B-w+A)),
+        ccis(PI*(n-1.)*(B-w-A)),
+        ccis(PI*n*(B+A)),
+        ccis(PI*n*(B-A)),
+        ccis(PI*(n+1.)*(B+w+A)),
+        ccis(PI*(n+1.)*(B+w-A)),
+        ccis(PI*(n+2.)*(B+2.*w+A)),
+        ccis(PI*(n+2.)*(B+2.*w-A))
     ));
 }
-return result;`, ['cis', 'component_mul', 'add'], 2);
+return result;`, ['cis', 'component_mul', 'add', 'add8'], 2);
 const ctheta01 = new ComplexFunction('ctheta01', 'z = downconvert(z); w = downconvert(w); return ctheta00(z + 0.5 * ONE, w);', ['theta00'], 2);
 const ctheta10 = new ComplexFunction('ctheta10',
 'z = downconvert(z); w = downconvert(w); return cmul(ccis(PI * (z + 0.25 * w)), ctheta00(z + 0.5 * w, w));',

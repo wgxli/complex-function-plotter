@@ -87,6 +87,25 @@ function isZero(ast) {
     return ast[0] === 'number' && ast[1] === 0 && ast[2] === 0;
 }
 
+const inverseMap = {
+    'neg': 'neg',
+    'reciprocal': 'reciprocal',
+    'exp': 'log',
+    'sin': 'arcsin',
+    'cos': 'arccos',
+    'tan': 'arctan',
+    'sec': 'arcsec',
+    'csc': 'arccsc',
+    'cot': 'arccot',
+    'sinh': 'arsinh',
+    'cosh': 'arcosh',
+    'tanh': 'artanh',
+    'sech': 'arsech',
+    'csch': 'arcsch',
+    'coth': 'arcoth',
+    'square': 'sqrt',
+}
+
 
 // Optimize AST, and expand any higher-order constructs.
 function compile(ast) {
@@ -116,6 +135,14 @@ function compile(ast) {
         const fn = fns[operator] || math[operator];
         return destructure(fn(...args.map(getConst)));
     }
+
+    // Cancel out inverse functions
+    if (inverseMap[operator] !== undefined) {
+        if (Array.isArray(args[0]) && args[0][0] === inverseMap[operator]) {
+            return args[0][1];
+        }
+    }
+
 
     // Optimizations
     if (operator === 'add') {
@@ -175,11 +202,11 @@ function compile(ast) {
             const val = getConst(args[1]);
             const subAST = args[0];
             if (val.im === 0) {
-                if (val.re === -1) {return ['reciprocal', subAST];}
+                if (val.re === -1) {return compile(['reciprocal', subAST]);}
                 if (val.re === 0) {return ['number', 1, 0];}
                 if (val.re === 0.5) {return ['sqrt', subAST];}
                 if (val.re === 1) {return subAST;}
-                if (val.re === 2) {return ['square', subAST];}
+                if (val.re === 2) {return compile(['square', subAST]);}
                 return ['exp', compile(['component_mul', ['log', subAST], val.re])]; // Cartesian only
             }
         }
