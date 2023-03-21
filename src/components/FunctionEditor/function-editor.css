@@ -2,3 +2,9 @@
   margin: 20px;
   margin-top: 0;
 }
+
+@media (max-width: 480px) {
+    #function-editor .resize-helper {
+        display: none;
+    }
+}

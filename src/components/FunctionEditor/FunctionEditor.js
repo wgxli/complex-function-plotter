@@ -31,7 +31,7 @@ export default ({value, onChange, errorMessage}) => <div id='function-editor'>
           borderRadius: 8,
         }}
     />
-    <Typography variant='caption'>
+    <Typography className='resize-helper' variant='caption'>
         <br/>
         This pane is resizable! Use the handle on the bottom-right corner.
     </Typography>

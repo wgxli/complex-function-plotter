@@ -6,6 +6,7 @@ A fully-featured, responsive [domain-coloring plotter](https://samuelj.li/comple
 ![Screenshot showing a Julia fractal.](images/screenshot-2.png)
 ![Screenshot showing the j-invariant.](images/j-invariant.png)
 ![Screenshot showing a the built-in contour integrator.](images/contour-integral.png)
+![Screenshot showing the Riemann zeta function.](images/zeta.png)
 
 ## Features
 * Beautiful, fast, interactive domain-coloring plots of complex functions
