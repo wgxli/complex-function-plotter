@@ -66,11 +66,13 @@ class FunctionPlot extends PureComponent {
     }
 
     componentDidUpdate() {
-        const {expression} = this.props;
-        if (this.lastExpression !== expression) {
+        const {expression, variables} = this.props;
+        const keys = Object.keys(variables).toString();
+        if (this.lastExpression !== expression || keys !== this.lastKeys) {
             this.compilePlot();
         }
         this.lastExpression = expression;
+        this.lastKeys = keys;
             
     }
 
