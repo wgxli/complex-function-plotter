@@ -59,6 +59,7 @@ const fns = {
 
 //    factorial: z => gamma(math.add(z, 1)),
 
+    nome,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
     wp, wpp,
