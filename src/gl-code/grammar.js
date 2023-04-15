@@ -131,6 +131,7 @@ var grammar = {
     {"name": "productOperator", "symbols": [{"literal":"*"}], "postprocess": () => 'mul'},
     {"name": "productOperator", "symbols": [{"literal":"×"}], "postprocess": () => 'mul'},
     {"name": "productOperator", "symbols": [{"literal":"/"}], "postprocess": () => 'div'},
+    {"name": "productOperator", "symbols": [{"literal":"%"}], "postprocess": () => 'mod'},
     {"name": "powerOperator$string$1", "symbols": [{"literal":"*"}, {"literal":"*"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "powerOperator", "symbols": ["powerOperator$string$1"]},
     {"name": "powerOperator", "symbols": [{"literal":"^"}]},

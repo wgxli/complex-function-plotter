@@ -17,6 +17,8 @@ const constants = {
     'phi': (1 + Math.sqrt(5))/2,
 }
 
+function fract(z) {return math.complex(z.re - Math.floor(z.re), z.im - Math.floor(z.im));}
+const mod =  (z, w) => math.multiply(w, fract(math.divide(z, w)));
 const add4 = (a, b, c, d) => math.add(math.add(a, b), math.add(c, d));
 
 const I = math.complex(0, 1);
@@ -29,6 +31,7 @@ const fns = {
     neg: math.unaryMinus,
     mul: math.multiply,
     div: math.divide,
+    mod,
     reciprocal: z => math.divide(1, z),
     component_mul: (z, alpha) => math.complex(alpha*z.re, alpha*z.im),
     component_mul_prelog: (z, alpha) => math.complex(math.exp(alpha)*z.re, math.exp(alpha)*z.im),

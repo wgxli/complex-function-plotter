@@ -33,7 +33,7 @@ const styles = theme => ({
 const supportedFunctions = [
     {
         name: 'Operators',
-        entries: ['+', '-', '*', '/', '^', '!']
+        entries: ['+', '-', '*', '/', '^', '!', '%']
     },
     {
         name: 'Trigonometry',
@@ -109,6 +109,7 @@ const EXAMPLES = {
     '/': '1/z',
     '^': 'z^z^z^z^z^z^z',
     '!': 'z!',
+    '%': 'z % (1+t*i)',
 
     'e': null,
     'pi': null,

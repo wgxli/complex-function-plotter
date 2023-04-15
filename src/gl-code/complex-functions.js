@@ -251,6 +251,7 @@ const ccomponent_mul = new ComponentMul('ccomponent_mul',
 const ccomponent_mul_prelog = new ComponentMul('ccomponent_mul_prelog',
 'return z*exp(w);', 'return vec3(z.xy, z.z + w);', [], [], 2);
 const cdiv = new ComplexFunction('cdiv', 'return cmul(z, creciprocal(w));', ['mul', 'reciprocal'], 2);
+const cmod = new ComplexFunction('cmod', 'return cmul(w, fract(downconvert(cdiv(z, w))));', ['mul', 'div'], 2)
 const cpow = new ComplexFunction('cpow', 'return cexp(cmul(clog(z), w));', ['exp', 'mul', 'log'], 2);
 const cadd4 = new ComplexFunction('cadd4', 'return z+w+w1+w2;',
 `float offset = max(max(z.z, w.z), max(w1.z, w2.z));
@@ -826,6 +827,7 @@ var complex_functions = {
     'sub': csub,
     'mul': cmul,
     'div': cdiv,
+    'mod': cmod,
     'factorial': cfact,
 
     cgamma_left, cgamma_right,

@@ -53,6 +53,7 @@ productOperator ->
     "*" {% () => 'mul' %}
     | "×" {% () => 'mul' %}
     | "/" {% () => 'div' %}
+    | "%" {% () => 'mod' %}
 
 powerOperator -> "**" | "^"
 
