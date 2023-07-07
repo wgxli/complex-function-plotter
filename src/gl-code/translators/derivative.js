@@ -49,6 +49,8 @@ const diffTable = {
     'sqrt': x => ['reciprocal', ['component_mul', ['sqrt', x], 2]],
 
     'erf': x => ['component_mul', ['exp', ['neg', ['square', x]]], 2/Math.sqrt(Math.PI)],
+
+    'lambertw': x => ['reciprocal', ['add', x, ['exp', ['lambertw', x]]]],
 }
 
 // Analytically compute the derivative of the given AST
