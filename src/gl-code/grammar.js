@@ -236,6 +236,8 @@ var grammar = {
     {"name": "unaryFunction", "symbols": ["unaryFunction$string$30"]},
     {"name": "unaryFunction$string$31", "symbols": [{"literal":"e"}, {"literal":"1"}, {"literal":"6"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "unaryFunction", "symbols": ["unaryFunction$string$31"]},
+    {"name": "unaryFunction$string$32", "symbols": [{"literal":"l"}, {"literal":"a"}, {"literal":"m"}, {"literal":"b"}, {"literal":"e"}, {"literal":"r"}, {"literal":"t"}, {"literal":"w"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "unaryFunction", "symbols": ["unaryFunction$string$32"]},
     {"name": "baseTrigFunction$string$1", "symbols": [{"literal":"s"}, {"literal":"i"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "baseTrigFunction", "symbols": ["baseTrigFunction$string$1"]},
     {"name": "baseTrigFunction$string$2", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},

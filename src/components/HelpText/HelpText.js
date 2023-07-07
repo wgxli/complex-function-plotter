@@ -82,6 +82,7 @@ const supportedFunctions = [
             'sqrt',
             'gamma', 'beta', 'binomial', 'eta', 'zeta',
             'erf',
+            'lambertw',
         ]
     },
     {
@@ -339,6 +340,7 @@ class HelpText extends React.Component {
                     <li>Thanks to Jason Poulin for requesting variable animation support and other improvements.</li>
                     <li>Thanks to Marius Sarbach for requesting the coordinate axis overlay.</li>
                     <li>Thanks to Ryan Solecki for requesting the sum, product, and derivative features.</li>
+                    <li>Thanks to Gabriele D'Urso and Ryan Solecki for requesting the product log (Lambert W) function.</li>
                 </ul>
 
                 <Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography><br/>

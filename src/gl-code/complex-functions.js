@@ -130,7 +130,7 @@ const clog = new ComplexFunction('clog',
 `float magnitude = log(length(z));
 float phase = atan(z.y, z.x);
 return vec2(magnitude, phase);`,
-`return vec3(log(length(z.xy)) + z.z, atan(z.y, z.x), 0.);`);
+`return vec3(log(length(z.xy)) + z.z, atan(z.y, z.x), 0.);`); // Note: result is already downconverted
 const csqrt = new ComplexFunction('csqrt',
 `float magnitude = length(z);
 float phase = 0.5 * atan(z.y, z.x);
@@ -315,6 +315,15 @@ const cbeta = new ComplexFunction('cbeta', 'return cdiv(cmul(cgamma(z), cgamma(w
 const cbinom = new ComplexFunction('cbinom',
 `VEC_TYPE zz = csub(z, w);
 return cdiv(z, cmul(cmul(w, zz), cbeta(zz, w)));`, ['sub', 'mul', 'div', 'beta'], 2);
+const clambertw = new ComplexFunction('clambertw',
+`VEC_TYPE L1 = clog(z);
+if (ordinate(z) < -8.) {return z;}
+z = downconvert(z);
+VEC_TYPE est = (length(z.xy) > 3.) ? L1 - clog(L1) : csqrt(C_E.x*z+ONE)-ONE;
+for (int i = 0; i < 3; i++) {
+    est -= cdiv(cmul(est, est + clog(est) - L1), ONE + est);
+}
+return est;`, ['component_mul', 'log', 'mul', 'div', 'add', 'sub', 'sqrt']); // Asymptotic formula + Newton's iteration.
 
 // Dirichlet eta function
 const ceta = new ComplexFunction('ceta',
@@ -527,6 +536,7 @@ if (z.y < 0.0) {result.y *= -1.;}
 if (z.x < 0.0) {result.x *= -1.; result.x -= 1e-7;}
 
 return result;`, ['cerf_small', 'cerf_large']);
+
 
 
 /***** Elliptic Functions *****/
@@ -834,6 +844,7 @@ var complex_functions = {
     'gamma': cgamma,
     'beta': cbeta,
     'binom': cbinom,
+    'lambertw': clambertw,
 
     ceta_left, ceta_strip, ceta_right,
     zeta_character, czeta_strip, czeta_helper, czeta_helper_2,

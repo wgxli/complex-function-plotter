@@ -1,6 +1,6 @@
 import {get, isNil} from 'lodash';
 import {
-    zeta, eta, gamma, beta, binom, erf,
+    zeta, eta, gamma, beta, binom, erf, lambertw,
     nome,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
@@ -59,6 +59,7 @@ const fns = {
     eta,
     zeta,
     erf,
+    lambertw,
 
 //    factorial: z => gamma(math.add(z, 1)),
 
@@ -67,7 +68,7 @@ const fns = {
     sn, cn, dn,
     wp, wpp,
     sm, cm,
-    j, e2, e4, e6, e8, e10, e12, e14, e16
+    j, e2, e4, e6, e8, e10, e12, e14, e16,
 }
 
 /**

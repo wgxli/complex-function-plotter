@@ -145,6 +145,21 @@ function erf(z) {
     return math.sum(series);
 }
 
+function lambertw(z) {
+    const L1 = math.log(z);
+    let est = math.subtract(L1, math.log(L1));
+    if (math.abs(z) < 3) {
+        est = math.subtract(math.sqrt(math.add(1, math.multiply(Math.E, z))), 1);
+    }
+    for (let i = 0; i < 6; i++) {
+        est = math.subtract(est, math.divide(
+            math.multiply(est, math.subtract(math.add(est, math.log(est)), L1)),
+            math.add(1, est)
+        ));
+    }
+    return est;
+}
+
 /***** Elliptic Functions *****/
 function theta00(z, tau) {
     let result = 1;
@@ -342,7 +357,7 @@ function e16(z) {
 }
 
 export {
-    zeta, eta, gamma, beta, binom, erf,
+    zeta, eta, gamma, beta, binom, erf, lambertw,
     nome,
     theta00, theta01, theta10, theta11,
     sn, cn, dn,
