@@ -26,7 +26,10 @@ const fns = {
     add8: (a, b, c, d, e, f, g, h) => math.add(add4(a, b, c, d), add4(e, f, g, h)),
     add4,
     mul4: (a, b, c, d) => math.multiply(math.multiply(a, b), math.multiply(c, d)),
+
     rawpow: math.pow,
+    log: z => math.log(math.add(z, math.complex(0, 1e-16))), // Consistent branch cut
+
     sub: math.subtract,
     neg: math.unaryMinus,
     mul: math.multiply,
