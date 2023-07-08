@@ -138,7 +138,7 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   vec2 encodereal(float a) {return vec2(log(abs(a)), 0.5*PI*(1. - sign(a)));}
   ${LOG_MODE ? 'vec3 downconvert(vec3 z) {return vec3(vec2(z.xy) * exp(z.z), 0);}' : 'vec2 downconvert (vec2 z) {return z;}'}
   vec3 upconvert(vec3 z) {float l = length(z.xy); return vec3(z.xy/l, z.z + log(l));}
-  float ordinate(${vectype} z) {return ${LOG_MODE ? 'z.z' : '0'};}
+  float ordinate(${vectype} z) {return ${LOG_MODE ? 'z.z' : '0.'};}
 
   ${functionDefinitions(expression, LOG_MODE)}
 
