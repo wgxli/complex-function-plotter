@@ -128,13 +128,13 @@ function getFragmentShaderSource(expression, customShader, width, height, variab
   const ${vectype} ONE = ${LOG_MODE ? 'vec3(1., 0, 0)' : 'vec2(1., 0)'};
   const ${vectype} I = ${LOG_MODE ? 'vec3(0, 1., 0)' : 'vec2(0, 1.)'};
   const ${vectype} C_PI = ${LOG_MODE ? 'vec3(PI, 0, 0)' : 'vec2(PI, 0)'};
-  const vec2 C_TAU = vec2(TAU, 0);
-  const vec2 C_E = vec2(E, 0);
-  const vec2 C_PHI = vec2(PHI, 0);
+  const ${vectype} C_TAU = ${LOG_MODE ? 'vec3(TAU, 0, 0)' : 'vec2(TAU, 0)'};
+  const ${vectype} C_E = ${LOG_MODE ? 'vec3(E, 0, 0)' : 'vec2(E, 0)'};
+  const ${vectype} C_PHI = ${LOG_MODE ? 'vec3(PHI, 0, 0)' : 'vec2(PHI, 0)'};
 
   ${variableDeclarations}
 
-  vec2 clogcart(${vectype} z) {return vec2(${LOG_MODE ? 'log(length(z.xy)) + z.z' : 'log(length(z))'}, atan(z.y, z.x));}
+  vec2 clogcart(${vectype} z) {return vec2(${LOG_MODE ? 'log(length(z.xy)) + z.z' : 'log(length(z))'}, atan(z.y, z.x+1e-20));}
   vec2 encodereal(float a) {return vec2(log(abs(a)), 0.5*PI*(1. - sign(a)));}
   ${LOG_MODE ? 'vec3 downconvert(vec3 z) {return vec3(vec2(z.xy) * exp(z.z), 0);}' : 'vec2 downconvert (vec2 z) {return z;}'}
   vec3 upconvert(vec3 z) {float l = length(z.xy); return vec3(z.xy/l, z.z + log(l));}
