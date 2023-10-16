@@ -28,7 +28,7 @@ const fns = {
     mul4: (a, b, c, d) => math.multiply(math.multiply(a, b), math.multiply(c, d)),
 
     rawpow: math.pow,
-    log: z => math.log(math.add(z, math.complex(0, 1e-16))), // Consistent branch cut
+    log: z => (z == 0) ? -1e100 : math.log((z.re < 0) ? math.add(z, math.complex(0, 1e-20)) : z), // Consistent branch cut
 
     sub: math.subtract,
     neg: math.unaryMinus,
