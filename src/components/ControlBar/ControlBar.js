@@ -13,7 +13,7 @@ import './control-bar.css';
 
 class ControlPanel extends React.PureComponent {
   handleTextChange(event) {
-    this.props.onChange(event.target.value);
+      this.props.onChange(event.target.value);
   }
 
   render() {

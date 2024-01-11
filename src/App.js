@@ -187,7 +187,7 @@ class App extends React.Component {
             this.setState({expression, variables: newVariables});
         } else {
             clearTimeout(this.typingTimer);
-            this.typingTimer = setTimeout(this.finalizeExpression.bind(this), 100);
+            this.typingTimer = setTimeout(this.finalizeExpression.bind(this), 200);
         }
     }
 
