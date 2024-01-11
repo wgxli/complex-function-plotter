@@ -90,6 +90,7 @@ unaryFunction ->
    | "log"
    | "ln" {% () => ['log'] %}
    | "sqrt"
+   | "√" {% () => ['sqrt'] %}
    | "gamma"
    | "eta"
    | "zeta"
