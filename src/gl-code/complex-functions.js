@@ -146,8 +146,8 @@ return (magnitude * magnitude) * vec2(cos(phase), sin(phase));`,
 float phase = atan(z.y, z.x) * 2.0;
 return vec3((magnitude * magnitude) * vec2(cos(phase), sin(phase)), 2.*z.z);`);
 
-// Trigonredtry //
-// Basic Trigonredtric Functions
+// Trigonometry //
+// Basic Trigonometric Functions
 const csin = new ComplexFunction('csin',
 `VEC_TYPE iz = cmul_i(z);
 return ccomponent_mul(cmul_i(csub(cexp(iz), cexp(cneg(iz)))), -0.5);`,
@@ -164,7 +164,7 @@ const ccsc = new ComplexFunction('ccsc', 'return creciprocal(csin(z));',
 const ccot = new ComplexFunction('ccot', 'return creciprocal(ctan(z));',
     ['reciprocal', 'tan']);
 
-// Inverse Trigonredric Functions
+// Inverse Trigonomeric Functions
 const carcsin = new ComplexFunction('carcsin',
 `VEC_TYPE a = csqrt(csub(ONE, csquare(z)));
 if (z.y < 0.) {
@@ -188,7 +188,7 @@ const carcsec = new ComplexFunction('carcsec', 'return carccos(creciprocal(z));'
 const carccsc = new ComplexFunction('carccsc', 'return carcsin(creciprocal(z));', ['arcsin', 'reciprocal']);
 
 
-// Hyperbolic Trigonredtric Functions
+// Hyperbolic Trigonomedtric Functions
 const csinh = new ComplexFunction('csinh',
 `VEC_TYPE exp_z = cexp(z); return ccomponent_mul(csub(exp_z, creciprocal(exp_z)), 0.5);`,
 ['exp', 'sub', 'component_mul', 'reciprocal']);
@@ -298,7 +298,7 @@ return sqrt(TAU) * cmul(x, cexp(cmul(clog(t), w + vec2(0.5, 0)) - t));`, // Lanc
 vec3 w = z - scale_one;
 vec3 t = w + 7.5 * scale_one;
 vec3 ww = vec3(w.xy, 0);
-vec3 x = vec3(0.99999999999980993, 0, 0);
+vec3 x = vec3(0.99999999999980993 * exp(z.z), 0, 0);
 x += 676.5203681218851 * creciprocal(ww + scale_one);
 x -= 1259.1392167224028 * creciprocal(ww + 2.*scale_one);
 x += 771.32342877765313 * creciprocal(ww + 3.*scale_one);
