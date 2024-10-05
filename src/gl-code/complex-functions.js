@@ -232,7 +232,7 @@ const carcoth = new ComplexFunction('carcoth',
 
 
 // Infix Operators //
-const cneg = new ComplexFunction('cneg', 'return -z;', 'return vec3(-z.xy, z.z);');
+const cneg = new ComplexFunction('cneg', 'return -z;', 'return vec3(vec2(0, 0) - z.xy, z.z);'); // Subtraction needed instead of unary minus on some GPUs... (even though expressions should be equivalent)
 const cadd = new ComplexFunction('cadd',
 'return z+w;',
 `float diff = z.z - w.z;
