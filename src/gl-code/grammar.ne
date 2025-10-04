@@ -71,6 +71,8 @@ binaryFunction ->
    | "sn"
    | "cn"
    | "dn"
+   | "min"
+   | "max"
    | "wp"
    | "wp'" {% () => ['wpp'] %}
    | "theta00"
@@ -130,6 +132,10 @@ trigFunction ->
 literal ->
     complexNumber {% id %}
     | variable {% id %}
+    | "π" {% () => ['constant', 'pi'] %}
+    | "τ" {% () => ['constant', 'tau'] %}
+    | "φ" {% () => ['constant', 'phi'] %}
+    | "ϕ" {% () => ['constant', 'phi'] %}
 
 
 variable -> [a-z]:+ {%

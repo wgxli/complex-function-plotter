@@ -42,6 +42,9 @@ const fns = {
     imag: math.im,
     step: z => (z.re >= 0) ? 1 : 0,
 
+    max: (z, w) => math.complex(Math.max(z.re, w.re), Math.max(z.im, w.im)),
+    min: (z, w) => math.complex(Math.min(z.re, w.re), Math.min(z.im, w.im)),
+
     arcsin: math.asin,
     arccos: math.acos,
     arctan: math.atan,

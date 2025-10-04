@@ -116,6 +116,24 @@ const cceil = new ComplexFunction('cceil', 'return floor(z + 0.9999999);', 'if (
 const cround = new ComplexFunction('cround', 'return floor(z + 0.5);', 'if (z.z > 20.) {return z;} else {return vec3(floor(downconvert(z).xy + 0.5), 0);}');
 const cstep = new ComplexFunction('cstep', 'return vec2(step(0., z.x), 0);', 'return vec3(step(0., z.x), 0, 0);')
 
+const norm3_code = `float diff = z.z - w.z;
+float p = step(0., diff);
+vec3 maxarg = p*z + (1.-p)*w;
+vec3 minarg = w+z-maxarg;
+vec2 minarg_norm = exp(-abs(diff))*minarg.xy;`;
+const cmax = new ComplexFunction(
+    'cmax',
+    `return vec2(max(z.x, w.x), max(z.y, w.y));`,
+    `${norm3_code}
+    return vec3(max(maxarg.x, minarg_norm.x), max(maxarg.y, minarg_norm.y), maxarg.z);`,
+    [], [], 2);
+const cmin = new ComplexFunction(
+    'cmin',
+    `return vec2(min(z.x, w.x), min(z.y, w.y));`,
+    `${norm3_code}
+    return vec3(min(maxarg.x, minarg_norm.x), min(maxarg.y, minarg_norm.y), maxarg.z);`,
+    [], [], 2);
+
 // Exponentials
 const ccis = new ComplexFunction('ccis', 'return cexp(cmul_i(z));', ['exp', 'mul_i']);
 const cexp_raw = new ComplexFunction('cexp_raw', // ASSUME DOWNCONVERTED
@@ -813,6 +831,8 @@ var complex_functions = {
     'ceil': cceil,
     'round': cround,
     'step': cstep,
+    'max': cmax,
+    'min': cmin,
 
     'exp': cexp,
     'exp_raw': cexp_raw,

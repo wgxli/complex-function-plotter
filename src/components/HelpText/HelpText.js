@@ -92,6 +92,7 @@ const supportedFunctions = [
             'conj',
             'real', 'imag',
             'floor', 'ceil', 'round', 'step',
+            'max', 'min'
         ]
     },
     {
@@ -138,6 +139,9 @@ const EXAMPLES = {
     'E12(τ)': 'e12(z)',
     'E14(τ)': 'e14(z)',
     'E16(τ)': 'e16(z)',
+
+    'max': 'max(z, π)',
+    'min': 'min(z, π)',
 
     'sum': 'sum(z^n/n!, n, 0, 5)',
     'product': 'prod(1-z/n, n, 1, 5)',
@@ -341,11 +345,20 @@ class HelpText extends React.Component {
                     <li>Thanks to Marius Sarbach for requesting the coordinate axis overlay.</li>
                     <li>Thanks to Ryan Solecki for requesting the sum, product, and derivative features.</li>
                     <li>Thanks to Gabriele D'Urso and Ryan Solecki for requesting the product log (Lambert W) function.</li>
+                    <li>Thanks to [anonymous] for requesting the min/max functions and donation button.</li>
                 </ul>
 
                 <Typography variant='caption'>Complex Function Plotter — Made with love by Samuel J. Li</Typography><br/>
                 <Typography variant='caption'><a href='https://github.com/wgxli/complex-function-plotter'>View the source</a> on GitHub</Typography><br/>
                 <Typography variant='caption'>Found a bug? — <a href='mailto:bug.report@samuelj.li'>bug.report@samuelj.li</a></Typography>
+
+                <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="3CSLUH3DVJMEQ" />
+                <input type="hidden" name="no_recurring" value="0" />
+                <input type="hidden" name="currency_code" value="USD" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate with PayPal button" />
+                </form>
+
             </div>
         );
     }

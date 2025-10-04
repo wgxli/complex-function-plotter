@@ -84,6 +84,10 @@
   margin-left: 20px;
 }
 
+#help-text form {
+    margin-top: 10px;
+}
+
 /* Media Queries */
 @media (max-width: 600px) {
     #help-text h1 {
